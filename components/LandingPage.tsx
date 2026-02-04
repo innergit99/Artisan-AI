@@ -21,186 +21,433 @@ export default function LandingPage({
     onViewPricing?: () => void
 }) {
     const [legalModal, setLegalModal] = useState<'terms' | 'privacy' | 'refund' | null>(null);
+    const [selectedMode, setSelectedMode] = useState<'SELF-PUBLISHER' | 'POD SELLER' | 'STUDIO / AGENCY'>('SELF-PUBLISHER');
+    const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+    const [activeFeature, setActiveFeature] = useState(0);
+
+    // New State for Conversion Features
+    const [genesisPrompt, setGenesisPrompt] = useState('');
+    const [roiBooks, setRoiBooks] = useState(12); // Default 12 books/year
+
+    // Derived Savings Calculation
+    // Old Stack: $207/mo * 12 = $2484/yr
+    // Artisan: $15/book * roiBooks (Assumed credit cost per full project)
+    const oldStackCost = 2484;
+    const artisanCost = roiBooks * 15;
+    const yearlySavings = oldStackCost - artisanCost;
+
+    // Mode-specific briefing data
+    const MODE_BRIEFING = {
+        'SELF-PUBLISHER': {
+            icon: <BookOpen size={16} />,
+            text: "Optimizing for KDP Velocity. Automated manuscripts, bleed-safe covers, and keyword-rich metadata.",
+            cta: "Launch Manuscript Engine",
+            color: "indigo"
+        },
+        'POD SELLER': {
+            icon: <Shirt size={16} />,
+            text: "Scaling Merchandise Factory. Procedural designs for Etsy/Shopify. Automated background removal.",
+            cta: "Launch Merch Foundry",
+            color: "emerald"
+        },
+        'STUDIO / AGENCY': {
+            icon: <Globe size={16} />,
+            text: "Enterprise Infrastructure. Multi-project management, deep market intelligence, and ROI metrics.",
+            cta: "View Enterprise Stack",
+            color: "purple"
+        }
+    };
+
+    const handleGenesisSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (genesisPrompt.trim()) {
+            onLaunchApp(genesisPrompt);
+        }
+    };
 
     return (
-        <div className="min-h-screen bg-black text-white selection:bg-indigo-500/30 overflow-x-hidden">
-            <NeuralNetworkBackground />
+        <div className="min-h-screen bg-[#050505] text-gray-100 font-sans selection:bg-indigo-500/30 overflow-x-hidden relative">
 
-            {/* HERO SECTION */}
-            <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 px-6">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)]" />
+            {/* ROBUST BACKGROUND LAYERS */}
+            <div className="fixed inset-0 bg-radial-glow pointer-events-none z-0" />
+            <div className="fixed inset-0 bg-grid-pattern pointer-events-none z-0 opacity-50" />
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="relative z-10 text-center space-y-8 max-w-5xl"
-                >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8">
-                        <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-300">Industrial Publishing Infrastructure v4.0</span>
+            {/* NAVBAR */}
+            <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-white/5 bg-[#050505]/80">
+                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <img src="/artisan_logo_official.png" alt="Artisan AI Logo" className="w-10 h-10 rounded-lg shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
+                        <span className="text-xl font-bold tracking-tight text-white">Artisan AI</span>
                     </div>
-
-                    <h1 className="text-7xl md:text-9xl font-black uppercase italic tracking-tighter leading-[0.85] text-white">
-                        THE ARTISAN <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-white to-indigo-600">FOUNDRY</span>
-                    </h1>
-
-                    <p className="text-lg md:text-xl text-gray-400 font-medium max-w-2xl mx-auto italic leading-relaxed">
-                        Precision engineering for the modern creator. Build, scale, and automate your KDP and POD empire with industrial-grade AI infrastructure.
-                    </p>
-
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
+                    <div className="flex items-center gap-10">
+                        <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 tracking-wide uppercase text-[11px]">
+                            <a href="#system" className="hover:text-white transition-colors">System</a>
+                            <a href="#features" className="hover:text-white transition-colors">Intelligence</a>
+                            <a href="#infrastructure" className="hover:text-white transition-colors">Infrastructure</a>
+                            <button onClick={onViewPricing} className="hover:text-white transition-colors">Licensing</button>
+                        </div>
                         <button
                             onClick={() => onLaunchApp()}
-                            className="group relative px-12 py-6 bg-white text-black font-black uppercase tracking-[0.4em] text-sm overflow-hidden transition-all hover:scale-105 active:scale-95"
+                            className="relative group overflow-hidden px-6 py-3 bg-white text-black text-xs font-black uppercase tracking-widest rounded-full transition-all hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
                         >
-                            <div className="absolute inset-0 bg-indigo-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                            <span className="relative z-10 group-hover:text-white transition-colors">Enter The Foundry</span>
+                            <span className="relative z-10 flex items-center gap-2">
+                                Launch Foundry
+                            </span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent translate-x-[-200%] group-hover:animate-shine" />
                         </button>
-
-                        <button
-                            onClick={onViewPricing}
-                            className="px-12 py-6 border border-white/20 bg-white/5 backdrop-blur-md font-black uppercase tracking-[0.4em] text-sm hover:bg-white/10 transition-all"
-                        >
-                            View Protocols
-                        </button>
-                    </div>
-
-                    <div className="flex items-center justify-center gap-12 pt-16">
-                        <div className="flex flex-col items-center gap-2 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Deploy to</span>
-                            <span className="text-lg font-black tracking-tighter italic">AMAZON KDP</span>
-                        </div>
-                        <div className="flex flex-col items-center gap-2 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Sync with</span>
-                            <span className="text-lg font-black tracking-tighter italic">SHOPIFY</span>
-                        </div>
-                        <div className="flex flex-col items-center gap-2 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Fulfill via</span>
-                            <span className="text-lg font-black tracking-tighter italic">PRINTFUL</span>
-                        </div>
-                    </div>
-                </motion.div>
-
-                <div className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce opacity-20">
-                    <div className="w-px h-12 bg-white" />
-                </div>
-            </section>
-
-            {/* TRUSTED PARTNERS (NOMINAL FAIR USE) */}
-            <section className="py-24 border-y border-white/5 bg-white/5 backdrop-blur-sm relative z-10">
-                <div className="max-w-7xl mx-auto px-6">
-                    <p className="text-center text-[10px] font-black uppercase tracking-[0.5em] text-gray-600 mb-12">Universal Integration Compatibility</p>
-                    <div className="flex flex-wrap justify-center items-center gap-16 md:gap-24 opacity-30">
-                        <div className="flex flex-col items-center">
-                            <span className="text-2xl font-black italic">AMAZON KDP</span>
-                            <span className="text-[8px] font-bold uppercase mt-1 tracking-tighter">API COMPLIANT</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-2xl font-black italic">ETSY</span>
-                            <span className="text-[8px] font-bold uppercase mt-1 tracking-tighter">SYNC READY</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-2xl font-black italic">SHOPIFY</span>
-                            <span className="text-[8px] font-bold uppercase mt-1 tracking-tighter">UCP CONNECT</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-2xl font-black italic">REDBUBBLE</span>
-                            <span className="text-[8px] font-bold uppercase mt-1 tracking-tighter">AUTO-LIST</span>
-                        </div>
                     </div>
                 </div>
-            </section>
+            </nav>
 
-            {/* CORE INFRASTRUCTURE TOOLS */}
-            <section className="py-40 px-6 relative z-10">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row items-end justify-between mb-24 gap-8">
-                        <div className="space-y-4">
-                            <h2 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter italic">CORE <span className="text-indigo-500">INFRA</span></h2>
-                            <p className="text-gray-500 font-medium italic">Deconstruct the publishing stack. Automate every layer.</p>
+            {/* HERO SECTION: INDUSTRIAL BRIEFING */}
+            <section className="pt-48 pb-32 px-6 relative overflow-visible perspective-1000">
+                <NeuralNetworkBackground />
+
+                <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10">
+                    <div className="text-left space-y-10">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-indigo-500/30 bg-indigo-500/10 text-[10px] font-black tracking-[0.2em] text-indigo-400 uppercase">
+                            <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+                            <span>System Online</span>
                         </div>
-                        <button className="flex items-center gap-4 text-xs font-black uppercase tracking-[0.3em] text-gray-400 hover:text-white transition-colors">
-                            Explore All Modules <ArrowRight size={16} />
-                        </button>
-                    </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            { icon: <PenTool size={32} />, title: "Manuscript Doctor", desc: "Industrial-grade content synthesis and humanization audit.", type: 'manuscript' },
-                            { icon: <Box size={32} />, title: "Cover Foundry", desc: "Algorithmic visual identity for bestsellers.", type: 'cover' },
-                            { icon: <TrendingUp size={32} />, title: "Niche Radar", desc: "Live-scraped market intelligence and profit mapping.", type: 'trends' }
-                        ].map((tool, i) => (
-                            <motion.div
-                                key={i}
-                                whileHover={{ y: -10 }}
-                                className="group p-10 bg-white/5 border border-white/10 hover:border-indigo-500/50 transition-all rounded-[3rem] space-y-8 cursor-pointer"
-                                onClick={() => onViewDetail && onViewDetail(tool.type as any)}
+                        <div>
+                            <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-[1.05] mb-6">
+                                THE INDUSTRIAL ENGINE <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">FOR AUTONOMOUS PUBLISHING</span>
+                            </h1>
+                            <p className="text-lg text-gray-400 leading-relaxed max-w-xl border-l-2 border-indigo-500/50 pl-6">
+                                Discover, validate, design, and deploy KDP & POD assets — without manual formatting, guesswork, or platform risk.
+                            </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <button
+                                onClick={() => onLaunchApp()}
+                                className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] flex items-center justify-center gap-3"
                             >
-                                <div className="w-16 h-16 rounded-2xl bg-indigo-600/10 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                                    {tool.icon}
-                                </div>
-                                <h3 className="text-2xl font-black uppercase italic tracking-tighter">{tool.title}</h3>
-                                <p className="text-gray-500 text-sm leading-relaxed">{tool.desc}</p>
-                                <div className="pt-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Deploy Module</span>
-                                    <ChevronRight size={14} className="text-indigo-400" />
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+                                <Play size={18} fill="currentColor" />
+                                Launch The Foundry
+                            </button>
+                            <button
+                                onClick={() => document.getElementById('system')?.scrollIntoView({ behavior: 'smooth' })}
+                                className="px-8 py-4 bg-[#111] border border-white/10 hover:bg-white/5 text-gray-300 font-medium rounded-lg transition-all flex items-center justify-center gap-3"
+                            >
+                                <LayoutTemplate size={18} />
+                                View System Architecture
+                            </button>
+                        </div>
 
-            {/* SYSTEM CAPABILITIES SECTION (Industrial Grid) */}
-            <section className="py-40 border-t border-white/5 relative z-10 bg-white/[0.02]">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="grid lg:grid-cols-2 gap-24 items-center">
-                        <div className="space-y-12">
-                            <div className="space-y-4">
-                                <h2 className="text-6xl font-black uppercase italic tracking-tighter leading-none">
-                                    INDUSTRIAL <br />
-                                    <span className="text-indigo-500">PRECISION</span>
-                                </h2>
-                                <p className="text-gray-400 text-lg leading-relaxed max-w-lg">
-                                    Our infrastructure isn't just about AI generation—it's about the industrial scale fulfillment and market dominance.
-                                </p>
-                            </div>
-
-                            <div className="grid sm:grid-cols-2 gap-8">
-                                {[
-                                    { icon: <Layers size={20} />, title: "Bulk Scaling", desc: "Generate 100+ SKU variants in a single pass." },
-                                    { icon: <ShieldCheck size={20} />, title: "IP Safety", desc: "Real-time trademark and compliance monitoring." },
-                                    { icon: <Cpu size={20} />, title: "Gemini Pro 1.5", desc: "Massive context window for full-manuscripts." },
-                                    { icon: <Globe size={20} />, title: "Global Sync", desc: "Native API hooks for Amazon, Etsy & Shopify." }
-                                ].map((cap, i) => (
-                                    <div key={i} className="space-y-3">
-                                        <div className="text-indigo-500">{cap.icon}</div>
-                                        <h4 className="text-xs font-black uppercase tracking-widest text-white">{cap.title}</h4>
-                                        <p className="text-[10px] text-gray-500 leading-relaxed font-medium">{cap.desc}</p>
-                                    </div>
+                        {/* Persona Selector */}
+                        <div className="pt-8 border-t border-white/5">
+                            <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-4">Select Operations Mode:</p>
+                            <div className="flex flex-wrap gap-2 mb-6">
+                                {(['SELF-PUBLISHER', 'POD SELLER', 'STUDIO / AGENCY'] as const).map((mode) => (
+                                    <button
+                                        key={mode}
+                                        onClick={() => setSelectedMode(mode)}
+                                        className={`px-4 py-2 border rounded text-xs font-mono transition-all uppercase ${selectedMode === mode
+                                            ? 'bg-indigo-600/20 border-indigo-500 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.3)]'
+                                            : 'bg-[#111] border-white/10 text-gray-400 hover:border-white/20'
+                                            }`}
+                                    >
+                                        [{mode}]
+                                    </button>
                                 ))}
                             </div>
+
+                            {/* Dynamic Mode Briefing */}
+                            <motion.div
+                                key={selectedMode}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="p-4 rounded-lg bg-[#0A0A0A] border border-white/5 flex items-start gap-4 max-w-md group hover:border-indigo-500/20 transition-colors"
+                            >
+                                <div className={`p-2 rounded bg-${MODE_BRIEFING[selectedMode].color}-500/10 text-${MODE_BRIEFING[selectedMode].color}-400`}>
+                                    {MODE_BRIEFING[selectedMode].icon}
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-300 leading-relaxed mb-2">
+                                        {MODE_BRIEFING[selectedMode].text}
+                                    </p>
+                                    <button
+                                        onClick={() => onLaunchApp()}
+                                        className={`text-[10px] font-black uppercase tracking-widest text-indigo-400 flex items-center gap-2 group-hover:gap-3 transition-all`}
+                                    >
+                                        {MODE_BRIEFING[selectedMode].cta} <ChevronRight size={10} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
+
+                    <div className="relative h-[500px] w-full flex items-center justify-center hero-3d-card group">
+                        {/* Abstract Industrial Intelligence Visual */}
+                        <div className="relative w-full h-full rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-[#050505]">
+                            <img
+                                src="/industrial_hero_engine.png"
+                                alt="Artisan AI Industrial Engine Core"
+                                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
+                            />
+
+                            {/* Overlay UI hints - subtle */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80" />
+
+                            {/* Interactive Prompt Overlay (Optional - kept for interaction) */}
+                            <div className="absolute bottom-0 left-0 right-0 p-8">
+                                <form onSubmit={handleGenesisSubmit} className="relative flex items-center bg-black/60 backdrop-blur-xl rounded-lg border border-white/10 p-1 shadow-2xl">
+                                    <div className="pl-4 text-indigo-500"><Sparkles size={16} /></div>
+                                    <input
+                                        type="text"
+                                        value={genesisPrompt}
+                                        onChange={(e) => setGenesisPrompt(e.target.value)}
+                                        placeholder="Initialize generation sequence..."
+                                        className="flex-1 bg-transparent border-none text-white px-4 py-3 focus:ring-0 placeholder:text-gray-500 text-sm font-mono outline-none"
+                                    />
+                                    <button type="submit" className="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded transition-colors">
+                                        <ArrowRight size={16} />
+                                    </button>
+                                </form>
+                            </div>
                         </div>
 
-                        <div className="relative">
-                            <div className="absolute -inset-4 bg-indigo-500/10 blur-3xl rounded-full" />
-                            <div className="relative bg-slate-900 border border-white/10 p-4 rounded-[3.5rem] shadow-2xl overflow-hidden">
-                                <TeaserPlayer />
-                            </div>
+                        {/* Decorative Elements */}
+                        <div className="absolute -right-12 -top-12 w-64 h-64 bg-indigo-500/20 blur-[100px] rounded-full pointer-events-none" />
+                        <div className="absolute -left-12 -bottom-12 w-64 h-64 bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
+                    </div>
+                </div>
+            </section>
+
+            {/* TRUST / SOCIAL PROOF */}
+            <section className="py-12 border-y border-white/5 bg-black/40 backdrop-blur-sm">
+                <div className="max-w-7xl mx-auto px-6 text-center">
+                    <p className="text-sm text-gray-400 font-bold mb-8 uppercase tracking-[0.2em]">
+                        Engineered for global ecosystem integration.
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-12 md:gap-24 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                        {/* Replaced generic avatars with enterprise logos concept */}
+                        <div className="flex items-center gap-3"><Box size={24} /> <span className="font-black text-xl tracking-tight">DEPLOY TO AMAZON KDP</span></div>
+                        <div className="flex items-center gap-3"><Globe size={24} /> <span className="font-black text-xl tracking-tight">SYNC WITH SHOPIFY</span></div>
+                        <div className="flex items-center gap-3"><BookOpen size={24} /> <span className="font-black text-xl tracking-tight">FORMAT FOR INGRAM</span></div>
+                        <div className="flex items-center gap-3"><Palette size={24} /> <span className="font-black text-xl tracking-tight">EXPORT TO ETSY</span></div>
+                    </div>
+                </div>
+            </section>
+
+            {/* PROBLEM VALIDATION: THE BROKEN SYSTEM */}
+            <section className="py-24 px-6 bg-[#050505] relative overflow-hidden">
+                <div className="max-w-4xl mx-auto text-center relative z-10">
+                    <div className="inline-block mb-4 p-2 bg-red-900/10 border border-red-500/20 rounded text-xs font-bold text-red-500 uppercase tracking-widest">
+                        Diagnosis
+                    </div>
+                    <h2 className="text-3xl md:text-5xl font-black text-white mb-8">Publishing Today Is Broken.</h2>
+                    <p className="text-xl text-gray-400 leading-relaxed mb-12">
+                        Trends change faster than creators can react. Platform rules are opaque.
+                        Manual formatting destroys scale. Rejections kill momentum.
+                        Agencies drown in tool sprawl.
+                    </p>
+                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto" />
+                    <p className="mt-8 text-white font-medium">
+                        Artisan AI Genesis was built to replace all of that.
+                    </p>
+                </div>
+            </section>
+
+            {/* COMPARISON: INFRASTRUCTURE PITCH */}
+            <section id="system" className="py-24 px-6 bg-black relative">
+                <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="text-center mb-16">
+                        <h2 className="text-sm font-bold text-gray-500 uppercase tracking-[0.3em] mb-4">System Architecture</h2>
+                        <h3 className="text-3xl text-white font-bold">This is not a tool. It is infrastructure.</h3>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8 items-stretch">
+                        {/* SAAS HELL */}
+                        <div className="bg-[#0A0A0A] border border-white/5 p-10 rounded-2xl relative overflow-hidden group hover:border-red-500/20 transition-colors">
+                            <div className="absolute top-0 right-0 p-6 opacity-10"><ShieldAlert size={80} className="text-red-500" /></div>
+                            <h3 className="text-2xl font-black text-red-500 uppercase italic mb-6">The SaaS Hell</h3>
+                            <ul className="space-y-4 mb-8 text-gray-400">
+                                <li className="flex gap-3"><X className="text-red-500 shrink-0" /> Fragmented, disconnected tools</li>
+                                <li className="flex gap-3"><X className="text-red-500 shrink-0" /> Subscription fatigue ($200+/mo)</li>
+                                <li className="flex gap-3"><X className="text-red-500 shrink-0" /> Manual data handoffs & CSV hell</li>
+                                <li className="flex gap-3"><X className="text-red-500 shrink-0" /> Constant risk of IP infringement</li>
+                            </ul>
+                            <img src="/problem_saas_clutter.png" alt="SaaS Clutter" className="w-full rounded-lg shadow-2xl opacity-60 grayscale group-hover:grayscale-0 transition-all border border-white/5" />
+                        </div>
+
+                        {/* ARTISAN GENESIS */}
+                        <div className="bg-[#111] border border-indigo-500/30 p-10 rounded-2xl relative overflow-hidden group shadow-[0_0_30px_rgba(99,102,241,0.1)]">
+                            <div className="absolute top-0 right-0 p-6 opacity-10"><Cpu size={80} className="text-indigo-500" /></div>
+                            <h3 className="text-2xl font-black text-indigo-400 uppercase italic mb-6">Artisan AI Genesis</h3>
+                            <ul className="space-y-4 mb-8 text-gray-300">
+                                <li className="flex gap-3"><Check className="text-indigo-400 shrink-0" /> Single autonomous industrial pipeline</li>
+                                <li className="flex gap-3"><Check className="text-indigo-400 shrink-0" /> Pay-per-result efficiency</li>
+                                <li className="flex gap-3"><Check className="text-indigo-400 shrink-0" /> Platform-aware compliance guardrails</li>
+                                <li className="flex gap-3"><Check className="text-indigo-400 shrink-0" /> Predictive market signals (Real-time)</li>
+                            </ul>
+                            <img src="/artisan_foundry_solution.png" alt="Artisan Core" className="w-full rounded-lg shadow-2xl border border-indigo-500/20" />
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* CALL TO ACTION */}
-            <section className="py-40 px-6 text-center relative z-10">
-                <div className="max-w-4xl mx-auto space-y-12">
-                    <h2 className="text-6xl md:text-8xl font-black uppercase italic tracking-tighter italic">READY TO <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-white">SHIP?</span></h2>
-                    <p className="text-xl text-gray-400 font-medium italic">Join the next generation of industrial publishers.</p>
+            {/* PHASED FEATURE REVEAL */}
+            <section id="features" className="py-32 px-6 bg-[#050505]">
+                <div className="max-w-7xl mx-auto">
+                    {/* PHASE 1 */}
+                    <div className="grid lg:grid-cols-2 gap-16 items-center mb-32">
+                        <div className="order-2 lg:order-1">
+                            <div className="w-full h-80 bg-[#111] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden group">
+                                <div className="absolute inset-0 bg-emerald-900/10" />
+                                <div className="text-center z-10">
+                                    <TrendingUp size={64} className="mx-auto text-emerald-500 mb-4" />
+                                    <p className="font-mono text-emerald-400 text-sm">MARKET_INTELLIGENCE_MODULE</p>
+                                </div>
+                                <div className="absolute inset-x-0 bottom-0 h-1 bg-emerald-500 animate-pulse" />
+                            </div>
+                        </div>
+                        <div className="order-1 lg:order-2">
+                            <h4 className="text-emerald-500 font-bold uppercase tracking-widest mb-2">Phase 1</h4>
+                            <h3 className="text-4xl font-black text-white mb-4">Market Intelligence</h3>
+                            <p className="text-gray-400 text-lg leading-relaxed">
+                                Don't guess. Know. Our Niche Radar analyzes millions of data points to identify high-demand, low-competition vectors before execution begins.
+                            </p>
+                            <ul className="mt-6 space-y-2 text-gray-500 font-mono text-sm">
+                                <li>&gt; Real-time Amazon Best Seller Scans</li>
+                                <li>&gt; Keyword Profitability Calc</li>
+                                <li>&gt; Trend Velocity Metrics</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    {/* PHASE 2 */}
+                    <div className="grid lg:grid-cols-2 gap-16 items-center mb-32">
+                        <div>
+                            <h4 className="text-indigo-500 font-bold uppercase tracking-widest mb-2">Phase 2</h4>
+                            <h3 className="text-4xl font-black text-white mb-4">Asset Orchestration</h3>
+                            <p className="text-gray-400 text-lg leading-relaxed">
+                                The Foundry writes 50k word manuscripts and generates procedural, print-ready covers in parallel. Context is preserved across the entire assembly line.
+                            </p>
+                            <ul className="mt-6 space-y-2 text-gray-500 font-mono text-sm">
+                                <li>&gt; Context-Aware Gemini Text Engine</li>
+                                <li>&gt; 300 DPI Procedural Flux Image Gen</li>
+                                <li>&gt; Bleed-Zone Safe Layouts</li>
+                            </ul>
+                        </div>
+                        <div className="">
+                            <div className="w-full h-80 bg-[#111] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden">
+                                <div className="absolute inset-0 bg-indigo-900/10" />
+                                <div className="text-center z-10">
+                                    <Layers size={64} className="mx-auto text-indigo-500 mb-4" />
+                                    <p className="font-mono text-indigo-400 text-sm">ASSET_CONSTRUCTION_MODULE</p>
+                                </div>
+                                <div className="absolute inset-x-0 bottom-0 h-1 bg-indigo-500 animate-pulse" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* PHASE 3 */}
+                    <div className="grid lg:grid-cols-2 gap-16 items-center">
+                        <div className="order-2 lg:order-1">
+                            <div className="w-full h-80 bg-[#111] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden">
+                                <div className="absolute inset-0 bg-blue-900/10" />
+                                <div className="text-center z-10">
+                                    <ShieldCheck size={64} className="mx-auto text-blue-500 mb-4" />
+                                    <p className="font-mono text-blue-400 text-sm">COMPLIANCE_EXPORT_MODULE</p>
+                                </div>
+                                <div className="absolute inset-x-0 bottom-0 h-1 bg-blue-500 animate-pulse" />
+                            </div>
+                        </div>
+                        <div className="order-1 lg:order-2">
+                            <h4 className="text-blue-500 font-bold uppercase tracking-widest mb-2">Phase 3</h4>
+                            <h3 className="text-4xl font-black text-white mb-4">Compliance & Export</h3>
+                            <p className="text-gray-400 text-lg leading-relaxed">
+                                Zero-rejection pipeline. Assets are validated against platform rules before they leave the system. One-click deploy to PDF, EPUB, or print.
+                            </p>
+                            <ul className="mt-6 space-y-2 text-gray-500 font-mono text-sm">
+                                <li>&gt; Auto-Formatting Engine</li>
+                                <li>&gt; Copyright & Trademark Checks</li>
+                                <li>&gt; Multi-Platform Bundle Export</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* WHO THIS IS FOR */}
+            <section className="py-24 px-6 bg-black border-t border-white/5">
+                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
+                    <div className="p-8 border-l border-red-900/30">
+                        <h3 className="text-lg font-bold text-gray-400 mb-6 uppercase tracking-widest">Who This Is <span className="text-red-500">NOT</span> For</h3>
+                        <ul className="space-y-4 text-gray-500">
+                            <li className="flex gap-2 items-center"><X size={16} /> Hobbyists dabbling in free tools</li>
+                            <li className="flex gap-2 items-center"><X size={16} /> One-off creators aiming for a single book</li>
+                            <li className="flex gap-2 items-center"><X size={16} /> People afraid of industrial automation</li>
+                        </ul>
+                    </div>
+                    <div className="p-8 border-l border-emerald-900/30 bg-emerald-900/5">
+                        <h3 className="text-lg font-bold text-white mb-6 uppercase tracking-widest">Who This Is <span className="text-emerald-500">Built</span> For</h3>
+                        <ul className="space-y-4 text-gray-300 font-medium">
+                            <li className="flex gap-2 items-center"><Check size={16} className="text-emerald-500" /> High-Volume Operators & Studios</li>
+                            <li className="flex gap-2 items-center"><Check size={16} className="text-emerald-500" /> System-Thinkers scaling assets</li>
+                            <li className="flex gap-2 items-center"><Check size={16} className="text-emerald-500" /> Publishers who value infrastructure over toys</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            {/* SUBSCRIPTION / ROI */}
+            <section id="infrastructure" className="py-32 px-6 bg-[#0F0F0F] relative overflow-hidden">
+                <div className="max-w-5xl mx-auto text-center relative z-10">
+                    <h2 className="text-4xl font-black text-white mb-12">Stop Burning Cash. Start Building Revenue.</h2>
+
+                    <div className="bg-[#111] border border-white/10 rounded-3xl p-8 lg:p-12 shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-32 bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none" />
+
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-12">
+                            <div className="text-left space-y-4">
+                                <p className="text-gray-400">Projected output per year</p>
+                                <div className="flex items-center gap-4">
+                                    <input
+                                        type="range"
+                                        min="1" max="100"
+                                        value={roiBooks} onChange={(e) => setRoiBooks(parseInt(e.target.value))}
+                                        className="w-48 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                                    />
+                                    <span className="text-3xl font-bold text-white">{roiBooks} Projects</span>
+                                </div>
+                            </div>
+
+                            <div className="text-right">
+                                <p className="text-sm font-bold text-emerald-400 uppercase tracking-widest mb-1">Annual Profit Unlocked</p>
+                                <div className="text-5xl font-black text-white mb-2">+${yearlySavings.toLocaleString()}</div>
+                                <p className="text-xs text-gray-500">Compared to traditional tool stack costs</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-12 pt-8 border-t border-white/5 flex justify-center">
+                            <button onClick={onViewPricing} className="text-indigo-400 hover:text-white flex items-center gap-2 text-sm font-bold transition-colors">
+                                View Enterprise Licensing Models <ArrowRight size={16} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* FINAL CTA: INEVITABLE */}
+            <section className="py-32 px-6 text-center relative bg-black">
+                <div className="absolute inset-0 bg-indigo-900/10 blur-[100px] pointer-events-none" />
+                <div className="max-w-3xl mx-auto relative z-10 space-y-10">
+                    <h2 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none">
+                        BUILD YOUR <br />
+                        INFRASTRUCTURE.
+                    </h2>
+                    <p className="text-xl text-gray-400 max-w-lg mx-auto">
+                        No templates. No guesswork. No rejection cycles.
+                    </p>
                     <button
                         onClick={() => onLaunchApp()}
-                        className="group relative px-20 py-8 bg-indigo-600 text-white font-black uppercase tracking-[0.5em] text-sm overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(99,102,241,0.3)] hover:shadow-[0_0_80px_rgba(99,102,241,0.5)]"
+                        className="px-10 py-5 bg-white text-black text-lg font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform shadow-[0_0_50px_rgba(255,255,255,0.4)] flex items-center gap-4 mx-auto"
                     >
                         <Zap size={24} fill="black" />
                         Enter The Foundry
@@ -210,59 +457,33 @@ export default function LandingPage({
             </section>
 
             {/* FOOTER */}
-            <footer className="py-20 border-t border-white/5 bg-black/80 backdrop-blur-md relative z-10">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="grid md:grid-cols-3 gap-12 mb-16 text-left">
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <img src="/artisan_logo_official.png" alt="Artisan AI" className="w-8 h-8 opacity-50" />
-                                <span className="font-bold text-white tracking-tight">Artisan AI Industrial</span>
-                            </div>
-                            <p className="text-xs text-gray-500 leading-relaxed">
-                                Advanced KDP & POD automation infrastructure for
-                                studios, agencies, and high-volume independent publishers.
-                            </p>
-                        </div>
-
-                        <div className="space-y-4">
-                            <h4 className="text-xs font-black uppercase tracking-widest text-white">Legal & Compliance</h4>
-                            <div className="flex flex-col gap-2 text-xs text-gray-400">
-                                <button onClick={() => setLegalModal('terms')} className="hover:text-white transition-colors text-left">Terms of Service</button>
-                                <button onClick={() => setLegalModal('privacy')} className="hover:text-white transition-colors text-left">Privacy Policy</button>
-                                <button onClick={() => setLegalModal('refund')} className="hover:text-white transition-colors text-left underline underline-offset-4 decoration-indigo-500/50">Refund Policy</button>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            <h4 className="text-xs font-black uppercase tracking-widest text-white">Global Support</h4>
-                            <div className="flex flex-col gap-2 text-xs text-gray-400">
-                                <div className="flex items-center gap-2"><Mail size={12} className="text-indigo-500" /> support@artisan-ai.com</div>
-                                <div className="flex items-center gap-2 opacity-50 italic">Registered Office: Adh Dhawq Street, Abu Dhabi, 00971, United Arab Emirates</div>
-                                <div className="flex items-center gap-2 px-2 py-1 bg-green-500/10 border border-green-500/20 rounded w-fit">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                                    <span className="text-[9px] font-mono text-green-500 uppercase">System Status: Operational</span>
-                                </div>
-                            </div>
-                        </div>
+            <footer className="py-12 border-t border-white/5 bg-black text-center text-gray-600">
+                <div className="flex justify-center flex-col items-center gap-6 mb-8">
+                    <div className="flex items-center gap-2 px-3 py-1 bg-green-900/20 border border-green-500/20 rounded-full">
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                        <span className="text-xs font-mono text-green-500">SYSTEM ONLINE: v2.4.0 (Stable)</span>
                     </div>
 
-                    <div className="pt-8 border-t border-white/5 flex flex-col items-center gap-6">
-                        {/* LEGAL DISCLAIMER - NOMINAL FAIR USE */}
-                        <p className="text-[10px] text-gray-500 max-w-4xl text-center leading-relaxed opacity-40">
-                            Artisan AI is an independent software provider. References to Amazon KDP, Etsy, Shopify, Printful, and Midjourney are for compatibility and integration descriptions only according to nominal fair use principles. We are not affiliated with, endorsed by, or partnered with these entities.
-                        </p>
-                        <p className="text-[10px] font-mono opacity-30 uppercase tracking-tighter">&copy; 2026 ARTISAN AI INDUSTRIAL GROUP. ALL RIGHTS RESERVED.</p>
+                    {/* LEGAL DISCLAIMER - NOMINAL FAIR USE */}
+                    <p className="text-[10px] text-gray-500 max-w-2xl leading-relaxed opacity-60">
+                        Artisan AI is an independent software provider. We are not affiliated with, endorsed by, or sponsored by Amazon, Shopify, Ingram, or Etsy.
+                        All brand names and trademarks are the property of their respective owners and are used here for descriptive compatibility purposes only according to nominal fair use principles.
+                    </p>
+
+                    <div className="flex flex-col items-center gap-4 mb-8">
+                        <div className="flex gap-6 text-xs uppercase tracking-wider">
+                            <button onClick={() => setLegalModal('terms')} className="hover:text-white transition-colors">Terms of Service</button>
+                            <button onClick={() => setLegalModal('privacy')} className="hover:text-white transition-colors">Privacy Policy</button>
+                            <button onClick={() => setLegalModal('refund')} className="hover:text-white transition-colors underline underline-offset-4 decoration-indigo-500/50">Refund Policy</button>
+                        </div>
+                        <div className="flex items-center gap-2 opacity-50 italic text-[10px]">Registered Office: Adh Dhawq Street, Abu Dhabi, 00971, United Arab Emirates</div>
                     </div>
                 </div>
+                <p className="text-xs font-mono opacity-50">&copy; 2026 ARTISAN AI INDUSTRIAL GROUP. ALL RIGHTS RESERVED.</p>
             </footer>
 
-            {/* LEGAL MODALS */}
-            {legalModal && (
-                <LegalModal
-                    type={legalModal}
-                    onClose={() => setLegalModal(null)}
-                />
-            )}
+            {/* LEGAL MODAL */}
+            {legalModal && <LegalModal type={legalModal} onClose={() => setLegalModal(null)} />}
         </div>
     );
 }
