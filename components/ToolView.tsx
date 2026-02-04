@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ToolType, GeneratedImage, PODStyle, MockupType, SEOMetadata, KDPGenrePreset, KDPProject, KDPBlueprint, KDPFormat, KDPTarget, TrendingNiche, BrandDNAReport, NicheRadarReport, KDPSeoDossier, ProductionDossier, CharacterProfile } from '../types';
+import { storage } from '../storageService';
 
 
 import { TOOLS, POD_STYLES, KDP_GENRES, KDP_TRIM_SIZES, KDP_TONES } from '../constants';
@@ -24,7 +25,7 @@ import {
   AlertCircle, ChevronRight, Wand2, RefreshCw, Layers, List, ShoppingCart,
   Maximize, FileText, Check, Settings, ArrowRight, Eye, Save, Type as TypeIcon,
   Monitor, Book, Printer, Cloud, ExternalLink, TrendingUp, Shirt, Globe,
-  Target, Zap, Sun, ShieldCheck, AlignLeft, Cpu, BarChart3, Key
+  Target, Zap, Sun, ShieldCheck, AlignLeft, Cpu, BarChart3, Key, User, Users
 } from 'lucide-react';
 
 
@@ -355,6 +356,15 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
   // Advanced Creative Controls
   const [aspectRatio, setAspectRatio] = useState("1:1");
   const [negativePrompt, setNegativePrompt] = useState("");
+
+  // Context-Aware Character Engine (Phase 6)
+  const [availableCharacters, setAvailableCharacters] = useState<CharacterProfile[]>([]);
+  const [activeCharacter, setActiveCharacter] = useState<CharacterProfile | null>(null);
+
+  // Load characters on mount
+  useEffect(() => {
+    storage.getAllCharacters().then(chars => setAvailableCharacters(chars));
+  }, []);
 
   // Import Logic
   const handleImportBackup = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -992,8 +1002,16 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
 
         console.log(`Generating Variant ${i + 1}...`);
         const startTime = performance.now(); // Start Timer
+
+        // CONTEXT-AWARE INJECTION (PHASE 6)
+        let finalPrompt = effectivePrompt + styles[i];
+        if (activeCharacter) {
+          console.log(`🧬 Injecting Visual DNA: ${activeCharacter.name}`);
+          finalPrompt = `(Character Context: ${activeCharacter.visualMasterPrompt}), ${finalPrompt}`;
+        }
+
         const variantUrl = await gemini.generateImageForModule(
-          effectivePrompt + styles[i],
+          finalPrompt,
           'POD',
           { aspectRatio, negativePrompt }
         );
@@ -3922,6 +3940,40 @@ h1, h2, h3 { page -break-after: avoid; }
                   </button>
                 )}
               </div>
+
+              {/* CONTEXT-AWARE CHARACTER SELECTOR (PHASE 6) */}
+              {availableCharacters.length > 0 && (
+                <div className="relative z-20">
+                  <div
+                    className={`flex items-center gap-3 p-3 rounded-2xl border transition-all cursor-pointer ${activeCharacter ? 'bg-indigo-600/10 border-indigo-500/50' : 'bg-slate-950 border-slate-800 hover:border-slate-700'}`}
+                    onClick={() => {
+                      // Cycle through characters + None option
+                      const currentIndex = availableCharacters.findIndex(c => c.id === activeCharacter?.id);
+                      if (currentIndex === -1) {
+                        setActiveCharacter(availableCharacters[0]); // Select first
+                      } else if (currentIndex === availableCharacters.length - 1) {
+                        setActiveCharacter(null); // Deselect (Generic Mode)
+                      } else {
+                        setActiveCharacter(availableCharacters[currentIndex + 1]); // Next
+                      }
+                    }}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${activeCharacter ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-500'}`}>
+                      {activeCharacter ? <User size={16} /> : <Users size={16} />}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-0.5">Active Character Context</p>
+                      <p className={`text-xs font-bold ${activeCharacter ? 'text-indigo-400' : 'text-slate-400 italic'}`}>
+                        {activeCharacter ? `Active: ${activeCharacter.name}` : "None (Generic Mode)"}
+                      </p>
+                    </div>
+                    <div className="text-[10px] text-slate-600 font-mono pr-2">
+                      {activeCharacter ? "ON" : "OFF"}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <textarea
                 value={prompt} onChange={e => setPrompt(e.target.value)}
                 className="w-full h-36 bg-slate-950 border border-slate-800 rounded-3xl p-6 text-sm font-bold resize-none outline-none focus:border-indigo-500 transition-all text-slate-200"
