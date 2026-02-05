@@ -16,7 +16,7 @@ const CoverFoundryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         <span className="text-sm font-bold uppercase tracking-widest">Back to Studio</span>
                     </button>
                     <div className="flex items-center gap-3">
-                        <img src="/assets/publishlab_logo.png" alt="Logo" className="w-8 h-8 rounded" />
+                        <img src="/assets/publishlab_logo.svg" alt="Logo" className="w-8 h-8 rounded" />
                         <span className="font-black uppercase italic tracking-tighter">Cover Foundry</span>
                     </div>
                 </div>

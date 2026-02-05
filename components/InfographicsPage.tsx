@@ -114,7 +114,7 @@ const InfographicsPage: React.FC<InfographicsPageProps> = ({ onBack, onLaunchStu
                         </button>
                         <div className="flex items-center gap-6 border-l border-white/10 pl-12">
                             <span className="text-2xl font-black tracking-tighter uppercase italic hidden lg:block text-white">PublishLab</span>
-                            <img src="/assets/publishlab_logo.png" alt="PublishLab" className="w-16 h-16 object-contain drop-shadow-[0_0_20px_rgba(99,102,241,0.6)]" />
+                            <img src="/assets/publishlab_logo.svg" alt="PublishLab" className="w-16 h-16 object-contain drop-shadow-[0_0_20px_rgba(99,102,241,0.6)]" />
                         </div>
                     </div>
                 </div>

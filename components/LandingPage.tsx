@@ -76,7 +76,7 @@ export default function LandingPage({
             <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-white/5 bg-[#050505]/80">
                 <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <img src="/assets/publishlab_logo.png" alt="PublishLab Logo" className="w-10 h-10 rounded-lg" />
+                        <img src="/assets/publishlab_logo.svg" alt="PublishLab Logo" className="w-10 h-10 rounded-lg" />
                         <span className="text-xl font-bold tracking-tight text-white">PublishLab</span>
                     </div>
                     <div className="flex items-center gap-10">

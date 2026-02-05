@@ -38,9 +38,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onNavigate, isDarkMode }) 
     <aside className={`w-64 border-r flex flex-col h-full transition-colors duration-300 ${isDarkMode ? 'bg-[#0a0f1d] border-slate-900 text-slate-100' : 'bg-white border-slate-200 shadow-xl z-50 text-slate-900'}`}>
       <div className="p-6 overflow-y-auto custom-scrollbar flex-1">
         <div className="mb-10 flex items-center gap-3 px-1">
-          <img src="/logo_infinity.png" alt="Artisan AI Logo" className="w-12 h-12 object-contain drop-shadow-lg" />
+          <img src="/assets/publishlab_logo.svg" alt="PublishLab Logo" className="w-12 h-12 object-contain drop-shadow-lg" />
           <h1 className={`text-lg font-black italic tracking-tighter leading-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-            Artisan AI <span className="text-indigo-500 block">Genesis ∞</span>
+            PublishLab <span className="text-indigo-500 block">Studio</span>
           </h1>
         </div>
 
