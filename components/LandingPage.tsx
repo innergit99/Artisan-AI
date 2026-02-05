@@ -297,13 +297,26 @@ export default function LandingPage({
                     {/* PHASE 1 */}
                     <div className="grid lg:grid-cols-2 gap-16 items-center mb-32">
                         <div className="order-2 lg:order-1">
-                            <div className="w-full h-80 bg-[#111] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden group">
-                                <div className="absolute inset-0 bg-emerald-900/10" />
-                                <div className="text-center z-10">
-                                    <TrendingUp size={64} className="mx-auto text-emerald-500 mb-4" />
-                                    <p className="font-mono text-emerald-400 text-sm">MARKET_INTELLIGENCE_MODULE</p>
+                            <div className="w-full h-96 bg-[#0A0A0A] rounded-[2.5rem] border border-emerald-500/20 flex items-center justify-center relative overflow-hidden group shadow-[0_0_50px_rgba(16,185,129,0.1)]">
+                                {/* Mesh Gradient Background */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/20 via-transparent to-transparent opacity-50" />
+                                <div className="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full group-hover:bg-emerald-500/20 transition-all duration-1000" />
+
+                                <div className="text-center z-10 transition-transform duration-700 group-hover:scale-110">
+                                    <div className="relative inline-block">
+                                        <div className="absolute -inset-4 bg-emerald-500/20 blur-xl rounded-full animate-pulse" />
+                                        <Search size={80} className="relative text-emerald-400 mb-6 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                                    </div>
+                                    <p className="font-mono text-emerald-400 text-[10px] tracking-[0.4em] uppercase">Market_Intelligence_Module</p>
+                                    <div className="mt-4 flex gap-1 justify-center">
+                                        {[...Array(5)].map((_, i) => (
+                                            <div key={i} className="w-8 h-1 bg-emerald-500/20 rounded-full overflow-hidden">
+                                                <div className="h-full bg-emerald-500" style={{ width: '100%', animation: `shimmer 2s infinite ${i * 0.2}s` }} />
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="absolute inset-x-0 bottom-0 h-1 bg-emerald-500 animate-pulse" />
+                                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
                             </div>
                         </div>
                         <div className="order-1 lg:order-2">
@@ -335,13 +348,24 @@ export default function LandingPage({
                             </ul>
                         </div>
                         <div className="">
-                            <div className="w-full h-80 bg-[#111] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden">
-                                <div className="absolute inset-0 bg-indigo-900/10" />
-                                <div className="text-center z-10">
-                                    <Layers size={64} className="mx-auto text-indigo-500 mb-4" />
-                                    <p className="font-mono text-indigo-400 text-sm">ASSET_CONSTRUCTION_MODULE</p>
+                            <div className="w-full h-96 bg-[#0A0A0A] rounded-[2.5rem] border border-indigo-500/20 flex items-center justify-center relative overflow-hidden group shadow-[0_0_50px_rgba(79,70,229,0.1)]">
+                                {/* Mesh Gradient Background */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-transparent to-transparent opacity-50" />
+                                <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-500/10 blur-[80px] rounded-full group-hover:bg-indigo-500/20 transition-all duration-1000" />
+
+                                <div className="text-center z-10 transition-transform duration-700 group-hover:scale-110">
+                                    <div className="relative inline-block">
+                                        <div className="absolute -inset-4 bg-indigo-500/20 blur-xl rounded-full animate-pulse" />
+                                        <Layers size={80} className="relative text-indigo-400 mb-6 drop-shadow-[0_0_15px_rgba(79,70,229,0.5)]" />
+                                    </div>
+                                    <p className="font-mono text-indigo-400 text-[10px] tracking-[0.4em] uppercase">Asset_Construction_Module</p>
+                                    <div className="mt-4 grid grid-cols-3 gap-2 justify-center max-w-[120px] mx-auto">
+                                        {[...Array(6)].map((_, i) => (
+                                            <div key={i} className="w-full aspect-square bg-indigo-500/10 border border-indigo-500/20 rounded animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="absolute inset-x-0 bottom-0 h-1 bg-indigo-500 animate-pulse" />
+                                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
                             </div>
                         </div>
                     </div>
@@ -349,13 +373,23 @@ export default function LandingPage({
                     {/* PHASE 3 */}
                     <div className="grid lg:grid-cols-2 gap-16 items-center">
                         <div className="order-2 lg:order-1">
-                            <div className="w-full h-80 bg-[#111] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden">
-                                <div className="absolute inset-0 bg-blue-900/10" />
-                                <div className="text-center z-10">
-                                    <ShieldCheck size={64} className="mx-auto text-blue-500 mb-4" />
-                                    <p className="font-mono text-blue-400 text-sm">COMPLIANCE_EXPORT_MODULE</p>
+                            <div className="w-full h-96 bg-[#0A0A0A] rounded-[2.5rem] border border-blue-500/20 flex items-center justify-center relative overflow-hidden group shadow-[0_0_50px_rgba(59,130,246,0.1)]">
+                                {/* Mesh Gradient Background */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-transparent opacity-50" />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+                                <div className="text-center z-10 transition-transform duration-700 group-hover:scale-110">
+                                    <div className="relative inline-block">
+                                        <div className="absolute -inset-4 bg-blue-500/20 blur-xl rounded-full animate-pulse" />
+                                        <ShieldCheck size={80} className="relative text-blue-400 mb-6 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+                                    </div>
+                                    <p className="font-mono text-blue-400 text-[10px] tracking-[0.4em] uppercase">Compliance_Export_Module</p>
+                                    <div className="mt-4 flex items-center gap-2 justify-center">
+                                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
+                                        <span className="font-mono text-blue-500/60 text-[8px] tracking-widest uppercase">Encryption Active</span>
+                                    </div>
                                 </div>
-                                <div className="absolute inset-x-0 bottom-0 h-1 bg-blue-500 animate-pulse" />
+                                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
                             </div>
                         </div>
                         <div className="order-1 lg:order-2">
