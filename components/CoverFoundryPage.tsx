@@ -16,7 +16,7 @@ const CoverFoundryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         <span className="text-sm font-bold uppercase tracking-widest">Back to Studio</span>
                     </button>
                     <div className="flex items-center gap-3">
-                        <img src="/artisan_logo_official.png" alt="Logo" className="w-8 h-8 rounded" />
+                        <img src="/assets/publishlab_logo.svg" alt="Logo" className="w-8 h-8 rounded" />
                         <span className="font-black uppercase italic tracking-tighter">Cover Foundry</span>
                     </div>
                 </div>
@@ -37,11 +37,11 @@ const CoverFoundryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Dominance.</span>
                         </h1>
                         <p className="text-xl text-gray-400 leading-relaxed mb-10 max-w-xl">
-                            The Foundry doesn't just generate images. It builds full-wrap 3D book covers with accurate bleed, spine, and professional typography.
+                            PublishLab doesn't just generate images. It builds full-wrap 3D book covers with accurate bleed, spine, and professional typography.
                         </p>
                         <div className="flex gap-6">
                             <button className="px-8 py-4 bg-purple-600 rounded-full font-bold shadow-lg shadow-purple-600/30 hover:scale-105 transition-all">
-                                Launch Foundry
+                                Launch PublishLab
                             </button>
                             <button className="px-8 py-4 bg-white/5 rounded-full font-bold border border-white/10 hover:bg-white/10 transition-all">
                                 Gallery Showcase
@@ -78,7 +78,7 @@ const CoverFoundryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
                 {/* Workflow Section */}
                 <div className="py-20 border-t border-white/5">
-                    <h2 className="text-3xl font-black mb-16 text-center italic uppercase tracking-tighter">Foundry Workflow</h2>
+                    <h2 className="text-3xl font-black mb-16 text-center italic uppercase tracking-tighter">PublishLab Workflow</h2>
                     <div className="grid md:grid-cols-4 gap-4">
                         {[
                             { step: '01', title: 'Atmosphere Selection', desc: 'Define mood using "Industrial" prompts or Genre presets.' },

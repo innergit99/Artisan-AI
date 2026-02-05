@@ -19,11 +19,11 @@ const TeaserPlayer: React.FC = () => {
 
         try {
             // Use Gemini Service (which falls back to Ollama Proxy)
-            const answer = await gemini.queryAI(`Context: You are the AI assistant for "Artisan AI", an industrial creative studio for authors.
+            const answer = await gemini.queryAI(`Context: You are the AI assistant for "PublishLab", an industrial creative studio for authors.
             The user is watching the demo video.
             User Question: "${query}"
             
-            Answer concisely in 1-2 sentences. Adopt a futuristic, "Foundry" persona.`, false);
+            Answer concisely in 1-2 sentences. Adopt a futuristic, "PublishLab" persona.`, false);
             setResponse(answer);
         } catch (err) {
             setResponse("Industrial sensors are offline. Please check local engines.");
@@ -87,7 +87,7 @@ const TeaserPlayer: React.FC = () => {
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Ask the Foundry Intelligence (e.g. 'How fast is the engine?')"
+                            placeholder="Ask the PublishLab Intelligence (e.g. 'How fast is the engine?')"
                             className="flex-1 bg-transparent border-none text-sm text-white px-4 py-2 focus:ring-0 placeholder:text-gray-500 outline-none"
                         />
                         <button

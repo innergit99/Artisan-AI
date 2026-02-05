@@ -105,7 +105,7 @@ const InfographicsPage: React.FC<InfographicsPageProps> = ({ onBack, onLaunchStu
                         className="group flex items-center gap-4 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/10 transition-all active:scale-95"
                     >
                         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                        Back to Genesis
+                        Back to PublishLab
                     </button>
                     <div className="flex items-center gap-12">
                         <button onClick={onLaunchStudio} className="group px-10 py-4 bg-white text-black text-[10px] font-black uppercase tracking-[0.3em] rounded-full hover:bg-indigo-600 hover:text-white transition-all shadow-2xl hover:shadow-indigo-500/50 active:scale-95 flex items-center gap-4">
@@ -113,8 +113,8 @@ const InfographicsPage: React.FC<InfographicsPageProps> = ({ onBack, onLaunchStu
                             Launch Studio
                         </button>
                         <div className="flex items-center gap-6 border-l border-white/10 pl-12">
-                            <span className="text-2xl font-black tracking-tighter uppercase italic hidden lg:block text-white">Artisan <span className="text-indigo-500">AI Genesis ∞</span></span>
-                            <img src="/logo_infinity.png" alt="Genesis" className="w-16 h-16 object-contain drop-shadow-[0_0_20px_rgba(99,102,241,0.6)]" />
+                            <span className="text-2xl font-black tracking-tighter uppercase italic hidden lg:block text-white">PublishLab</span>
+                            <img src="/assets/publishlab_logo.svg" alt="PublishLab" className="w-16 h-16 object-contain drop-shadow-[0_0_20px_rgba(99,102,241,0.6)]" />
                         </div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@ const InfographicsPage: React.FC<InfographicsPageProps> = ({ onBack, onLaunchStu
                             How It <span className="text-indigo-500">Works.</span>
                         </h1>
                         <p className="max-w-4xl mx-auto text-3xl md:text-4xl text-slate-400 font-medium italic leading-relaxed">
-                            Trace the journey of a single asset through the Artisan AI Genesis industrial pipeline — from raw signal to retail product.
+                            Trace the journey of a single asset through the PublishLab industrial pipeline — from raw signal to retail product.
                         </p>
                     </div>
 
@@ -200,7 +200,7 @@ const InfographicsPage: React.FC<InfographicsPageProps> = ({ onBack, onLaunchStu
 
             <footer className="py-32 text-center border-t border-white/10 bg-slate-950">
                 <p className="text-[12px] font-black uppercase tracking-[0.6em] text-slate-700">
-                    © 2026 Artisan AI Genesis ∞ Industrial Systems • Built on AntiGravity Kit 2.0
+                    © 2026 PublishLab Industrial Systems • Built on AntiGravity Kit 2.0
                 </p>
             </footer>
         </div>

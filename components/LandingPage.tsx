@@ -76,8 +76,8 @@ export default function LandingPage({
             <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-white/5 bg-[#050505]/80">
                 <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <img src="/assets/the_foundry_logo.png" alt="The Foundry Logo" className="w-10 h-10 rounded-lg shadow-[0_0_15px_rgba(249,115,22,0.5)]" />
-                        <span className="text-xl font-bold tracking-tight text-white">The Foundry</span>
+                        <img src="/assets/publishlab_logo.svg" alt="PublishLab Logo" className="w-10 h-10 rounded-lg" />
+                        <span className="text-xl font-bold tracking-tight text-white">PublishLab</span>
                     </div>
                     <div className="flex items-center gap-10">
                         <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 tracking-wide uppercase text-[11px]">
@@ -91,7 +91,7 @@ export default function LandingPage({
                             className="relative group overflow-hidden px-6 py-3 bg-white text-black text-xs font-black uppercase tracking-widest rounded-full transition-all hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
                         >
                             <span className="relative z-10 flex items-center gap-2">
-                                Launch Foundry
+                                Launch PublishLab
                             </span>
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent translate-x-[-200%] group-hover:animate-shine" />
                         </button>
@@ -247,7 +247,7 @@ export default function LandingPage({
                     </p>
                     <div className="h-px w-24 bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto" />
                     <p className="mt-8 text-white font-medium">
-                        Artisan AI Genesis was built to replace all of that.
+                        PublishLab was built to replace all of that.
                     </p>
                 </div>
             </section>
@@ -278,7 +278,7 @@ export default function LandingPage({
                         {/* ARTISAN GENESIS */}
                         <div className="bg-[#111] border border-indigo-500/30 p-10 rounded-2xl relative overflow-hidden group shadow-[0_0_30px_rgba(99,102,241,0.1)]">
                             <div className="absolute top-0 right-0 p-6 opacity-10"><Cpu size={80} className="text-indigo-500" /></div>
-                            <h3 className="text-2xl font-black text-indigo-400 uppercase italic mb-6">Artisan AI Genesis</h3>
+                            <h3 className="text-2xl font-black text-indigo-400 uppercase italic mb-6">PublishLab</h3>
                             <ul className="space-y-4 mb-8 text-gray-300">
                                 <li className="flex gap-3"><Check className="text-indigo-400 shrink-0" /> Single autonomous industrial pipeline</li>
                                 <li className="flex gap-3"><Check className="text-indigo-400 shrink-0" /> Pay-per-result efficiency</li>
@@ -326,7 +326,7 @@ export default function LandingPage({
                             <h4 className="text-indigo-500 font-bold uppercase tracking-widest mb-2">Phase 2</h4>
                             <h3 className="text-4xl font-black text-white mb-4">Asset Orchestration</h3>
                             <p className="text-gray-400 text-lg leading-relaxed">
-                                The Foundry writes 50k word manuscripts and generates procedural, print-ready covers in parallel. Context is preserved across the entire assembly line.
+                                PublishLab writes 50k word manuscripts and generates procedural, print-ready covers in parallel. Context is preserved across the entire assembly line.
                             </p>
                             <ul className="mt-6 space-y-2 text-gray-500 font-mono text-sm">
                                 <li>&gt; Context-Aware Gemini Text Engine</li>
@@ -450,7 +450,7 @@ export default function LandingPage({
                         className="px-10 py-5 bg-white text-black text-lg font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform shadow-[0_0_50px_rgba(255,255,255,0.4)] flex items-center gap-4 mx-auto"
                     >
                         <Zap size={24} fill="black" />
-                        Enter The Foundry
+                        Enter PublishLab
                     </button>
                     <p className="text-xs text-gray-600 font-mono">SECURE ENTRY • CANCEL AT ANY TIME</p>
                 </div>
@@ -466,7 +466,7 @@ export default function LandingPage({
 
                     {/* LEGAL DISCLAIMER - NOMINAL FAIR USE */}
                     <p className="text-[10px] text-gray-500 max-w-2xl leading-relaxed opacity-60">
-                        The Foundry is an independent software provider. We are not affiliated with, endorsed by, or sponsored by Amazon, Shopify, Ingram, or Etsy.
+                        PublishLab is an independent software provider. We are not affiliated with, endorsed by, or sponsored by Amazon, Shopify, Ingram, or Etsy.
                         All brand names and trademarks are the property of their respective owners and are used here for descriptive compatibility purposes only according to nominal fair use principles.
                     </p>
 
@@ -477,10 +477,10 @@ export default function LandingPage({
                             <button onClick={() => setLegalModal('refund')} className="hover:text-white transition-colors underline underline-offset-4 decoration-indigo-500/50">Refund Policy</button>
                         </div>
                         <div className="flex items-center gap-2 opacity-50 italic text-[10px]">Registered Office: Adh Dhawq Street, Abu Dhabi, 00971, United Arab Emirates</div>
-                        <div className="flex items-center gap-2 opacity-50 text-[10px] hover:text-white transition-colors"><Mail size={12} /> support@thefoundry.ai</div>
+                        <div className="flex items-center gap-2 opacity-50 text-[10px] hover:text-white transition-colors"><Mail size={12} /> support@publishlab.ink</div>
                     </div>
                 </div>
-                <p className="text-xs font-mono opacity-50">&copy; 2026 ARTISAN AI INDUSTRIAL GROUP. ALL RIGHTS RESERVED.</p>
+                <p className="text-xs font-mono opacity-50">&copy; 2026 PUBLISHLAB. ALL RIGHTS RESERVED.</p>
             </footer>
 
             {/* LEGAL MODAL */}

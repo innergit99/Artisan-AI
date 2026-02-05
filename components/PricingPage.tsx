@@ -12,7 +12,7 @@ const TIERS = [
         id: 'free',
         name: 'Novice',
         price: '0',
-        description: 'For hobbyists exploring the foundry.',
+        description: 'For hobbyists exploring PublishLab.',
         features: [
             '1 Manuscript Projection / Mo',
             'Low-res Cover Previews',
@@ -42,7 +42,7 @@ const TIERS = [
     },
     {
         id: 'pro',
-        name: 'Foundry Master',
+        name: 'PublishLab Master',
         price: '14.99',
         description: 'Scalable infrastructure for publishing empires.',
         features: [
@@ -273,7 +273,7 @@ export const PricingPage: React.FC<{ onBack?: () => void; onPlanSelected?: () =>
                 <div className="mt-40 max-w-4xl mx-auto px-4">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl font-black uppercase tracking-widest text-white mb-4">Frequently Asked Questions</h2>
-                        <p className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Everything you need to know about the Artisan Foundry</p>
+                        <p className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Everything you need to know about the PublishLab Studio</p>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
@@ -287,7 +287,7 @@ export const PricingPage: React.FC<{ onBack?: () => void; onPlanSelected?: () =>
                                 a: "Absolutely. You can cancel your subscription with one click from your profile settings. You'll retain access to your plan's features until the end of your current billing period."
                             },
                             {
-                                q: "What is 'Foundry Level Persistence'?",
+                                q: "What is 'Lab Level Persistence'?",
                                 a: "This is our industrial-grade cloud sync. Your manuscripts, cover designs, and research stay synced across all your devices, backed by encrypted global redundancy."
                             },
                             {

@@ -116,7 +116,7 @@ export default function LegalModal({ type, onClose }: LegalModalProps) {
                         <>
                             <section>
                                 <h3 className="text-white font-bold text-lg mb-2">1. 14-Day Money-Back Guarantee</h3>
-                                <p>We want you to be completely satisfied with The Foundry. If you are not satisfied with your purchase of credits or subscription, you may request a full refund within 14 days of the transaction date, provided that you have not significantly consumed the purchased credits (usage &lt; 10%).</p>
+                                <p>We want you to be completely satisfied with PublishLab. If you are not satisfied with your purchase of credits or subscription, you may request a full refund within 14 days of the transaction date, provided that you have not significantly consumed the purchased credits (usage &lt; 10%).</p>
                             </section>
 
                             <section>
