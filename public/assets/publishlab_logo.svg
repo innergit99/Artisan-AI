@@ -1,5 +1,4 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Gradient Definition -->
   <defs>
     <linearGradient id="beakerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
@@ -7,22 +6,20 @@
     </linearGradient>
   </defs>
   
-  <!-- Background Circle (optional, for contrast) -->
-  <circle cx="256" cy="256" r="240" fill="url(#beakerGradient)" opacity="0.1"/>
+  <circle cx="256" cy="256" r="240" fill="url(#beakerGradient)" opacity="0.05"/>
   
-  <!-- Laboratory Beaker Shape -->
-  <path d="M 200 120 L 220 120 L 220 200 L 180 380 Q 180 420 220 420 L 292 420 Q 332 420 332 380 L 292 200 L 292 120 L 312 120 L 312 100 L 200 100 Z" 
-        fill="url(#beakerGradient)" 
+  <!-- Laboratory Beaker -->
+  <path d="M 200 120 L 220 120 L 220 200 L 170 380 Q 170 430 220 430 L 292 430 Q 342 430 342 380 L 292 200 L 292 120 L 312 120 L 312 100 L 200 100 Z" 
+        fill="none" 
         stroke="url(#beakerGradient)" 
-        stroke-width="4"/>
+        stroke-width="16"
+        stroke-linejoin="round"/>
   
-  <!-- Ink Droplet Inside Beaker -->
-  <ellipse cx="256" cy="300" rx="30" ry="40" fill="#FFFFFF" opacity="0.9"/>
-  <path d="M 256 260 Q 270 280 256 300 Q 242 280 256 260 Z" fill="#FFFFFF" opacity="0.7"/>
+  <!-- Fountain Pen Nib -->
+  <path d="M 256 180 L 290 260 L 290 340 Q 290 355 256 355 Q 222 355 222 340 L 222 260 Z" fill="url(#beakerGradient)" />
+  <rect x="254" y="260" width="4" height="80" fill="white" opacity="0.3" /> <!-- Slit -->
+  <circle cx="256" cy="260" r="5" fill="white" /> <!-- Breather hole -->
   
-  <!-- Measurement Lines on Beaker (detail) -->
-  <line x1="190" y1="340" x2="220" y2="340" stroke="#FFFFFF" stroke-width="2" opacity="0.4"/>
-  <line x1="190" y1="360" x2="220" y2="360" stroke="#FFFFFF" stroke-width="2" opacity="0.4"/>
-  <line x1="292" y1="340" x2="322" y2="340" stroke="#FFFFFF" stroke-width="2" opacity="0.4"/>
-  <line x1="292" y1="360" x2="322" y2="360" stroke="#FFFFFF" stroke-width="2" opacity="0.4"/>
+  <path d="M 256 355 L 256 390" stroke="url(#beakerGradient)" stroke-width="8" stroke-linecap="round" /> <!-- Droplet bridge -->
+  <path d="M 256 390 Q 270 410 256 425 Q 242 410 256 390 Z" fill="url(#beakerGradient)" /> <!-- Ink Droplet -->
 </svg>

@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onNavigate, isDarkMode }) 
         <div className="mb-10 flex items-center gap-3 px-1">
           <img src="/assets/publishlab_logo.svg" alt="PublishLab Logo" className="w-12 h-12 object-contain drop-shadow-lg" />
           <h1 className={`text-lg font-black italic tracking-tighter leading-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-            PublishLab <span className="text-indigo-500 block">Studio</span>
+            PublishLab <span className="text-indigo-500 block font-black">Studio</span>
           </h1>
         </div>
 
