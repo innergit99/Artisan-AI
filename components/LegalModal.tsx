@@ -54,19 +54,19 @@ export default function LegalModal({ type, onClose }: LegalModalProps) {
                         <>
                             <section>
                                 <h3 className="text-white font-bold text-lg mb-2">1. Agreement to Terms</h3>
-                                <p>By accessing Artisan AI ("Service"), provided by <strong>Artisan AI Industrial Group</strong> ("Company"), you agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may not access the Service.</p>
+                                <p>By accessing PublishLab ("Service"), provided by <strong>PublishLab</strong> ("Company"), you agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may not access the Service.</p>
                             </section>
 
                             <section>
                                 <h3 className="text-white font-bold text-lg mb-2">2. Description of Service</h3>
-                                <p>Artisan AI provides AI-powered creative tools ("The Foundry") including book writing architectures, graphic design engines, and marketing content synthesizers.</p>
+                                <p>PublishLab provides AI-powered publishing tools including manuscript writing, professional cover design, niche research, and marketing automation for authors and creators.</p>
                             </section>
 
                             <section>
                                 <h3 className="text-white font-bold text-lg mb-2">3. Payment & Credits</h3>
                                 <ul className="list-disc pl-5 space-y-1">
                                     <li><strong>Pay-Per-Result:</strong> Services are billed based on consumable "Credits" or direct purchases via Paddle.</li>
-                                    <li><strong>Refunds:</strong> We offer a 14-day money-back guarantee for unused credits. Contact support@artisan-ai.com.</li>
+                                    <li><strong>Refunds:</strong> We offer a 14-day money-back guarantee for unused credits. Contact support@publishlab.ink.</li>
                                     <li><strong>Cancellation:</strong> You may cease using the service at any time. No long-term contracts.</li>
                                 </ul>
                             </section>
@@ -107,7 +107,7 @@ export default function LegalModal({ type, onClose }: LegalModalProps) {
 
                             <section>
                                 <h3 className="text-white font-bold text-lg mb-2">5. Contact Data Officer</h3>
-                                <p className="flex items-center gap-2"><Mail size={16} /> privacy@artisan-ai.com</p>
+                                <p className="flex items-center gap-2"><Mail size={16} /> privacy@publishlab.ink</p>
                             </section>
                         </>
                     )}
@@ -121,7 +121,7 @@ export default function LegalModal({ type, onClose }: LegalModalProps) {
 
                             <section>
                                 <h3 className="text-white font-bold text-lg mb-2">2. How to Request a Refund</h3>
-                                <p>To initiate a refund, please contact our support team at <a href="mailto:support@artisan-ai.com" className="text-indigo-400 hover:underline">support@artisan-ai.com</a> with your order number/receipt ID.</p>
+                                <p>To initiate a refund, please contact our support team at <a href="mailto:support@publishlab.ink" className="text-indigo-400 hover:underline">support@publishlab.ink</a> with your order number/receipt ID.</p>
                             </section>
 
                             <section>

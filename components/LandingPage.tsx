@@ -76,8 +76,8 @@ export default function LandingPage({
             <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-white/5 bg-[#050505]/80">
                 <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <img src="/artisan_logo_official.png" alt="Artisan AI Logo" className="w-10 h-10 rounded-lg shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
-                        <span className="text-xl font-bold tracking-tight text-white">Artisan AI</span>
+                        <img src="/assets/the_foundry_logo.png" alt="The Foundry Logo" className="w-10 h-10 rounded-lg shadow-[0_0_15px_rgba(249,115,22,0.5)]" />
+                        <span className="text-xl font-bold tracking-tight text-white">The Foundry</span>
                     </div>
                     <div className="flex items-center gap-10">
                         <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 tracking-wide uppercase text-[11px]">
@@ -112,11 +112,11 @@ export default function LandingPage({
 
                         <div>
                             <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-[1.05] mb-6">
-                                THE INDUSTRIAL ENGINE <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">FOR AUTONOMOUS PUBLISHING</span>
+                                PUBLISHLAB <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-500">AI PUBLISHING PLATFORM</span>
                             </h1>
                             <p className="text-lg text-gray-400 leading-relaxed max-w-xl border-l-2 border-indigo-500/50 pl-6">
-                                Discover, validate, design, and deploy KDP & POD assets — without manual formatting, guesswork, or platform risk.
+                                Write bestsellers, design professional covers, and discover profitable niches — all powered by intelligent AI automation.
                             </p>
                         </div>
 
@@ -126,7 +126,7 @@ export default function LandingPage({
                                 className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] flex items-center justify-center gap-3"
                             >
                                 <Play size={18} fill="currentColor" />
-                                Launch The Foundry
+                                Launch PublishLab
                             </button>
                             <button
                                 onClick={() => document.getElementById('system')?.scrollIntoView({ behavior: 'smooth' })}
@@ -466,7 +466,7 @@ export default function LandingPage({
 
                     {/* LEGAL DISCLAIMER - NOMINAL FAIR USE */}
                     <p className="text-[10px] text-gray-500 max-w-2xl leading-relaxed opacity-60">
-                        Artisan AI is an independent software provider. We are not affiliated with, endorsed by, or sponsored by Amazon, Shopify, Ingram, or Etsy.
+                        The Foundry is an independent software provider. We are not affiliated with, endorsed by, or sponsored by Amazon, Shopify, Ingram, or Etsy.
                         All brand names and trademarks are the property of their respective owners and are used here for descriptive compatibility purposes only according to nominal fair use principles.
                     </p>
 
@@ -477,7 +477,7 @@ export default function LandingPage({
                             <button onClick={() => setLegalModal('refund')} className="hover:text-white transition-colors underline underline-offset-4 decoration-indigo-500/50">Refund Policy</button>
                         </div>
                         <div className="flex items-center gap-2 opacity-50 italic text-[10px]">Registered Office: Adh Dhawq Street, Abu Dhabi, 00971, United Arab Emirates</div>
-                        <div className="flex items-center gap-2 opacity-50 text-[10px] hover:text-white transition-colors"><Mail size={12} /> support@artisan-ai.com</div>
+                        <div className="flex items-center gap-2 opacity-50 text-[10px] hover:text-white transition-colors"><Mail size={12} /> support@thefoundry.ai</div>
                     </div>
                 </div>
                 <p className="text-xs font-mono opacity-50">&copy; 2026 ARTISAN AI INDUSTRIAL GROUP. ALL RIGHTS RESERVED.</p>

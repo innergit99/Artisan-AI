@@ -2057,7 +2057,7 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-6">Brand Name</label>
                 <input
                   value={logoBrand} onChange={e => setLogoBrand(e.target.value)}
-                  placeholder="e.g., Artisan Publishing"
+                  placeholder="e.g., PublishLab Publishing"
                   className="w-full bg-slate-950 border border-slate-800 rounded-[2.5rem] p-6 text-xl font-bold outline-none focus:border-cyan-500"
                 />
               </div>
@@ -2491,11 +2491,11 @@ h1, h2, h3 { page -break-after: avoid; }
             </button>
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden">
-                <img src="/logo_infinity.png" alt="Artisan AI Genesis ∞" className="w-10 h-10 object-contain" />
+                <img src="/assets/publishlab_logo.png" alt="PublishLab" className="w-10 h-10 object-contain p-1" />
               </div>
               <div>
-                <h2 className="text-xl font-black uppercase italic tracking-tighter text-white">Artisan AI Genesis ∞</h2>
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400">KDP Publishing Engine</p>
+                <h2 className="text-xl font-black uppercase italic tracking-tighter text-white">PublishLab</h2>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400">AI Publishing Platform</p>
               </div>
             </div>
           </div>
@@ -3072,7 +3072,7 @@ h1, h2, h3 { page -break-after: avoid; }
 
                         <div className="mb-12">
                           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                            Published by {kdpBlueprint.PROJECT_META.publisher_imprint || "Artisan AI Genesis"}
+                            Published by {kdpBlueprint.PROJECT_META.publisher_imprint || "PublishLab"}
                           </p>
                         </div>
                       </div>
