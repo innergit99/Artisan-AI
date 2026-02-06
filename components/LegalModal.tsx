@@ -54,7 +54,7 @@ export default function LegalModal({ type, onClose }: LegalModalProps) {
                         <>
                             <section>
                                 <h3 className="text-white font-bold text-lg mb-2">1. Agreement to Terms</h3>
-                                <p>By accessing PublishLab ("Service"), provided by <strong>Bishal Gautam</strong> ("Proprietor") trading as <strong>PublishLab</strong>, you agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may not access the Service.</p>
+                                <p>By accessing PublishLab ("Service"), provided by <strong>Artisan AI</strong> ("Company") / <strong>Bishal Gautam</strong> ("Proprietor") trading as <strong>PublishLab</strong>, you agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may not access the Service.</p>
                             </section>
 
                             <section>
