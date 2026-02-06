@@ -212,3 +212,45 @@ export const IndustrialReactorNode: React.FC = () => {
 
     return <Sketch setup={setup} draw={draw} className="w-full h-full flex items-center justify-center opacity-80" />;
 };
+
+export const LivePipelineTerminal: React.FC = () => {
+    const [logs, setLogs] = React.useState<string[]>([]);
+    const logPool = [
+        "PIPELINE_STABLE::GENESIS_CORE",
+        "SYNCING_MARKET_SIGNALS...",
+        "VECTOR_ASSET_LOCKED",
+        "300DPI_RENDER_ENGINE_IDLE",
+        "COMPLIANCE_GATE_VERIFIED",
+        "ASSET_DEPLOYED_TO_KDP",
+        "SENTIMENT_RADAR_SCANNING",
+        "GEMINI_1.5_PRO_CONNECTED",
+        "INDUSTRIAL_STUDIO_ACTIVE",
+        "ZERO_LATENCY_STREAM_LOCKED"
+    ];
+
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            setLogs(prev => {
+                const newLog = `> ${logPool[Math.floor(Math.random() * logPool.length)]}`;
+                const next = [newLog, ...prev].slice(0, 6);
+                return next;
+            });
+        }, 1500);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="w-full h-full font-mono text-[8px] text-indigo-400/60 p-4 space-y-1">
+            {logs.map((log, i) => (
+                <div key={i} className="flex gap-2 items-center overflow-hidden whitespace-nowrap">
+                    <span className="text-indigo-500/80">[{new Date().toLocaleTimeString()}]</span>
+                    <span style={{ opacity: 1 - i * 0.15 }}>{log}</span>
+                </div>
+            ))}
+            <div className="flex gap-1 items-center mt-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 animate-pulse" />
+                <span className="text-[7px] text-emerald-500/40 uppercase tracking-widest">System_Health_Optimal</span>
+            </div>
+        </div>
+    );
+};
