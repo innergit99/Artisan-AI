@@ -122,7 +122,7 @@ const TermsPage: React.FC<TermsPageProps> = ({ onBack }) => {
                                 <ul className="space-y-2 text-sm text-gray-500 font-medium">
                                     <li>• 7-day industrial satisfaction guarantee</li>
                                     <li>• Subscription cancellation anytime</li>
-                                    <li>• Contact: support@publishlab.ai</li>
+                                    <li>• Contact: support@publishlab.ink</li>
                                 </ul>
                             </section>
                         </div>
@@ -132,7 +132,7 @@ const TermsPage: React.FC<TermsPageProps> = ({ onBack }) => {
                             <p className="text-sm text-gray-600 font-medium">
                                 For enterprise pricing or volume inquiries:
                                 <br />
-                                <span className="text-indigo-500 font-black tracking-widest uppercase text-xs">enterprise@publishlab.ai</span>
+                                <span className="text-indigo-500 font-black tracking-widest uppercase text-xs">hello@publishlab.ink</span>
                             </p>
                         </footer>
                     </div>

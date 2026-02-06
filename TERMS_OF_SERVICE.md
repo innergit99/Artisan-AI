@@ -57,7 +57,7 @@ You may NOT use PublishLab to:
 
 - 7-day money-back guarantee for all paid plans
 - No refunds for partial months
-- Contact support@publishlab.ai for refund requests
+- Contact support@publishlab.ink for refund requests
 
 ## Changes to Terms
 
@@ -66,5 +66,5 @@ We may update these terms at any time. Continued use of the service constitutes 
 ## Contact
 
 For questions about fair use or enterprise pricing:
-- Email: support@publishlab.ai
-- Enterprise: enterprise@publishlab.ai
+- Email: support@publishlab.ink
+- Enterprise: hello@publishlab.ink
