@@ -185,7 +185,7 @@ export default function LandingPage({
                         <div className="relative w-full h-full rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-[#050505]">
                             <img
                                 src="/industrial_hero_engine.png"
-                                alt="Artisan AI Industrial Engine Core"
+                                alt="PublishLab Industrial Engine Core"
                                 className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
                             />
 

@@ -7,8 +7,10 @@ export interface SubscriptionTier {
     id: string;
     name: string;
     price: number;
+    yearlyPrice?: number;
     features: string[];
-    paddleProductId?: string; // Set after Paddle setup
+    paddleProductId?: string; // Monthly ID
+    paddleYearlyProductId?: string; // Yearly ID
     limits: {
         booksPerMonth: number;
         imagesPerMonth: number;
@@ -21,62 +23,85 @@ export interface SubscriptionTier {
 export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     FREE: {
         id: 'free',
-        name: 'Free',
+        name: 'Novice',
         price: 0,
         features: [
-            '2 books per month',
-            '5 images per month',
-            'Basic templates',
-            'Watermarked exports',
+            '1 Manuscript Projection / Mo',
+            'Low-res Cover Previews',
+            'Basic Niche Discovery',
+            'Standard AI Model',
+            'Community Support',
         ],
         limits: {
-            booksPerMonth: 2,
+            booksPerMonth: 1,
             imagesPerMonth: 5,
             chaptersPerBook: 10,
             priority: 'low',
         },
     },
 
-    CREATOR: {
-        id: 'creator',
-        name: 'Creator',
-        price: 4.99,
-        paddleProductId: 'pri_01kgj1n3qkqj57dxpnt3b0cjxe', // Sandbox Creator Plan
+    SOLO: {
+        id: 'solo',
+        name: 'Solo Builder',
+        price: 12.99,
+        yearlyPrice: 124.99, // ~20% discount
+        paddleProductId: 'pri_decoy_monthly',
         features: [
-            '15 books per month',
-            '50 images per month',
-            'All templates',
-            'No watermarks',
-            'PDF exports',
-            'Priority generation',
+            '5 Manuscripts / Mo',
+            '300 DPI Print-Ready Covers',
+            'Standard Character Bibles',
+            'Priority Support',
+            'No Watermarks',
         ],
         limits: {
-            booksPerMonth: 15,
+            booksPerMonth: 5,
             imagesPerMonth: 50,
             chaptersPerBook: 20,
             priority: 'normal',
         },
     },
 
-    PRO: {
-        id: 'pro',
-        name: 'Pro',
+    ARTISAN: {
+        id: 'artisan',
+        name: 'Artisan',
         price: 14.99,
-        paddleProductId: 'pro_01kgj1pccf8r87ha871a8dyjt2', // Sandbox Pro Plan
+        yearlyPrice: 143.99, // ~20% discount ($11.99/mo)
+        paddleProductId: 'pri_01kgj1n3qkqj57dxpnt3b0cjxe', // Target Plan
+        paddleYearlyProductId: 'pri_artisan_yearly',
         features: [
-            'Unlimited books',
-            'Unlimited images',
-            'All premium templates',
-            'No watermarks',
-            'All export formats',
-            'Highest priority',
-            'API access',
-            'Commercial license',
+            'Unlimited Manuscripts',
+            '300 DPI Print-Ready Covers',
+            'Trend Radar API Access',
+            'Gemini 1.5 Pro Engine',
+            'Advanced Character Bibles',
+            'Priority Support',
         ],
         limits: {
             booksPerMonth: 999,
             imagesPerMonth: 999,
             chaptersPerBook: 50,
+            priority: 'high',
+        },
+    },
+
+    MASTER: {
+        id: 'master',
+        name: 'PublishLab Master',
+        price: 49.00,
+        yearlyPrice: 470.00, // ~20% discount
+        paddleProductId: 'pro_01kgj1pccf8r87ha871a8dyjt2',
+        features: [
+            'Everything in Artisan',
+            'Multi-Agent Collaboration',
+            '1-Click KDP Deployment',
+            'Whitelabel Export',
+            'Dedicated Account Manager',
+            'Custom AI Fine-tuning',
+        ],
+        limits: {
+            booksPerMonth: 9999,
+            imagesPerMonth: 9999,
+            chaptersPerBook: 100,
             priority: 'high',
         },
     },

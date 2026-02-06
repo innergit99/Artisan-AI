@@ -35,12 +35,12 @@ const App: React.FC = () => {
   const [diagStatus, setDiagStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [diagMessage, setDiagMessage] = useState<string>('');
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const saved = localStorage.getItem('artisan-theme');
+    const saved = localStorage.getItem('publishlab-theme');
     return saved ? saved === 'dark' : true;
   });
 
   useEffect(() => {
-    localStorage.setItem('artisan-theme', isDarkMode ? 'dark' : 'light');
+    localStorage.setItem('publishlab-theme', isDarkMode ? 'dark' : 'light');
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
     } else {

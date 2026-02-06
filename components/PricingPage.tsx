@@ -24,29 +24,47 @@ const TIERS = [
         accent: 'gray'
     },
     {
-        id: 'creator',
-        name: 'Creator',
-        price: '4.99',
+        id: 'solo',
+        name: 'Solo Builder',
+        price: '12.99',
+        yearlyPrice: '124.99',
         description: 'The industrial standard for solo builders.',
+        features: [
+            '5 Manuscripts / Mo',
+            '300 DPI Print-Ready Covers',
+            'Standard Character Bibles',
+            'Priority Support',
+            'No Watermarks'
+        ],
+        icon: <Zap className="text-indigo-400" size={24} />,
+        accent: 'indigo'
+    },
+    {
+        id: 'artisan',
+        name: 'Artisan',
+        price: '14.99',
+        yearlyPrice: '143.99',
+        description: 'The industrial standard for serious creators.',
         features: [
             'Unlimited Manuscripts',
             '300 DPI Print-Ready Covers',
             'Trend Radar API Access',
             'Gemini 1.5 Pro Engine',
-            'Priority Support',
-            'Advanced Character Bibles'
+            'Advanced Character Bibles',
+            'Priority Support'
         ],
-        icon: <Zap className="text-indigo-400" size={24} />,
+        icon: <Sparkles className="text-indigo-400" size={24} />,
         accent: 'indigo',
         popular: true
     },
     {
-        id: 'pro',
+        id: 'master',
         name: 'PublishLab Master',
-        price: '14.99',
+        price: '49.00',
+        yearlyPrice: '470.00',
         description: 'Scalable infrastructure for publishing empires.',
         features: [
-            'Everything in Creator',
+            'Everything in Artisan',
             'Multi-Agent Collaboration',
             '1-Click KDP Deployment',
             'Whitelabel Export',
@@ -111,8 +129,6 @@ export const PricingPage: React.FC<{ onBack?: () => void; onPlanSelected?: () =>
     const [selectedTier, setSelectedTier] = useState<typeof TIERS[0] | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    // ... (existing imports)
-
     const handlePlanActivation = async (email: string) => {
         if (!selectedTier) return;
 
@@ -162,7 +178,7 @@ export const PricingPage: React.FC<{ onBack?: () => void; onPlanSelected?: () =>
             </AnimatePresence>
 
             {/* Header Area */}
-            <div className="relative z-10 max-w-7xl mx-auto pt-32 pb-20 px-6">
+            <div className="relative z-10 max-w-[1400px] mx-auto pt-32 pb-20 px-6">
                 {onBack && (
                     <button
                         onClick={onBack}
@@ -184,9 +200,9 @@ export const PricingPage: React.FC<{ onBack?: () => void; onPlanSelected?: () =>
                     <motion.h1
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-6xl md:text-8xl font-black tracking-tighter italic uppercase"
+                        className="text-6xl md:text-8xl font-black tracking-tighter italic uppercase leading-none"
                     >
-                        Build Your <span className="text-gradient-animated">Empire.</span>
+                        Build Your <br /><span className="text-gradient-animated">Empire.</span>
                     </motion.h1>
 
                     <p className="text-xl text-gray-400">
@@ -210,60 +226,68 @@ export const PricingPage: React.FC<{ onBack?: () => void; onPlanSelected?: () =>
                 </div>
 
                 {/* Pricing Grid */}
-                <div className="grid lg:grid-cols-3 gap-8 mt-24">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-24 items-start">
                     {TIERS.map((tier, idx) => (
                         <motion.div
                             key={tier.id}
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            whileHover={{ y: -10 }}
-                            className={`relative p-8 rounded-[3rem] border transition-all duration-500 group ${tier.popular
-                                ? 'bg-indigo-600/5 border-indigo-500/30 shadow-[0_0_50px_rgba(99,102,241,0.1)]'
-                                : 'bg-white/[0.02] border-white/10 hover:border-white/20'
+                            whileHover={{ y: -5 }}
+                            className={`relative p-8 rounded-[2.5rem] border transition-all duration-500 group h-full flex flex-col ${tier.popular
+                                ? 'bg-indigo-600/[0.08] border-indigo-500/40 shadow-[0_0_50px_rgba(99,102,241,0.15)] ring-1 ring-indigo-500/20'
+                                : 'bg-white/[0.02] border-white/5 hover:border-white/20'
                                 }`}
                         >
                             {tier.popular && (
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-indigo-600 text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-indigo-600 text-[9px] font-black uppercase tracking-widest rounded-full shadow-[0_0_20px_rgba(79,70,229,0.5)]">
                                     Industrial Standard
                                 </div>
                             )}
 
-                            <div className="flex justify-between items-start mb-8">
-                                <div className={`p-4 rounded-2xl bg-${tier.accent}-500/10 border border-${tier.accent}-500/20`}>
+                            <div className="flex flex-col mb-8">
+                                <div className={`w-12 h-12 rounded-xl bg-${tier.accent}-500/10 border border-${tier.accent}-500/20 flex items-center justify-center mb-6`}>
                                     {tier.icon}
                                 </div>
-                                <div className="text-right">
-                                    <div className="text-sm font-bold text-gray-500 uppercase tracking-widest">{tier.name}</div>
-                                    <div className="text-4xl font-black mt-1">
-                                        $<span className="text-white">{billingCycle === 'monthly' ? tier.price : Math.floor(parseInt(tier.price) * 0.8)}</span>
+                                <div>
+                                    <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">{tier.name}</div>
+                                    <div className="flex items-baseline gap-1">
+                                        <span className="text-4xl font-black text-white">$</span>
+                                        <span className="text-5xl font-black text-white">
+                                            {billingCycle === 'monthly' ? tier.price : Math.floor(parseFloat(tier.price) * 0.8)}
+                                        </span>
+                                        <span className="text-xs text-gray-500 font-bold uppercase tracking-tighter">/ mo</span>
                                     </div>
-                                    <div className="text-[10px] text-gray-600 font-bold uppercase">/ Mo</div>
+                                    {billingCycle === 'yearly' && tier.yearlyPrice && (
+                                        <div className="text-[10px] text-emerald-400 font-bold mt-2 uppercase tracking-wide">
+                                            Billed ${tier.yearlyPrice} annually
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
-                            <p className="text-gray-400 text-sm mb-8 leading-relaxed">
+                            <p className="text-gray-400 text-xs mb-8 leading-relaxed font-medium">
                                 {tier.description}
                             </p>
 
-                            <div className="space-y-4 mb-10">
+                            <div className="space-y-4 mb-10 flex-1">
                                 {tier.features.map((feature, fIdx) => (
-                                    <div key={fIdx} className="flex items-center gap-3">
-                                        <div className={`p-1 rounded bg-${tier.accent}-500/20 text-${tier.accent}-400`}>
+                                    <div key={fIdx} className="flex items-start gap-3">
+                                        <div className={`mt-0.5 p-0.5 rounded-full bg-${tier.accent}-500/20 text-${tier.accent}-400`}>
                                             <Check size={10} />
                                         </div>
-                                        <span className="text-sm text-gray-300 font-medium">{feature}</span>
+                                        <span className="text-[13px] text-gray-400 font-medium leading-tight">{feature}</span>
                                     </div>
                                 ))}
                             </div>
 
                             <button
                                 onClick={() => setSelectedTier(tier)}
-                                className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${tier.popular
+                                className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all ${tier.popular
                                     ? 'bg-white text-black hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.2)]'
                                     : 'bg-white/5 border border-white/10 hover:bg-white/10'
                                     }`}>
-                                Activate {tier.name}
+                                {tier.price === '0' ? 'Get Started' : `Activate ${tier.name}`}
                             </button>
                         </motion.div>
                     ))}
