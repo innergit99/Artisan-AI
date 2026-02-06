@@ -2433,37 +2433,24 @@ AVOID: Any imagery that could interfere with barcode scanning`;
   }
 
   private async generateWithPollinations(prompt: string, width: number, height: number, negativePrompt: string, returnBase64: boolean = false): Promise<string> {
-    // Pollinations.ai DIRECT IMAGE ENDPOINT
-    // usage: https://pollinations.ai/p/{prompt}
-    // This redirects to the generated image and handles CORS correctly for img tags.
+    // ENVIRONMENT-AWARE IMAGE GENERATION
+    // Local mode: Canvas (zero cost)
+    // Production mode: Fal.ai Flux (industrial quality)
+    const { imageService } = await import('./imageService');
 
-    const cleanPrompt = prompt
-      .replace(/&/g, "and")
-      .replace(/[^a-zA-Z0-9, \-]/g, "") // Strict Allowlist
-      .substring(0, 1000); // Increased to avoid truncation
-
-    const encodedPrompt = encodeURIComponent(cleanPrompt);
-    const encodedNegative = encodeURIComponent(negativePrompt);
-    // Use correct 2026 Pollinations API (Anonymous Tier for Client-Side)
-    // Spec: https://gen.pollinations.ai/image/{prompt}
-    // We REMOVE the key because 'sk_' keys are server-side only and cause CORS errors in browsers.
-    // FIX: Seed must be 32-bit int (Max 2147483647). Date.now() is too large.
-    const safeSeed = Math.floor(Math.random() * 2000000000);
-    // FIX: Revert to 'image.pollinations.ai' CDN which supports embedding.
-    // 'flux' model is now gated/moved and returns a placeholder. Switching to 'turbo' (SDXL) for stability.
-    // Adding Negative Prompt Support 
-    const finalUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=turbo&width=${width}&height=${height}&seed=${safeSeed}&nologo=true&negative=${encodedNegative}`;
-    console.log(`[🏭 Industrial Engine] Pollinations URL: ${finalUrl}`);
-
-    if (!returnBase64) {
-      console.log(`[🏭 Industrial Engine] Generated Image URL: ${finalUrl}`);
-      return finalUrl;
+    try {
+      return await imageService.generateImage({
+        prompt,
+        width,
+        height,
+        model: 'schnell',
+        numInferenceSteps: 4,
+        guidanceScale: 3.5
+      });
+    } catch (error: any) {
+      console.error('❌ Image generation failed:', error.message);
+      throw error;
     }
-
-    // POD: fetch and convert to base64 to avoid CORS-tainted canvas in processTransparency
-    // TEMPORARILY DISABLED: Proxy not working; fall back to URL for display
-    console.log(`[🏭 Industrial Engine] Base64 conversion disabled due to proxy issues. Returning URL: ${finalUrl}`);
-    return finalUrl;
   }
 
   private async generateWithHuggingFaceZeroGPU(prompt: string, size: number): Promise<string> {
