@@ -28,6 +28,13 @@ export default function LandingPage({
     // New State for Conversion Features
     const [genesisPrompt, setGenesisPrompt] = useState('');
     const [roiBooks, setRoiBooks] = useState(12); // Default 12 books/year
+    const [copied, setCopied] = useState(false);
+
+    const handleCopyEmail = () => {
+        navigator.clipboard.writeText('support@publishlab.ink');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     // Derived Savings Calculation
     // Old Stack: $207/mo * 12 = $2484/yr
@@ -533,36 +540,73 @@ export default function LandingPage({
                         <Zap size={24} fill="black" />
                         Enter PublishLab
                     </button>
-                    <p className="text-xs text-gray-600 font-mono">SECURE ENTRY • CANCEL AT ANY TIME</p>
+                    <p className="text-sm text-gray-400 font-bold font-mono tracking-widest">SECURE ENTRY • CANCEL AT ANY TIME</p>
                 </div>
             </section>
 
             {/* FOOTER */}
-            <footer className="py-12 border-t border-white/5 bg-black text-center text-gray-600">
-                <div className="flex justify-center flex-col items-center gap-6 mb-8">
-                    <div className="flex items-center gap-2 px-3 py-1 bg-green-900/20 border border-green-500/20 rounded-full">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-xs font-mono text-green-500">SYSTEM ONLINE: v2.4.0 (Stable)</span>
+            <footer className="py-20 border-t border-white/5 bg-black text-center text-gray-400">
+                <div className="flex justify-center flex-col items-center gap-10 mb-8">
+                    <div className="flex items-center gap-3 px-4 py-2 bg-green-900/10 border border-green-500/30 rounded-full shadow-[0_0_20px_rgba(34,197,94,0.05)]">
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+                        <span className="text-xs font-black font-mono text-green-500 tracking-wider">SYSTEM ONLINE: v2.4.0 (STABLE)</span>
                     </div>
 
                     {/* LEGAL DISCLAIMER - NOMINAL FAIR USE */}
-                    <p className="text-[10px] text-gray-500 max-w-2xl leading-relaxed opacity-60">
+                    <p className="text-[11px] text-gray-500 max-w-2xl leading-relaxed font-medium">
                         PublishLab is an independent software provider. We are not affiliated with, endorsed by, or sponsored by Amazon, Shopify, Ingram, or Etsy.
                         All brand names and trademarks are the property of their respective owners and are used here for descriptive compatibility purposes only according to nominal fair use principles.
                     </p>
 
-                    <div className="flex flex-col items-center gap-4 mb-8">
-                        <div className="flex gap-6 text-xs uppercase tracking-wider">
-                            <button onClick={() => setLegalModal('terms')} className="hover:text-white transition-colors">Terms of Service</button>
-                            <button onClick={() => setLegalModal('privacy')} className="hover:text-white transition-colors">Privacy Policy</button>
-                            <button onClick={() => setLegalModal('refund')} className="hover:text-white transition-colors underline underline-offset-4 decoration-indigo-500/50">Refund Policy</button>
-                            <button onClick={onViewPricing} className="hover:text-white transition-colors">Pricing</button>
+                    <div className="flex flex-col items-center gap-8 w-full max-w-4xl">
+                        <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 text-sm font-bold uppercase tracking-widest text-gray-300">
+                            <button onClick={() => setLegalModal('terms')} className="hover:text-indigo-400 transition-all hover:scale-105">Terms of Service</button>
+                            <button onClick={() => setLegalModal('privacy')} className="hover:text-indigo-400 transition-all hover:scale-105">Privacy Policy</button>
+                            <button onClick={() => setLegalModal('refund')} className="hover:text-indigo-400 transition-all hover:scale-105 underline underline-offset-8 decoration-indigo-500/50">Refund Policy</button>
+                            <button onClick={onViewPricing} className="hover:text-indigo-400 transition-all hover:scale-105">Pricing</button>
                         </div>
-                        <div className="flex items-center gap-2 opacity-50 italic text-[10px]">Registered Office: Adh Dhawq Street, Abu Dhabi, 00971, United Arab Emirates</div>
-                        <div className="flex items-center gap-2 opacity-50 text-[10px] hover:text-white transition-colors"><Mail size={12} /> support@publishlab.ink</div>
+
+                        <div className="flex flex-col items-center gap-4 py-8 border-y border-white/5 w-full">
+                            <div className="flex items-center gap-2 text-gray-400 font-medium italic text-xs tracking-tight">
+                                <Globe size={14} className="text-indigo-500/50" />
+                                Registered Office: Adh Dhawq Street, Abu Dhabi, 00971, United Arab Emirates
+                            </div>
+
+                            <div className="relative group/support">
+                                <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg blur opacity-20 group-hover/support:opacity-50 transition duration-500"></div>
+                                <div className="relative flex items-center gap-4 bg-[#0A0A0A] border border-white/10 px-6 py-3 rounded-lg shadow-xl">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-indigo-500/10 rounded-md">
+                                            <Mail size={16} className="text-indigo-400" />
+                                        </div>
+                                        <a href="mailto:support@publishlab.ink" className="text-sm font-black text-white hover:text-indigo-400 transition-colors tracking-tight">
+                                            support@publishlab.ink
+                                        </a>
+                                    </div>
+                                    <div className="w-px h-6 bg-white/5" />
+                                    <button
+                                        onClick={handleCopyEmail}
+                                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
+                                    >
+                                        {copied ? (
+                                            <span className="text-emerald-400 flex items-center gap-1 animate-in fade-in zoom-in duration-300">
+                                                <Check size={12} /> Copied_Node
+                                            </span>
+                                        ) : (
+                                            <span className="flex items-center gap-1">
+                                                Copy_Address
+                                            </span>
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <p className="text-xs font-mono opacity-50">&copy; 2026 PUBLISHLAB. ALL RIGHTS RESERVED.</p>
+                <div className="mt-8 flex flex-col items-center gap-4">
+                    <img src="/assets/publishlab_logo.svg" alt="PublishLab" className="w-8 h-8 opacity-20 mb-2" />
+                    <p className="text-xs font-black font-mono tracking-[0.4em] text-gray-600">&copy; 2026 PUBLISHLAB. ALL RIGHTS RESERVED.</p>
+                </div>
             </footer>
 
             {/* LEGAL MODAL */}
