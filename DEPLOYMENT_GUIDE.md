@@ -1,281 +1,149 @@
-# 🚀 HuggingFace Spaces Deployment Guide
+# PublishLab Deployment Guide
 
-## Prerequisites
+## 🚀 Quick Start
 
-1. **HuggingFace Account**
-   - Sign up at https://huggingface.co/join
-   - Create new Space at https://huggingface.co/new-space
-
-2. **Git LFS** (for large files)
-   ```bash
-   git lfs install
-   ```
-
-3. **HuggingFace CLI** (optional, for easier deployment)
-   ```bash
-   pip install huggingface_hub
-   huggingface-cli login
-   ```
-
----
-
-## 📦 Deployment Steps
-
-### Option A: Web UI (Easiest)
-
-1. **Create New Space**
-   - Go to https://huggingface.co/new-space
-   - Name: `artisan-ai-creative-studio`
-   - License: `MIT`
-   - SDK: `Docker`
-   - Hardware: `ZeroGPU` (free tier)
-
-2. **Upload Files**
-   - Click "Files and versions"
-   - Upload these files:
-     ```
-     ├── Dockerfile
-     ├── README_HF.md (rename to README.md)
-     ├── backend/
-     │   ├── app.py
-     │   └── requirements.txt
-     └── (frontend build files will be built in Docker)
-     ```
-
-3. **Configure**
-   - In Space settings, enable ZeroGPU
-   - Set visibility (Public or Private)
-
-4. **Deploy**
-   - Space will automatically build and deploy
-   - First build takes 10-15 minutes
-
----
-
-### Option B: Git (Recommended for Updates)
-
-1. **Clone Your Space**
-   ```bash
-   git clone https://huggingface.co/spaces/YOUR_USERNAME/artisan-ai-creative-studio
-   cd artisan-ai-creative-studio
-   ```
-
-2. **Copy Files**
-   ```bash
-   # From your Artisan AI directory
-   cp Dockerfile ./
-   cp README_HF.md ./README.md
-   cp -r backend ./
-   
-   # Copy frontend source (will be built in Docker)
-   cp -r components src public *.ts *.tsx *.json *.html ./
-   ```
-
-3. **Commit and Push**
-   ```bash
-   git add .
-   git commit -m "Initial deployment"
-   git push
-   ```
-
-4. **Monitor Build**
-   - Go to your Space URL
-   - Watch build logs
-   - Wait for "Running" status
-
----
-
-## 🧪 Testing After Deployment
-
-### 1. Health Check
+### Local Development (Zero Cost)
 ```bash
-curl https://YOUR_USERNAME-artisan-ai-creative-studio.hf.space/health
+# 1. Install dependencies
+npm install
+
+# 2. Start Ollama (for text generation)
+ollama serve
+
+# 3. Pull the model
+ollama pull llama3.2:3b
+
+# 4. Start dev server
+npm run dev
 ```
 
-Expected response:
-```json
-{
-  "status": "healthy",
-  "service": "Artisan AI Backend",
-  "gpu_available": true
-}
-```
+**Local Mode Features:**
+- ✅ Text: Ollama (Llama 3.2:3b)
+- ✅ Images: Canvas (client-side)
+- ✅ Cost: $0/month
 
-### 2. Text Generation Test
+---
+
+## 🏭 Production Deployment
+
+### 1. Get API Keys
+
+#### Gemini 1.5 Flash (Text - Primary)
+1. Visit: https://aistudio.google.com/app/apikey
+2. Create API key
+3. Add to Vercel: `VITE_GEMINI_API_KEY`
+
+**Cost**: $0.00001875/1k tokens (~$0.019/month per Artisan user)
+
+#### Groq (Text - Fallback)
+1. Visit: https://console.groq.com/keys
+2. Create API key
+3. Add to Vercel: `VITE_GROQ_API_KEY`
+
+**Cost**: $0.00059/1k tokens (only if Gemini fails)
+
+#### Fal.ai (Images - Primary)
+1. Visit: https://fal.ai/dashboard/keys
+2. Create API key
+3. Add to Vercel: `VITE_FAL_API_KEY`
+
+**Cost**: $0.003/image (Flux Schnell) or $0.025/image (Flux Dev)
+
+---
+
+### 2. Deploy to Vercel
+
 ```bash
-curl -X POST https://YOUR_USERNAME-artisan-ai-creative-studio.hf.space/api/text \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "Write a mystery story opening",
-    "max_tokens": 500
-  }'
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
 ```
 
-### 3. Image Generation Test
-```bash
-curl -X POST https://YOUR_USERNAME-artisan-ai-creative-studio.hf.space/api/image \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "Professional book cover for mystery thriller",
-    "width": 512,
-    "height": 512
-  }'
+#### Environment Variables (Vercel Dashboard)
 ```
-
----
-
-## 🔧 Frontend Integration
-
-### Update backendConfig.ts
-
-Replace this line:
-```typescript
-: 'https://your-username-artisan-ai.hf.space';
-```
-
-With your actual Space URL:
-```typescript
-: 'https://YOUR_USERNAME-artisan-ai-creative-studio.hf.space';
-```
-
-### Rebuild Frontend
-```bash
-npm run build
-```
-
-### Update Deployment
-```bash
-git add backendConfig.ts
-git commit -m "Update backend URL"
-git push
+VITE_GEMINI_API_KEY=your_key_here
+VITE_GROQ_API_KEY=your_key_here
+VITE_FAL_API_KEY=your_key_here
+VITE_PADDLE_VENDOR_ID=your_vendor_id
+VITE_PADDLE_CLIENT_TOKEN=your_token
+VITE_PADDLE_ENVIRONMENT=production
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_anon_key
 ```
 
 ---
 
-## ⚡ Performance Optimization
+### 3. Verify Deployment
 
-### 1. Model Caching
-Models are automatically cached after first load. First request takes 20-30s, subsequent requests are 5-15s.
-
-### 2. Keep-Alive
-Send periodic health checks to keep models loaded:
-```javascript
-setInterval(() => {
-  fetch('/health');
-}, 4 * 60 * 1000); // Every 4 minutes
+#### Check Environment Detection
+Open browser console on deployed site:
+```
+🚀 PRODUCTION MODE: Using premium APIs
+   Text: gemini
+   Images: fal
 ```
 
-### 3. Request Batching
-Use `/api/text/batch` for multiple chapters:
-```javascript
-const chapters = await fetch('/api/text/batch', {
-  method: 'POST',
-  body: JSON.stringify([
-    { prompt: "Chapter 1...", max_tokens: 2000 },
-    { prompt: "Chapter 2...", max_tokens: 2000 }
-  ])
-});
-```
+#### Test Manuscript Generation
+1. Navigate to Manuscript Foundry
+2. Generate a test manuscript
+3. Check console for: `✅ Gemini 1.5 Flash generation successful`
+
+#### Test Cover Generation
+1. Navigate to Cover Foundry
+2. Generate a test cover
+3. Check console for: `✅ Fal.ai generation successful`
 
 ---
 
-## 🐛 Troubleshooting
+## 📊 Cost Monitoring
 
-### Build Fails
+### Expected Monthly Costs (1000 Active Users)
 
-**Issue**: Docker build timeout
-**Solution**: Reduce model size or use staged loading
-```python
-# In app.py, use smaller models initially
-model_name = "microsoft/Phi-3-mini-4k-instruct"  # 3.8B instead of 8B
-```
+| Tier | Users | Text Cost | Image Cost | Total CPUPM |
+|:-----|:------|:----------|:-----------|:------------|
+| Novice | 500 | $0.47 | $7.50 | $0.016 |
+| Solo | 300 | $1.41 | $18.00 | $0.075 |
+| Artisan | 150 | $2.85 | $187.50 | $2.60 |
+| Master | 50 | $15.63 | $275.00 | $20.54 |
 
-### Out of Memory
-
-**Issue**: GPU OOM during generation
-**Solution**: Reduce batch size or max tokens
-```python
-max_new_tokens=1000  # Instead of 2000
-```
-
-### Cold Start Too Slow
-
-**Issue**: First request takes >60s
-**Solution**: Use smaller model or increase timeout
-```python
-# In app.py
-@app.on_event("startup")
-async def startup():
-    # Pre-load models
-    load_text_model()
-    load_image_model()
-```
+**Total Infrastructure Cost**: ~$1,447/month  
+**Total Revenue**: ~$8,595/month  
+**Gross Margin**: 83.2%
 
 ---
 
-## 📊 Monitoring
+## 🔧 Troubleshooting
 
-### Space Metrics
-- View in HF Space dashboard
-- Monitor CPU/GPU usage
-- Track request count
-- Check error rates
+### "Gemini API Key missing"
+- Verify `VITE_GEMINI_API_KEY` is set in Vercel
+- Redeploy after adding environment variables
 
-### Logs
-```bash
-# View live logs in HF Space UI
-# Or use CLI
-huggingface-cli space logs YOUR_USERNAME/artisan-ai-creative-studio
-```
+### "Fal.ai generation failed"
+- Check API key is valid
+- Verify quota hasn't been exceeded
+- System will auto-fallback to Canvas
 
----
-
-##  🎯 Post-Deployment Checklist
-
-- [ ] Health endpoint returns 200
-- [ ] Text generation works
-- [ ] Image generation works
-- [ ] Frontend loads correctly
-- [ ] All tools accessible
-- [ ] Performance acceptable (< 15s per request)
-- [ ] Error handling works
-- [ ] Updated frontend with correct backend URL
-- [ ] Tested on mobile
-- [ ] Shared with team/users
+### "LOCAL MODE in production"
+- Check `VITE_FORCE_LOCAL_MODE` is NOT set
+- Verify deployment is on Vercel (not localhost)
 
 ---
 
-## 🔄 Updating
+## 🎯 Performance Targets
 
-### Code Updates
-```bash
-# Make changes locally
-git add .
-git commit -m "Update: description"
-git push
-```
-
-### Model Updates
-Edit `app.py` model names, commit, push. Space rebuilds automatically.
-
-### Dependencies
-Edit `backend/requirements.txt`, commit, push.
+| Metric | Target | Current |
+|:-------|:-------|:--------|
+| Manuscript Generation | < 30s | ~25s (Gemini) |
+| Cover Generation | < 10s | ~8s (Fal.ai) |
+| Uptime SLA | 99.5% | TBD |
+| API Error Rate | < 1% | TBD |
 
 ---
 
-## 📝 Notes
+## 📞 Support
 
-- **Free Tier Limits**: 60s max per request, queue during high load
-- **GPU**: T4 with 16GB VRAM
-- **Storage**: 50GB persistent (for model cache)
-- **Bandwidth**: Unlimited on Community (free tier)
-
----
-
-## 🎉 Success!
-
-Your Artisan AI Creative Studio is now deployed and accessible worldwide!
-
-Space URL: `https://huggingface.co/spaces/YOUR_USERNAME/artisan-ai-creative-studio`
-
-Share it, use it, and enjoy! 🚀
+For deployment issues:
+- Email: support@publishlab.ink
+- Documentation: https://publishlab.ink/docs

@@ -48,6 +48,13 @@ const App: React.FC = () => {
     }
   }, [isDarkMode]);
 
+  // Log environment configuration on mount
+  useEffect(() => {
+    import('./environmentConfig').then(({ logEnvironmentInfo }) => {
+      logEnvironmentInfo();
+    });
+  }, []);
+
   useEffect(() => {
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
