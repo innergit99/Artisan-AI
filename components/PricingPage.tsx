@@ -337,25 +337,34 @@ export const PricingPage: React.FC<{ onBack?: () => void; onPlanSelected?: () =>
                             </div>
                         ))}
                     </div>
-                </div>
 
-                {/* Footer Badges */}
-                <div className="mt-32 pt-16 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-8">
-                    {[
-                        { icon: <ShieldCheck size={20} />, label: 'Sonatype Compliant' },
-                        { icon: <Globe size={20} />, label: 'Global Edge Sync' },
-                        { icon: <Star size={20} />, label: '99.9% Node Uptime' },
-                        { icon: <TrendingUp size={20} />, label: 'Profit-First Logic' }
-                    ].map((badge, i) => (
-                        <div key={i} className="flex items-center gap-3 text-gray-600 grayscale hover:grayscale-0 hover:text-white transition-all cursor-default">
-                            {badge.icon}
-                            <span className="text-[10px] font-black uppercase tracking-widest">{badge.label}</span>
-                        </div>
-                    ))}
+                    {/* Fair Use Policy Disclaimer */}
+                    <div className="mt-16 p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+                        <p className="text-gray-500 text-xs leading-relaxed text-center">
+                            <span className="text-gray-400 font-bold">Fair Use Policy:</span> "Unlimited" plans are optimized for typical creator workflows
+                            (Artisan: ~50 manuscripts/month, Master: ~200 manuscripts/month). We'll never block your access, but may temporarily
+                            reduce generation quality during exceptionally high usage to maintain speed for all users.
+                            <a href="/terms" className="text-indigo-400 hover:text-indigo-300 ml-1 underline">View full terms</a>
+                        </p>
+                    </div>
+
+                    {/* Footer Badges */}
+                    <div className="mt-16 pt-16 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-8">
+                        {[
+                            { icon: <ShieldCheck size={20} />, label: 'Sonatype Compliant' },
+                            { icon: <Globe size={20} />, label: 'Global Edge Sync' },
+                            { icon: <Star size={20} />, label: '99.9% Node Uptime' },
+                            { icon: <TrendingUp size={20} />, label: 'Profit-First Logic' }
+                        ].map((badge, i) => (
+                            <div key={i} className="flex items-center gap-3 text-gray-600 grayscale hover:grayscale-0 hover:text-white transition-all cursor-default">
+                                {badge.icon}
+                                <span className="text-[10px] font-black uppercase tracking-widest">{badge.label}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+            );
 };
 
-export default PricingPage;
+            export default PricingPage;
