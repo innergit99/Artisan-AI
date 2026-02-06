@@ -45,8 +45,8 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
         name: 'Solo Builder',
         price: 12.99,
         yearlyPrice: 124.99, // ~20% discount
-        paddleProductId: 'pri_01kgrr2bfas8jwm082vqfzeybg',
-        paddleYearlyProductId: 'pri_01kgrr2bfas8jwm082vqfzeybg', // FLAG: Identical to monthly
+        paddleProductId: 'pri_01kgrqwj3x68wckxbyya8bqa78',
+        paddleYearlyProductId: 'pri_01kgrr2bfas8jwm082vqfzeybg',
         features: [
             '5 Manuscripts / Mo',
             '300 DPI Print-Ready Covers',
