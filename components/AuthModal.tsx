@@ -9,7 +9,7 @@ interface AuthModalProps {
     onSuccess: () => void;
 }
 
-type AuthMode = 'login' | 'signup' | 'forgot';
+type AuthMode = 'login' | 'signup' | 'forgot' | 'update_password';
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
     const [mode, setMode] = useState<AuthMode>('login');
@@ -47,6 +47,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                 });
                 if (error) throw error;
                 setResetSent(true);
+            } else if (mode === 'update_password') {
+                const { error } = await supabase.auth.updateUser({
+                    password: password
+                });
+                if (error) throw error;
+                onSuccess();
+                onClose();
             }
         } catch (err: any) {
             setError(err.message);
@@ -60,6 +67,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
         setError(null);
         setResetSent(false);
     };
+
+    // Auto-switch to update_password mode if we detect recovery flow
+    React.useEffect(() => {
+        supabase.auth.onAuthStateChange((event) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                setMode('update_password');
+            }
+        });
+    }, []);
 
     if (!isOpen) return null;
 
@@ -76,12 +92,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                     <div className="p-8 pb-0 flex justify-between items-center">
                         <div>
                             <h2 className="text-2xl font-black italic uppercase text-white">
-                                {mode === 'forgot' ? 'Reset Password' : 'Public Beta Access'}
+                                {mode === 'forgot' ? 'Reset Password' :
+                                    mode === 'update_password' ? 'Set New Password' :
+                                        'Public Beta Access'}
                             </h2>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
                                 {mode === 'login' && 'Enter Your Studio'}
                                 {mode === 'signup' && 'Claim Your Beta Account — Free Forever'}
                                 {mode === 'forgot' && 'We\'ll send you a reset link'}
+                                {mode === 'update_password' && 'Enter your new password below'}
                             </p>
                         </div>
                         <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
@@ -115,24 +134,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                         ) : (
                             <>
                                 <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Email Address</label>
-                                        <div className="relative">
-                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-                                            <input
-                                                type="email"
-                                                required
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-700"
-                                                placeholder="user@example.com"
-                                            />
+                                    {mode !== 'update_password' && (
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Email Address</label>
+                                            <div className="relative">
+                                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                                                <input
+                                                    type="email"
+                                                    required
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)}
+                                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-700"
+                                                    placeholder="user@example.com"
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
 
                                     {mode !== 'forgot' && (
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Password</label>
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                                {mode === 'update_password' ? 'New Password' : 'Password'}
+                                            </label>
                                             <div className="relative">
                                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
                                                 <input
@@ -169,12 +192,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                                     {loading ? <Loader2 className="animate-spin" size={16} /> : (
                                         mode === 'login' ? 'Restore Session' :
                                             mode === 'signup' ? 'Activate Free Beta Access' :
-                                                'Send Reset Link'
+                                                mode === 'update_password' ? 'Update Password & Login' :
+                                                    'Send Reset Link'
                                     )}
                                 </button>
 
                                 <div className="text-center space-y-2">
-                                    {mode === 'forgot' ? (
+                                    {mode === 'forgot' || mode === 'update_password' ? (
                                         <button
                                             type="button"
                                             onClick={() => handleModeChange('login')}
