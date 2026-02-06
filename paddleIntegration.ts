@@ -139,7 +139,9 @@ export async function initializePaddle(): Promise<void> {
         // @ts-ignore
         if (window.Paddle) {
             // @ts-ignore
-            window.Paddle.Environment.set('sandbox'); // Change to 'production' when ready
+            const paddleEnv = import.meta.env.VITE_PADDLE_ENVIRONMENT || 'sandbox';
+            // @ts-ignore
+            window.Paddle.Environment.set(paddleEnv);
             // @ts-ignore
             window.Paddle.Initialize({
                 token: paddleVendorId,
