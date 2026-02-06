@@ -276,7 +276,7 @@ export default function LandingPage({
                         </div>
 
                         {/* ARTISAN GENESIS */}
-                        <div className="bg-[#111] border border-indigo-500/30 p-10 rounded-2xl relative overflow-hidden group shadow-[0_0_30px_rgba(99,102,241,0.1)]">
+                        <div className="bg-[#111] border border-indigo-500/30 p-10 rounded-2xl relative overflow-hidden group shadow-[0_0_30px_rgba(99,102,241,0.1)] flex flex-col h-full">
                             <div className="absolute top-0 right-0 p-6 opacity-10"><Cpu size={80} className="text-indigo-500" /></div>
                             <h3 className="text-2xl font-black text-indigo-400 uppercase italic mb-6">PublishLab</h3>
                             <ul className="space-y-4 mb-8 text-gray-300">
@@ -285,9 +285,11 @@ export default function LandingPage({
                                 <li className="flex gap-3"><Check className="text-indigo-400 shrink-0" /> Platform-aware compliance guardrails</li>
                                 <li className="flex gap-3"><Check className="text-indigo-400 shrink-0" /> Predictive market signals (Real-time)</li>
                             </ul>
-                            <div className="h-[450px] mt-4 relative rounded-xl overflow-hidden border border-indigo-500/20 bg-[#050505]/60 group-hover:border-indigo-500/50 transition-all duration-700 flex flex-col">
-                                {/* Top Half: The Reactor core */}
-                                <div className="h-2/3 relative">
+
+                            {/* Visual Stack - Now Fills Space */}
+                            <div className="flex-1 min-h-[450px] relative rounded-xl overflow-hidden border border-indigo-500/20 bg-[#050505]/60 group-hover:border-indigo-500/50 transition-all duration-700 flex flex-col">
+                                {/* Top 60%: The Reactor core */}
+                                <div className="h-[60%] relative">
                                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-gradient-to-t from-indigo-500/10 to-transparent" />
                                     <IndustrialReactorNode />
                                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 border border-indigo-500/30 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
@@ -296,15 +298,31 @@ export default function LandingPage({
                                     </div>
                                 </div>
 
-                                {/* Bottom Half: Live Terminal & Supply Line */}
-                                <div className="h-1/3 bg-black/40 border-t border-white/5 relative">
+                                {/* Bottom Sections: Feed + Metrics */}
+                                <div className="flex-1 bg-black/40 border-t border-white/5 relative flex flex-col">
                                     <div className="absolute top-0 left-0 px-2 py-0.5 bg-indigo-500/10 border-r border-b border-indigo-500/20 text-[6px] font-mono text-indigo-500/70 uppercase tracking-widest">
                                         Live_Pipeline_Feed
                                     </div>
-                                    <LivePipelineTerminal />
+                                    <div className="flex-1 overflow-hidden min-h-[120px]">
+                                        <LivePipelineTerminal />
+                                    </div>
+
+                                    {/* Real-time Industrial Metrics */}
+                                    <div className="px-4 py-3 border-t border-white/5 grid grid-cols-3 gap-2 bg-[#080808]">
+                                        {[
+                                            { label: 'THROUGHPUT', val: '99.4%', color: 'text-indigo-400' },
+                                            { label: 'LATENCY', val: '22ms', color: 'text-emerald-400' },
+                                            { label: 'STABILITY', val: 'LOCKED', color: 'text-blue-400' }
+                                        ].map((m, i) => (
+                                            <div key={i} className="text-center">
+                                                <p className="text-[6px] text-gray-600 font-mono tracking-tighter mb-0.5">{m.label}</p>
+                                                <p className={`text-[10px] font-black ${m.color} tracking-tight`}>{m.val}</p>
+                                            </div>
+                                        ))}
+                                    </div>
 
                                     {/* Final Impact Message */}
-                                    <div className="absolute bottom-0 inset-x-0 h-10 bg-indigo-500/10 border-t border-indigo-500/20 flex items-center justify-center">
+                                    <div className="h-10 bg-indigo-500/10 border-t border-indigo-500/20 flex items-center justify-center">
                                         <div className="flex items-center gap-3">
                                             <div className="w-1 h-1 rounded-full bg-indigo-400 animate-ping" />
                                             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]">
