@@ -120,7 +120,7 @@ export class MarketService {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { responseMimeType: "application/json" }
+                generationConfig: { response_mime_type: "application/json" }
             })
         });
 
