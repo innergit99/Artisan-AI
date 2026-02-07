@@ -6,6 +6,7 @@ import { marketService, NicheAnalysis } from '../marketService';
 
 const TrendRadarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     const [keyword, setKeyword] = useState('');
+    const [mode, setMode] = useState<'KDP' | 'POD'>('KDP');
     const [loading, setLoading] = useState(false);
     const [analysis, setAnalysis] = useState<NicheAnalysis | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -19,7 +20,7 @@ const TrendRadarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         setAnalysis(null);
 
         try {
-            const result = await marketService.analyzeNiche(keyword);
+            const result = await marketService.analyzeNiche(keyword, mode);
             setAnalysis(result);
         } catch (err: any) {
             console.error(err);
@@ -65,6 +66,21 @@ const TrendRadarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                             Trend Radar scans live search queries to find "Zero-Competition" high-demand niches. Don't guess. Build what the world is already searching for.
                         </p>
 
+                        <div className="flex gap-2 mb-6">
+                            <button
+                                onClick={() => setMode('KDP')}
+                                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${mode === 'KDP' ? 'bg-emerald-500 text-black' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                            >
+                                📚 KDP BOOKS
+                            </button>
+                            <button
+                                onClick={() => setMode('POD')}
+                                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${mode === 'POD' ? 'bg-emerald-500 text-black' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                            >
+                                👕 POD MERCH
+                            </button>
+                        </div>
+
                         <form onSubmit={handleScan} className="flex gap-4 max-w-md">
                             <div className="relative flex-1">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
@@ -72,7 +88,7 @@ const TrendRadarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                     type="text"
                                     value={keyword}
                                     onChange={(e) => setKeyword(e.target.value)}
-                                    placeholder="Enter niche (e.g. 'Cyberpunk Gardening')"
+                                    placeholder={mode === 'KDP' ? "Enter book niche (e.g. 'Cyberpunk Gardening')" : "Enter design niche (e.g. 'Retro Sunset Nurse')"}
                                     className="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-12 pr-6 focus:outline-none focus:border-emerald-500/50 transition-colors placeholder:text-gray-600"
                                 />
                             </div>
@@ -196,6 +212,63 @@ const TrendRadarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         </AnimatePresence>
                     </motion.div>
                 </div>
+                {analysis && !loading && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        className="mt-20"
+                    >
+                        <h2 className="text-3xl font-black mb-10 flex items-center gap-3">
+                            <Target className="text-emerald-500" />
+                            Top 5 High-Probability Opportunities
+                        </h2>
+
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {analysis.topOpportunities?.map((opp, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-emerald-500/30 transition-all group"
+                                >
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div className="text-xs font-bold text-emerald-400 uppercase bg-emerald-500/10 px-2 py-1 rounded">
+                                            {opp.title.split(' ')[0]} Focus
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-[10px] text-gray-500 uppercase">Est. Royalty</div>
+                                            <div className="text-sm font-black text-emerald-400">{opp.estimatedRoyalty}</div>
+                                        </div>
+                                    </div>
+
+                                    <h3 className="text-lg font-black mb-2 line-clamp-2">{opp.title}</h3>
+                                    <p className="text-xs text-gray-400 mb-4 h-12 line-clamp-3 leading-relaxed">
+                                        {opp.description}
+                                    </p>
+
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div className="flex gap-2">
+                                            <div className="text-[10px] text-gray-500 uppercase">Demand: <span className="text-emerald-400 font-bold">{opp.demand}</span></div>
+                                            <div className="text-[10px] text-gray-500 uppercase">Comp: <span className="text-yellow-400 font-bold">{opp.competition}</span></div>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={() => {
+                                            // Future: Redirect to specific tool
+                                            alert(`Launching ${mode === 'KDP' ? 'Manuscript Doctor' : 'POD Designer'} for: ` + opp.title);
+                                        }}
+                                        className="w-full py-3 bg-white/5 hover:bg-emerald-600 transition-all rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 group-hover:scale-105"
+                                    >
+                                        Execute concept
+                                        <ArrowRight size={14} />
+                                    </button>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
             </main>
         </div>
     );
