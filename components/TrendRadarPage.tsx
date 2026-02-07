@@ -42,7 +42,7 @@ const TrendRadarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     </button>
                     <div className="flex items-center gap-3">
                         <img src="/artisan_logo_official.png" alt="Logo" className="w-8 h-8 rounded" />
-                        <span className="font-black uppercase italic tracking-tighter">Trend Radar</span>
+                        <span className="font-black uppercase italic tracking-tighter">Trend Radar <span className="text-emerald-500 text-xs not-italic">v2.1</span></span>
                     </div>
                 </div>
             </nav>

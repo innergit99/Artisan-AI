@@ -158,6 +158,7 @@ const App: React.FC = () => {
     if (activeTab === ToolType.MY_GALLERY) return <GalleryView images={gallery} isDarkMode={isDarkMode} />;
     if (activeTab === ToolType.SETTINGS) return (
       <div className="p-12 animate-in fade-in slide-in-from-bottom-4">
+        {/* ... existing settings code ... */}
         <h1 className="text-6xl font-black mb-12 italic uppercase tracking-tighter">Industrial Settings</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="p-10 rounded-[2.5rem] bg-slate-900 border border-slate-800 shadow-2xl space-y-8">
@@ -190,6 +191,16 @@ const App: React.FC = () => {
         </div>
       </div>
     );
+
+    // CRITICAL: Route Niche Radar to the new V2 Engine
+    if (activeTab === ToolType.NICHE_RADAR) {
+      return (
+        <TrendRadarPage
+          onBack={() => setActiveTab(ToolType.DASHBOARD)}
+        />
+      );
+    }
+
     return <ToolView toolType={activeTab} initialPrompt={initialPrompt} onBack={() => setActiveTab(ToolType.DASHBOARD)} onImageGenerated={addToGallery} onNavigate={handleNavigate} isDarkMode={isDarkMode} />;
   };
 
