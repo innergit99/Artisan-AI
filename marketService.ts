@@ -72,7 +72,6 @@ export class MarketService {
                 },
                 body: JSON.stringify({
                     query: query,
-                    pageOptions: { fetchPageContent: false }, // We only need snippets for speed
                     limit: 5 // Top 5 results are enough for a pulse check
                 })
             });
