@@ -56,28 +56,48 @@ export class MarketService {
      * Uses Firecrawl /search endpoint to get clear text signals
      */
     private async performSearch(query: string): Promise<string> {
-        const response = await fetch(`${this.baseUrl}/search`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${this.apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                query: query,
-                pageOptions: { fetchPageContent: false }, // We only need snippets for speed
-                limit: 5 // Top 5 results are enough for a pulse check
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Firecrawl API Error: ${response.status}`);
+        if (!this.apiKey) {
+            console.warn("Firecrawl API Key is missing in performSearch");
+            return "";
         }
 
-        const data = await response.json();
-        if (!data.success || !data.data) return "";
+        console.log(`🔥 Firecrawl: Searching for '${query}'...`);
 
-        // Combine snippets into a context blob
-        return data.data.map((item: any) => `[${item.title}]: ${item.description}`).join('\n\n');
+        try {
+            const response = await fetch(`${this.baseUrl}/search`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    query: query,
+                    pageOptions: { fetchPageContent: false }, // We only need snippets for speed
+                    limit: 5 // Top 5 results are enough for a pulse check
+                })
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                console.error(`Firecrawl API Error: ${response.status}`, errorBody);
+                throw new Error(`Firecrawl API Error: ${response.status} - ${errorBody}`);
+            }
+
+            const data = await response.json();
+
+            if (!data.success || !data.data) {
+                console.warn("Firecrawl returned no success or data", data);
+                return "";
+            }
+
+            console.log(`🔥 Firecrawl: Found ${data.data.length} results.`);
+
+            // Combine snippets into a context blob
+            return data.data.map((item: any) => `[${item.title}]: ${item.description}`).join('\n\n');
+        } catch (error) {
+            console.error("Firecrawl Fetch Failed:", error);
+            throw error;
+        }
     }
 
     /**
