@@ -32,6 +32,9 @@ const EXPORT_BLOCKERS = [
     /INDUSTRIAL ASSET GEN/i,
     /Artisan AI Genesis/i,
     /\bArtisan author\b/i,
+    /Gemini 1.5/i,
+    /Gemini Pro/i,
+    /Gemini Flash/i,
 ];
 
 // Warning patterns - flag but don't block

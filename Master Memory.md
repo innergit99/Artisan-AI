@@ -1,6 +1,6 @@
 # ARTISAN AI - Master Memory
 
-> **Last Update**: 2026-02-06 22:27
+> **Last Update**: 2026-02-07 12:40
 > **Current Status**: 🟢 LIVE (Public Beta - publishlab.ink)
 
 ## Project Overview
@@ -39,7 +39,9 @@
 20. **[KDP] Export Validator Created**: New `kdpExportValidator.ts` with 25+ blocker patterns. Blocks export if placeholder content detected.
 21. **[KDP] Gemini API Endpoint Fixed**: Updated `diagnostics.ts` from `v1beta` to `v1` endpoint.
 22. **[KDP] Premium Textures**: Added 3-color gradients and film grain to `coverGenerator.ts`.
+42. **[DEV] Gemini CLI Integration**: Configured local `gemini` CLI with dedicated API key (`GEMINI_CLI_KEY`) via `init_cli.ps1` for quota-isolated terminal usage.
 43. **[RADAR] Real-Time Intelligence**: Activated `marketService.ts` with Firecrawl API. `TrendRadarPage.tsx` now performs live cross-platform niche analysis using Gemini 1.5 Flash.
+44. **[DEPLOY] Market Radar v1**: Deployed to Vercel (Production) with Real-Time Engine (Requires `VITE_FIRECRAWL_API_KEY` in Vercel Env Vars).
 
 ### 📝 Previous Changes (2026-02-03)
 1.  **[SYSTEM] Free Tier Switch (Critical)**: Disabled `GEMINI_API_KEY` to stop billing. Refactored `geminiService.ts` to strictly block Google API calls and enforce a fallback chain.
@@ -69,3 +71,6 @@
 | `kdpExportValidator.ts` | NEW - Export blocker with 25+ patterns |
 | `diagnostics.ts` | Fixed Gemini API endpoint |
 | `coverGenerator.ts` | Premium grain texture |
+| `marketService.ts` | NEW - Real-time market data (Firecrawl/Gemini) |
+| `TrendRadarPage.tsx` | Dynamic UI for Niche Analysis |
+| `init_cli.ps1` | CLI configuration script for isolated quota |

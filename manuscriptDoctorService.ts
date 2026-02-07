@@ -83,6 +83,14 @@ export interface Change {
 
 export class ManuscriptDoctorService {
 
+    private geminiKey: string | null = null;
+
+    constructor() {
+        // In a real app, this would be injected or retrieved securely
+        // For this demo, we assume it's available in the environment or passed in
+        this.geminiKey = import.meta.env.VITE_GEMINI_API_KEY || null;
+    }
+
     /**
      * Parse uploaded file and extract text
      */
@@ -180,56 +188,70 @@ export class ManuscriptDoctorService {
     }
 
     /**
-     * Analyze manuscript context and extract profile
+     * Analyze manuscript context and extract profile using Gemini
      */
-    analyzeContext(text: string, userGenre?: string): ContextProfile {
+    async analyzeContext(text: string, userGenre?: string): Promise<ContextProfile> {
         const cleanedText = text.trim();
         if (!cleanedText) {
-            return {
-                detectedGenre: 'NONFICTION',
-                confidence: 0,
-                tone: 'formal',
-                pov: '3rd',
-                dialogueDensity: 0,
-                pacingScore: 0.5,
-                readabilityGrade: 0,
-                authorVoiceFingerprint: { avgSentenceLength: 0, vocabularyComplexity: 0, passiveVoiceRatio: 0 }
-            };
+            return this.getInputEmptyProfile();
         }
 
+        // Calculate basic metrics locally
         const sentences = cleanedText.split(/[.!?]+/).filter(s => s.trim().length > 0);
         const words = cleanedText.split(/\s+/).filter(w => w.length > 0);
         const dialogueMatches = cleanedText.match(/"[^"]*"/g) || [];
-
-        // Calculate metrics
         const avgSentenceLength = sentences.length > 0 ? words.length / sentences.length : 0;
         const dialogueDensity = sentences.length > 0 ? dialogueMatches.length / sentences.length : 0;
-
-        // Detect POV
-        const firstPersonCount = (text.match(/\b(I|me|my|mine|we|us|our)\b/gi) || []).length;
-        const thirdPersonCount = (text.match(/\b(he|she|they|him|her|them)\b/gi) || []).length;
-        const pov = firstPersonCount > thirdPersonCount ? '1st' : '3rd';
-
-        // Detect tone (simplified)
-        const emotionalWords = (text.match(/\b(love|hate|fear|joy|anger|sad|happy|excited)\b/gi) || []).length;
-        const formalWords = (text.match(/\b(therefore|furthermore|consequently|nevertheless)\b/gi) || []).length;
-        const tone = emotionalWords > formalWords ? 'emotional' : 'formal';
-
-        // Genre detection (simplified - in production use ML model)
-        const detectedGenre = this.detectGenre(text, userGenre);
-
-        // Readability (Flesch-Kincaid approximation)
         const syllables = this.estimateSyllables(text);
         const readabilityScore = 206.835 - 1.015 * avgSentenceLength - 84.6 * (syllables / words.length);
         const gradeLevel = 0.39 * avgSentenceLength + 11.8 * (syllables / words.length) - 15.59;
+        const pacingScore = this.calculatePacingScore(text);
 
+        try {
+            // Use Gemini for advanced analysis if key is available
+            if (this.geminiKey) {
+                const prompt = `Analyze the following text snippet (approx first 2000 chars) for stylistic profile.
+                
+                Text: "${cleanedText.substring(0, 2000)}..."
+
+                Return a JSON object with:
+                {
+                    "detectedGenre": "string (e.g., Romance, Sci-Fi, Thriller)",
+                    "tone": "string (formal, casual, emotional, technical)",
+                    "pov": "string (1st, 2nd, 3rd)"
+                }
+                `;
+
+                const aiResponse = await this.callGemini(prompt, true);
+                const aiData = JSON.parse(aiResponse);
+
+                return {
+                    detectedGenre: aiData.detectedGenre || userGenre || 'NONFICTION',
+                    confidence: 0.9,
+                    tone: aiData.tone || 'formal',
+                    pov: aiData.pov || '3rd',
+                    dialogueDensity,
+                    pacingScore,
+                    readabilityGrade: Math.max(0, Math.round(gradeLevel)),
+                    authorVoiceFingerprint: {
+                        avgSentenceLength,
+                        vocabularyComplexity: this.calculateVocabularyComplexity(words),
+                        passiveVoiceRatio: this.detectPassiveVoice(text)
+                    }
+                };
+            }
+        } catch (error) {
+            console.warn("AI Analysis failed, falling back to heuristic analysis", error);
+        }
+
+        // Fallback to heuristics if AI fails or no key
         return {
-            detectedGenre,
+            detectedGenre: this.detectGenre(text, userGenre),
             confidence: userGenre ? 1.0 : 0.75,
-            tone,
-            pov,
+            tone: this.detectTone(text),
+            pov: this.detectPOV(text),
             dialogueDensity,
-            pacingScore: this.calculatePacingScore(text),
+            pacingScore,
             readabilityGrade: Math.max(0, Math.round(gradeLevel)),
             authorVoiceFingerprint: {
                 avgSentenceLength,
@@ -239,30 +261,45 @@ export class ManuscriptDoctorService {
         };
     }
 
+    private getInputEmptyProfile(): ContextProfile {
+        return {
+            detectedGenre: 'NONFICTION',
+            confidence: 0,
+            tone: 'formal',
+            pov: '3rd',
+            dialogueDensity: 0,
+            pacingScore: 0.5,
+            readabilityGrade: 0,
+            authorVoiceFingerprint: { avgSentenceLength: 0, vocabularyComplexity: 0, passiveVoiceRatio: 0 }
+        };
+    }
+
+    private detectPOV(text: string): '1st' | '2nd' | '3rd' {
+        const firstPersonCount = (text.match(/\b(I|me|my|mine|we|us|our)\b/gi) || []).length;
+        const thirdPersonCount = (text.match(/\b(he|she|they|him|her|them)\b/gi) || []).length;
+        return firstPersonCount > thirdPersonCount ? '1st' : '3rd';
+    }
+
+    private detectTone(text: string): 'formal' | 'casual' | 'emotional' | 'technical' {
+        const emotionalWords = (text.match(/\b(love|hate|fear|joy|anger|sad|happy|excited)\b/gi) || []).length;
+        const formalWords = (text.match(/\b(therefore|furthermore|consequently|nevertheless)\b/gi) || []).length;
+        return emotionalWords > formalWords ? 'emotional' : 'formal';
+    }
+
+
     private detectGenre(text: string, userGenre?: string): string {
         if (userGenre) return userGenre;
-
-        // Simple keyword-based genre detection
         const lowerText = text.toLowerCase();
-
-        if (lowerText.includes('love') || lowerText.includes('heart') || lowerText.includes('kiss')) {
-            return 'ROMANCE';
-        } else if (lowerText.includes('murder') || lowerText.includes('detective') || lowerText.includes('crime')) {
-            return 'MYSTERY';
-        } else if (lowerText.includes('magic') || lowerText.includes('dragon') || lowerText.includes('wizard')) {
-            return 'FANTASY';
-        } else if (lowerText.includes('space') || lowerText.includes('alien') || lowerText.includes('robot')) {
-            return 'SCIFI';
-        }
-
-        return 'NONFICTION'; // Default
+        if (lowerText.includes('love') || lowerText.includes('heart') || lowerText.includes('kiss')) return 'ROMANCE';
+        if (lowerText.includes('murder') || lowerText.includes('detective') || lowerText.includes('crime')) return 'MYSTERY';
+        if (lowerText.includes('magic') || lowerText.includes('dragon') || lowerText.includes('wizard')) return 'FANTASY';
+        if (lowerText.includes('space') || lowerText.includes('alien') || lowerText.includes('robot')) return 'SCIFI';
+        return 'NONFICTION';
     }
 
     private estimateSyllables(text: string): number {
-        // Simplified syllable counting
         const words = text.toLowerCase().split(/\s+/);
         let syllables = 0;
-
         words.forEach(word => {
             word = word.replace(/[^a-z]/g, '');
             if (word.length <= 3) {
@@ -272,13 +309,12 @@ export class ManuscriptDoctorService {
                 syllables += vowelGroups ? vowelGroups.length : 1;
             }
         });
-
         return syllables;
     }
 
     private calculateVocabularyComplexity(words: string[]): number {
         const uniqueWords = new Set(words.map(w => w.toLowerCase()));
-        return uniqueWords.size / words.length; // Type-Token Ratio
+        return uniqueWords.size / words.length;
     }
 
     private detectPassiveVoice(text: string): number {
@@ -289,13 +325,10 @@ export class ManuscriptDoctorService {
     }
 
     private calculatePacingScore(text: string): number {
-        // Action words vs descriptive words ratio
         const actionWords = (text.match(/\b(ran|jumped|fought|screamed|grabbed|hit|threw)\b/gi) || []).length;
         const descriptiveWords = (text.match(/\b(beautiful|slowly|carefully|gently|quietly)\b/gi) || []).length;
         const total = actionWords + descriptiveWords;
-
-        if (total === 0) return 0.5;
-        return actionWords / total; // 0 = slow, 1 = fast
+        return total === 0 ? 0.5 : actionWords / total;
     }
 
     /**
@@ -309,8 +342,6 @@ export class ManuscriptDoctorService {
     ): Promise<{ enhancedText: string; report: RewriteReport }> {
 
         const beforeMetrics = this.calculateTextMetrics(text);
-
-        // Split into chunks for processing
         const chunks = this.splitIntoChunks(text, 2000);
         const enhancedChunks: string[] = [];
         const changes: Change[] = [];
@@ -329,7 +360,7 @@ export class ManuscriptDoctorService {
             grammarFixes: changes.filter(c => c.type === 'grammar').length,
             styleEnhancements: changes.filter(c => c.type === 'style').length,
             toneAdjustments: changes.filter(c => c.type === 'tone').length,
-            readabilityImprovement: afterMetrics.readabilityScore - beforeMetrics.readabilityScore,
+            readabilityImprovement: (afterMetrics.readabilityScore || 0) - (beforeMetrics.readabilityScore || 0),
             beforeMetrics,
             afterMetrics,
             changeLog: changes
@@ -352,7 +383,6 @@ export class ManuscriptDoctorService {
                 currentChunk += (currentChunk ? '\n\n' : '') + para;
             }
         }
-
         if (currentChunk) chunks.push(currentChunk.trim());
         return chunks;
     }
@@ -364,21 +394,64 @@ export class ManuscriptDoctorService {
         preserveVoice: boolean
     ): Promise<{ text: string; changes: Change[] }> {
 
-        // In production, this would call AI API (GPT-4, Claude, etc.)
-        // For now, simulate basic improvements
+        if (!this.geminiKey) {
+            // Fallback to simulation if no key
+            return this.simulateProcessChunk(chunk, mode, context);
+        }
 
+        try {
+            const prompt = `
+            Act as an expert manuscript editor. Rewrite the following text chunk based on these instructions:
+            
+            MODE: ${mode}
+            GENRE: ${context.detectedGenre}
+            TONE: ${context.tone}
+            POV: ${context.pov}
+            PRESERVE VOICE: ${preserveVoice}
+
+            INSTRUCTIONS:
+            ${mode === 'fix_errors' ? '- Fix grammar, typos, and formatting errors only. Do not change style.' : ''}
+            ${mode === 'enhance_style' ? '- Improve "show, don\'t tell". varying sentence structure. Remove passive voice.' : ''}
+            ${mode === 'full_rewrite' ? '- Deep polish. Improve pacing, dialogue, and narrative flow. Ensure high-quality prose.' : ''}
+            
+            OUTPUT FORMAT:
+            Return a JSON object with:
+            {
+                "rewrittenText": "The entire rewritten chunk...",
+                "changes": [
+                    { "type": "grammar|style|tone", "original": "snippet", "revised": "snippet", "reason": "why" }
+                ]
+            }
+
+            TEXT TO REWRITE:
+            "${chunk}"
+            `;
+
+            const aiResponse = await this.callGemini(prompt, true);
+            const data = JSON.parse(aiResponse);
+
+            return {
+                text: data.rewrittenText || chunk,
+                changes: data.changes || []
+            };
+
+        } catch (error) {
+            console.error("Gemini Rewrite Failed", error);
+            return { text: chunk, changes: [] };
+        }
+    }
+
+    private simulateProcessChunk(chunk: string, mode: RewriteMode, context: ContextProfile): { text: string; changes: Change[] } {
         let enhanced = chunk;
         const changes: Change[] = [];
 
         if (mode === 'fix_errors' || mode === 'full_rewrite' || mode === 'enhance_style') {
-            // Fix common grammar issues
             const grammarFixes = this.applyGrammarFixes(enhanced);
             enhanced = grammarFixes.text;
             changes.push(...grammarFixes.changes);
         }
 
         if (mode === 'enhance_style' || mode === 'full_rewrite') {
-            // Enhance style
             const styleFixes = this.enhanceStyle(enhanced, context);
             enhanced = styleFixes.text;
             changes.push(...styleFixes.changes);
@@ -387,11 +460,30 @@ export class ManuscriptDoctorService {
         return { text: enhanced, changes };
     }
 
+    private async callGemini(prompt: string, jsonMode: boolean = false): Promise<string> {
+        if (!this.geminiKey) throw new Error("Gemini API Key missing");
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.geminiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: jsonMode ? { response_mime_type: "application/json" } : {}
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Gemini API Error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
+    }
+
     private applyGrammarFixes(text: string): { text: string; changes: Change[] } {
         const changes: Change[] = [];
         let fixed = text;
 
-        // Fix double spaces
         if (fixed.includes('  ')) {
             changes.push({
                 type: 'grammar',
@@ -404,7 +496,6 @@ export class ManuscriptDoctorService {
             fixed = fixed.replace(/\s{2,}/g, ' ');
         }
 
-        // Fix common typos (simplified)
         const typos = [
             { from: /\bteh\b/gi, to: 'the', reason: 'Fixed typo: teh → the' },
             { from: /\brecieve\b/gi, to: 'receive', reason: 'Fixed spelling: recieve → receive' },
@@ -432,10 +523,7 @@ export class ManuscriptDoctorService {
         const changes: Change[] = [];
         let enhanced = text;
 
-        // Add sensory details for fiction
         if (['ROMANCE', 'FANTASY', 'HORROR', 'MYSTERY'].includes(context.detectedGenre)) {
-            // This would use AI in production
-            // For now, just mark as enhancement opportunity
             changes.push({
                 type: 'style',
                 original: text.substring(0, 50),
@@ -445,7 +533,6 @@ export class ManuscriptDoctorService {
                 lineNumber: 0
             });
         }
-
         return { text: enhanced, changes };
     }
 
