@@ -36,6 +36,11 @@ export interface ManuscriptUpload {
 }
 
 export interface ContextProfile {
+    // Metadata
+    title?: string;
+    author?: string;
+    chapterTitles: string[];
+
     detectedGenre: string;
     confidence: number;
     tone: 'formal' | 'casual' | 'emotional' | 'technical';
@@ -210,14 +215,22 @@ export class ManuscriptDoctorService {
         try {
             // Use Gemini for advanced analysis if key is available
             if (this.geminiKey) {
-                const prompt = `Analyze the following text snippet (approx first 2000 chars) for stylistic profile.
+                const prompt = `Analyze the following manuscript text (first 3000 chars) to extract metadata and stylistic profile.
                 
-                Text: "${cleanedText.substring(0, 2000)}..."
+                Text Chunk: "${cleanedText.substring(0, 3000)}..."
+
+                Instructions:
+                1. Infer the Title and Author if present in the first few lines. If not found, look for clues or return null.
+                2. Detect the Genre, Tone, and POV.
+                3. Identify any Chapter headings visible in this chunk.
 
                 Return a JSON object with:
                 {
-                    "detectedGenre": "string (e.g., Romance, Sci-Fi, Thriller)",
-                    "tone": "string (formal, casual, emotional, technical)",
+                    "title": "string or null",
+                    "author": "string or null",
+                    "chapterTitles": ["string"],
+                    "detectedGenre": "string",
+                    "tone": "string",
                     "pov": "string (1st, 2nd, 3rd)"
                 }
                 `;
@@ -226,6 +239,9 @@ export class ManuscriptDoctorService {
                 const aiData = JSON.parse(aiResponse);
 
                 return {
+                    title: aiData.title || undefined,
+                    author: aiData.author || undefined,
+                    chapterTitles: aiData.chapterTitles || [],
                     detectedGenre: aiData.detectedGenre || userGenre || 'NONFICTION',
                     confidence: 0.9,
                     tone: aiData.tone || 'formal',
@@ -246,6 +262,9 @@ export class ManuscriptDoctorService {
 
         // Fallback to heuristics if AI fails or no key
         return {
+            title: undefined,
+            author: undefined,
+            chapterTitles: [],
             detectedGenre: this.detectGenre(text, userGenre),
             confidence: userGenre ? 1.0 : 0.75,
             tone: this.detectTone(text),
@@ -263,6 +282,9 @@ export class ManuscriptDoctorService {
 
     private getInputEmptyProfile(): ContextProfile {
         return {
+            title: undefined,
+            author: undefined,
+            chapterTitles: [],
             detectedGenre: 'NONFICTION',
             confidence: 0,
             tone: 'formal',
@@ -566,12 +588,13 @@ export class ManuscriptDoctorService {
         project: Partial<KDPProject>
     ): Partial<KDPBlueprint> {
         const chapters = this.extractChapters(upload.enhancedText || upload.rawText);
+        const meta = upload.contextProfile;
 
         return {
             PROJECT_META: {
-                title_working: project.title || 'Untitled Manuscript',
-                suggestedAuthor: project.author || 'Unknown Author',
-                primary_genre: upload.contextProfile.detectedGenre,
+                title_working: meta.title || project.title || 'Untitled Manuscript',
+                suggestedAuthor: meta.author || project.author || 'Unknown Author',
+                primary_genre: meta.detectedGenre,
                 series_info: '',
                 trim_size: project.trimSize || '6" x 9"',
                 publisher_imprint: project.publisher || '',
@@ -580,7 +603,7 @@ export class ManuscriptDoctorService {
             },
             INTERIOR_CONTENT: chapters.map((text, index) => ({
                 chapter: index + 1,
-                title: `Chapter ${index + 1}`,
+                title: meta.chapterTitles[index] || `Chapter ${index + 1}`,
                 content: text,
                 summary: 'Imported content.',
                 visualPrompt: `${upload.contextProfile.detectedGenre} cinematic book illustration depicting: ${text.substring(0, 150)}`,

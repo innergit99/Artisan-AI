@@ -209,7 +209,11 @@ const App: React.FC = () => {
         </motion.div>
       ) : activeDetail === 'manuscript' ? (
         <motion.div key="manuscript" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
-          <ManuscriptDoctorPage onBack={() => setActiveDetail(null)} />
+          <ManuscriptDoctorPage onBack={() => {
+            setActiveDetail(null);
+            setShowLanding(false);
+            setActiveTab(ToolType.DASHBOARD);
+          }} />
         </motion.div>
       ) : activeDetail === 'cover' ? (
         <motion.div key="cover" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
