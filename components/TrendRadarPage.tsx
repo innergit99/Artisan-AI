@@ -38,7 +38,7 @@ const TrendRadarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <button onClick={onBack} className="text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
                         <ArrowRight className="rotate-180" size={18} />
-                        <span className="text-sm font-bold uppercase tracking-widest">Back to Studio</span>
+                        <span className="text-sm font-bold uppercase tracking-widest">BACK TO DASHBOARD</span>
                     </button>
                     <div className="flex items-center gap-3">
                         <img src="/artisan_logo_official.png" alt="Logo" className="w-8 h-8 rounded" />
@@ -142,7 +142,7 @@ const TrendRadarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                         <div className="text-right">
                                             <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Opportunity</div>
                                             <div className={`text-xl font-black ${analysis.opportunity === 'Gold Mine' ? 'text-yellow-400' :
-                                                    analysis.opportunity === 'Viable' ? 'text-emerald-400' : 'text-red-400'
+                                                analysis.opportunity === 'Viable' ? 'text-emerald-400' : 'text-red-400'
                                                 }`}>
                                                 {analysis.opportunity}
                                             </div>
@@ -155,7 +155,7 @@ const TrendRadarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                                             <div className="w-full h-1 bg-white/10 rounded-full mb-2">
                                                 <div
                                                     className={`h-full rounded-full ${analysis.saturationIndex === 'Very Low' ? 'bg-emerald-500 w-1/4' :
-                                                            analysis.saturationIndex === 'High' ? 'bg-red-500 w-3/4' : 'bg-yellow-500 w-1/2'
+                                                        analysis.saturationIndex === 'High' ? 'bg-red-500 w-3/4' : 'bg-yellow-500 w-1/2'
                                                         }`}
                                                 />
                                             </div>
