@@ -32,41 +32,8 @@ import {
 
 
 
-const MOCKUP_ASSETS: Record<MockupType, string> = {
-  STANDARD_TEE: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=1200',
-  LARGE_PRINT_TEE: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=1200',
-  HAT: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&q=80&w=1200',
-  STICKER: 'https://images.unsplash.com/photo-1572375927902-1c716d520298?auto=format&fit=crop&q=80&w=1200',
-  PHONE_CASE: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&q=80&w=1200',
-  DESK_MAT: 'https://images.unsplash.com/photo-1616627561950-9f746e330171?auto=format&fit=crop&q=80&w=1200',
-  MOUSE_PAD: 'https://images.unsplash.com/photo-1586105449897-20b5efeb3233?auto=format&fit=crop&q=80&w=1200',
-  PILLOW: 'https://images.unsplash.com/photo-1584132905271-512c958d674a?auto=format&fit=crop&q=80&w=1200',
-  TOTE_BAG: 'https://images.unsplash.com/photo-1597484662317-9bd773efdf58?auto=format&fit=crop&q=80&w=1200',
-  MUG: 'https://images.unsplash.com/photo-1514228742587-6b1558fbed20?auto=format&fit=crop&q=80&w=1200',
-  POSTER: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=1200',
-  CANVAS: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=1200',
-  GREETING_CARD: 'https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=1200',
-  LAPTOP_SKIN: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&q=80&w=1200',
-  POUCH: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=1200',
-  DRESS: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&q=80&w=1200',
-  SCARF: 'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?auto=format&fit=crop&q=80&w=1200',
-  DUVET: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=1200',
-  SHOWER_CURTAIN: 'https://images.unsplash.com/photo-1560067174-c5a3a8f37060?auto=format&fit=crop&q=80&w=1200',
-  JOURNAL: 'https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=1200',
-  SPIRAL_NOTEBOOK: 'https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=1200',
-  CLOCK: 'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?auto=format&fit=crop&q=80&w=1200',
-  ACRYLIC_BLOCK: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=1200',
-  COASTER: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=1200',
-  BLANKET: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=1200',
-  TAPESTRY: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=1200',
-  BATH_MAT: 'https://images.unsplash.com/photo-1560067174-c5a3a8f37060?auto=format&fit=crop&q=80&w=1200',
-  BUTTON: 'https://images.unsplash.com/photo-1562228581-4757ec44411d?auto=format&fit=crop&q=80&w=1200',
-  APRON: 'https://images.unsplash.com/photo-1577563821430-8636e0d375a9?auto=format&fit=crop&q=80&w=1200',
-  PUZZLE: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?auto=format&fit=crop&q=80&w=1200',
-  SOCKS: 'https://images.unsplash.com/photo-1582966298431-a80a5e1c8b67?auto=format&fit=crop&q=80&w=1200',
-  BACKPACK: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=1200',
-  DUFFLE_BAG: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=1200'
-};
+// MOCKUP_ASSETS will now be populated programmatically by the drawing engine
+const MOCKUP_ASSETS: Record<MockupType, string> = {} as any;
 
 // Added missing MOCKUP_LABELS constant for mapping MockupType to human-readable strings
 const MOCKUP_LABELS: Record<MockupType, string> = {
@@ -586,6 +553,23 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
       return () => clearTimeout(timer);
     }
   }, [kdpBlueprint, kdpProject, toolType, isGenerating, isDoctoring]);
+
+  // Initialize Mockup Assets with Drawings
+  useEffect(() => {
+    if (toolType === ToolType.POD_MERCH) {
+      const initDrawings = async () => {
+        const { canvasMockupService } = await import('../canvasMockupService');
+        const drawings: Record<string, string> = {};
+        for (const type of Object.keys(MOCKUP_LABELS)) {
+          try {
+            drawings[type] = await canvasMockupService.generateBaseProduct(type, '#ffffff');
+          } catch (e) { }
+        }
+        setPrintfulMockups(prev => ({ ...prev, ...drawings }));
+      };
+      initDrawings();
+    }
+  }, [toolType]);
 
   // Load saved project on mount (KDP Book Lab only)
   useEffect(() => {
@@ -4131,6 +4115,7 @@ h1, h2, h3 { page -break-after: avoid; }
                         className="absolute inset-0 pointer-events-none flex items-center justify-center"
                         style={{
                           transform: `translate(${mockupPosX}px, ${mockupPosY}px) scale(${mockupScale})`,
+                          opacity: printfulMockups[activeMockup] && !isGeneratingMockups ? 0 : 1 // Hide overlay if canvas mockup is active
                         }}
                       >
                         <img src={result} className={`
@@ -4196,8 +4181,8 @@ drop-shadow-2xl pointer-events-none
                             } `}
                         >
                           <img
-                            src={MOCKUP_ASSETS[mockupType]}
-                            className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                            src={printfulMockups[mockupType] || MOCKUP_ASSETS[mockupType]}
+                            className="w-full h-full object-contain p-2 transition-transform group-hover:scale-110"
                             alt={MOCKUP_LABELS[mockupType]}
                           />
                           <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center p-2 ${activeMockup === mockupType ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
