@@ -19,7 +19,7 @@ export class HFBackendService {
             console.log('🔌 Connecting to HuggingFace Space...');
 
             // Try to get token from Vite env or process env
-            const hfToken = import.meta.env.VITE_HF_API_TOKEN;
+            const hfToken = (import.meta as any).env?.VITE_HF_API_TOKEN || process.env.VITE_HF_API_TOKEN;
 
             if (hfToken) {
                 console.log(`🔐 Authenticating with HF Token: ${hfToken.substring(0, 5)}...`);

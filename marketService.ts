@@ -28,7 +28,7 @@ export class MarketService {
     private baseUrl = 'https://api.firecrawl.dev/v1';
 
     constructor() {
-        this.apiKey = import.meta.env.VITE_FIRECRAWL_API_KEY || '';
+        this.apiKey = (import.meta as any).env?.VITE_FIRECRAWL_API_KEY || process.env.VITE_FIRECRAWL_API_KEY || '';
     }
 
     /**
@@ -118,7 +118,7 @@ export class MarketService {
      * Uses Gemini to analyze the SERP data and output structured JSON
      */
     private async synthesizeMarketData(keyword: string, serpData: string, mode: 'KDP' | 'POD'): Promise<NicheAnalysis> {
-        const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
+        const geminiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
         if (!geminiKey) throw new Error("Gemini API Key missing");
 
         const contextInstruction = mode === 'KDP'

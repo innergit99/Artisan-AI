@@ -21,6 +21,10 @@ const KDP_GENRE_SPECS: Record<string, { minCh: number; maxCh: number; wpc: numbe
   'THRILLER': { minCh: 25, maxCh: 40, wpc: 3000, style: 'High stakes, ticking clock, fast pacing.', layout: 'reflowable', readingDir: 'ltr', trim: '5.5" x 8.5"' },
   'FANTASY': { minCh: 30, maxCh: 60, wpc: 3500, style: 'World-building, magic systems, epic journey.', layout: 'reflowable', readingDir: 'ltr', trim: '6" x 9" (Standard)' },
   'SCI-FI': { minCh: 25, maxCh: 45, wpc: 3500, style: 'Fictional tech, societal impact, exploration.', layout: 'reflowable', readingDir: 'ltr', trim: '6" x 9" (Standard)' },
+  'HORROR': { minCh: 12, maxCh: 18, wpc: 3500, style: 'Atmospheric, psychological dread, gradual pacing', layout: 'reflowable', readingDir: 'ltr', trim: '6" x 9" (Standard)' },
+  'YA': { minCh: 15, maxCh: 25, wpc: 2500, style: 'Fast-paced, high voice, relatable stakes, first person', layout: 'reflowable', readingDir: 'ltr', trim: '5.5" x 8.5" (Trade)' },
+  'COZY': { minCh: 10, maxCh: 15, wpc: 3000, style: 'Light-hearted, no gore, quirky characters, amateur sleuth', layout: 'reflowable', readingDir: 'ltr', trim: '5" x 8" (Pocket)' },
+  'HISTORICAL': { minCh: 20, maxCh: 40, wpc: 3500, style: 'Historical accuracy, period atmosphere, era-appropriate voice.', layout: 'reflowable', readingDir: 'ltr', trim: '6" x 9" (Standard)' },
 
   // NON-FICTION
   'BIOGRAPHY': { minCh: 20, maxCh: 40, wpc: 3000, style: 'Chronological, factual, narrative non-fiction.', layout: 'reflowable', readingDir: 'ltr', trim: '6" x 9" (Standard)' },
@@ -32,19 +36,56 @@ const KDP_GENRE_SPECS: Record<string, { minCh: number; maxCh: number; wpc: numbe
   'COMIC': { minCh: 24, maxCh: 120, wpc: 50, style: 'Panel-based storytelling, dialogue heavy, visual action.', layout: 'fixed', readingDir: 'ltr', trim: '6.625" x 10.25"' },
   'MANGA': { minCh: 160, maxCh: 200, wpc: 30, style: 'Right-to-left flow, high contrast, cinematic pacing.', layout: 'fixed', readingDir: 'rtl', trim: '5" x 8"' },
 
-  // LOW CONTENT
+  // LOW CONTENT / ACTIVITY
   'JOURNAL': { minCh: 90, maxCh: 120, wpc: 10, style: 'Repeating prompts, reflection space, minimal text.', layout: 'fixed', readingDir: 'ltr', trim: '6" x 9" (Standard)' },
   'PLANNER': { minCh: 120, maxCh: 365, wpc: 10, style: 'Daily/Weekly structure, organizational grids.', layout: 'fixed', readingDir: 'ltr', trim: '8.5" x 11" (Letter)' },
-
-  // NEW GENRES (Week 3 Expansion)
-  'HORROR': { minCh: 12, maxCh: 18, wpc: 3500, style: 'Atmospheric, psychological dread, gradual pacing', layout: 'reflowable', readingDir: 'ltr', trim: '6" x 9" (Standard)' },
-  'YA': { minCh: 15, maxCh: 25, wpc: 2500, style: 'Fast-paced, high voice, relatable stakes, first person', layout: 'reflowable', readingDir: 'ltr', trim: '5.5" x 8.5" (Trade)' },
-  'COZY': { minCh: 10, maxCh: 15, wpc: 3000, style: 'Light-hearted, no gore, quirky characters, amateur sleuth', layout: 'reflowable', readingDir: 'ltr', trim: '5" x 8" (Pocket)' },
   'KIDS_COLORING': { minCh: 30, maxCh: 60, wpc: 10, style: 'Large outlines, simple concepts, single-sided pages', layout: 'fixed', readingDir: 'ltr', trim: '8.5" x 11" (Letter)' },
   'ADULT_COLORING': { minCh: 50, maxCh: 100, wpc: 10, style: 'Intricate patterns, stress relief, single-sided pages', layout: 'fixed', readingDir: 'ltr', trim: '8.5" x 11" (Letter)' },
 
   'DEFAULT': { minCh: 10, maxCh: 20, wpc: 1500, style: 'Standard commercial fiction structure.', layout: 'reflowable', readingDir: 'ltr', trim: '6" x 9" (Standard)' }
 };
+
+/**
+ * Normalizes frontend genre IDs to backend specification keys
+ */
+export function resolveGenreSpec(genreId: string): { key: string; spec: typeof KDP_GENRE_SPECS['DEFAULT'] } {
+  const id = genreId.toLowerCase().trim();
+
+  // Mapping table for specific frontend IDs
+  const mapping: Record<string, string> = {
+    'romance': 'ROMANCE',
+    'dark-romance': 'ROMANCE',
+    'mystery': 'MYSTERY',
+    'mystery-thriller': 'MYSTERY',
+    'thriller': 'THRILLER',
+    'psych-thriller': 'THRILLER',
+    'fantasy': 'FANTASY',
+    'fantasy-epic': 'FANTASY',
+    'urban-fantasy': 'FANTASY',
+    'sci-fi': 'SCI-FI',
+    'space-opera': 'SCI-FI',
+    'horror': 'HORROR',
+    'cozy-mystery': 'COZY',
+    'ya': 'YA',
+    'historical': 'HISTORICAL',
+    'manga': 'MANGA',
+    'comic': 'COMIC',
+    'picture-book': 'CHILDREN',
+    'biography': 'BIOGRAPHY',
+    'business': 'BUSINESS',
+    'self-help': 'SELF-HELP',
+    'coloring-adult': 'ADULT_COLORING',
+    'coloring-kids': 'KIDS_COLORING',
+    'coloring-kdp': 'KIDS_COLORING',
+    'journal': 'JOURNAL',
+    'planner': 'PLANNER'
+  };
+
+  const key = mapping[id] || id.replace(/-/g, '_').toUpperCase();
+  const spec = KDP_GENRE_SPECS[key] || KDP_GENRE_SPECS['DEFAULT'];
+
+  return { key, spec };
+}
 
 // --- GENRE LOGIC ENGINE DEFINITIONS (Week 3 Architecture) ---
 interface GenreLogic {
@@ -240,7 +281,7 @@ No explanations. No quotes.`;
     console.log('🚀 PRODUCTION MODE: Using premium APIs');
 
     // 1. TRY GEMINI 1.5 FLASH (Primary - Fastest & Cheapest)
-    const geminiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    const geminiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
     if (geminiKey && !geminiKey.includes('PLACEHOLDER')) {
       try {
         console.log('💎 Calling Gemini 1.5 Flash...');
@@ -256,7 +297,7 @@ No explanations. No quotes.`;
     }
 
     // 2. TRY GROQ LLAMA 3.3-70B (Fallback - High Quality)
-    const groqKey = import.meta.env.VITE_GROQ_API_KEY || process.env.GROQ_API_KEY;
+    const groqKey = (import.meta as any).env?.VITE_GROQ_API_KEY || process.env.VITE_GROQ_API_KEY || process.env.GROQ_API_KEY;
     if (groqKey && !groqKey.includes('PLACEHOLDER')) {
       try {
         console.log('🔄 Calling Groq Llama 3.3-70B...');
@@ -885,7 +926,7 @@ Output ONLY a valid JSON array: ["Title 1", "Title 2", "Title 3", "Title 4", "Ti
       // Phase 1: Generate Story Outline
       const outline = await this.generateStoryOutline(project);
 
-      const spec = KDP_GENRE_SPECS[project.genre] || KDP_GENRE_SPECS['DEFAULT'];
+      const { key, spec } = resolveGenreSpec(project.genre);
 
       // Phase 2: Create Blueprint with Outline
       const blueprint = {

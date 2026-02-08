@@ -93,7 +93,7 @@ export class ManuscriptDoctorService {
     constructor() {
         // In a real app, this would be injected or retrieved securely
         // For this demo, we assume it's available in the environment or passed in
-        this.geminiKey = import.meta.env.VITE_GEMINI_API_KEY || null;
+        this.geminiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || null;
     }
 
     /**
