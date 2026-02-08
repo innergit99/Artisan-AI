@@ -149,6 +149,7 @@ export interface KDPBlueprint {
     publisher_imprint: string;
     copyright_year: string;
     interior_color: 'B&W' | 'Color';
+    reading_direction?: 'LTR' | 'RTL';
   };
   BOOK_STRUCTURE: {
     front_matter: {

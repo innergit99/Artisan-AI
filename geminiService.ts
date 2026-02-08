@@ -899,7 +899,8 @@ Output ONLY a valid JSON array: ["Title 1", "Title 2", "Title 3", "Title 4", "Ti
           trim_size: project.trimSize || spec?.trim || '6" x 9" (Standard)',
           publisher_imprint: project.publisher || 'Independent',
           copyright_year: new Date().getFullYear().toString(),
-          interior_color: project.interiorColor || 'B&W'
+          interior_color: project.interiorColor || 'B&W',
+          reading_direction: (spec?.readingDir?.toUpperCase() as 'LTR' | 'RTL') || 'LTR'
         },
         COVER_SPEC: {
           front_prompt: this.generateSalesDrivenCoverPrompt(project.title, project.genre, 'front'),
@@ -2177,7 +2178,10 @@ AVOID: Any imagery that could interfere with barcode scanning`;
     };
 
     const formulaKey = Object.keys(genrePrompts).find(k => genreUpper.includes(k));
-    return formulaKey ? genrePrompts[formulaKey] : `Professional book interior illustration for "${chapterTitle}": Genre: ${genre}, atmospheric scene composition, emotionally resonant mood, professional book illustration, Story context: ${summaryHints}`;
+    const basePrompt = formulaKey ? genrePrompts[formulaKey] : `Professional book interior illustration for "${chapterTitle}": Genre: ${genre}, atmospheric scene composition, emotionally resonant mood, professional book illustration, Story context: ${summaryHints}`;
+
+    // KDP SAFETY ENFORCEMENT
+    return `${basePrompt}, CRITICAL: Keep all important visual elements within the central 80% safe zone, avoid placing faces or text near the edges to prevent bleed cropping.`;
   }
 
   async generateBackCoverBlurb(blueprint: KDPBlueprint): Promise<string> {

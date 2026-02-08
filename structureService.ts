@@ -1,4 +1,5 @@
 import { KDPGenrePreset, KDPProject } from './types';
+import { KDPCalculator, PaperType as KDPPaperType, KDP_LIMITS } from './kdpCalculator';
 
 // --- PART 1: GENRE INTELLIGENCE MATRIX (CIN) ---
 
@@ -450,36 +451,24 @@ export class StructureService {
      * PLIS: Calculate exact physical layout specs based on content
      */
     calculateLayoutSpecs(pageCount: number, paperType: 'Cream' | 'White' | 'Color'): LayoutSpecs {
-        // Constants (Inches)
-        const BLEED = 0.125;
-        const MIN_PAGES = 24;
+        // Map structure service paper type to calculator paper type
+        const calculatorPaperType: KDPPaperType = paperType === 'Color' ? 'premium-color' : (paperType === 'Cream' ? 'cream' : 'white');
 
-        // Paper Thickness (approximate for KDP)
-        const PPI = paperType === 'Cream' ? 0.002252 : 0.002347; // Pages Per Inch inverse... wait, this is thickness per page
-        // Actually: Cream is ~0.002252 in/page, White is ~0.002252 in/page, Color is thicker.
-        // KDP Formula: (Page Count * Thickness)
-        const thickness = paperType === 'Color' ? 0.002347 : 0.002252;
-
-        let spine = pageCount * thickness;
-
-        // Margins grow with page count (to prevent spine-swallow)
-        let innerMargin = 0.375; // Default safe
-        if (pageCount > 150) innerMargin = 0.5;
-        if (pageCount > 300) innerMargin = 0.625;
-        if (pageCount > 500) innerMargin = 0.75;
+        const gutter = KDPCalculator.getGutter(pageCount);
+        const spine = KDPCalculator.getSpineWidth(pageCount, calculatorPaperType);
 
         return {
             trimSize: 'Variable', // Context dependent
             margins: {
-                inner: innerMargin,
-                outer: 0.25,
-                top: 0.25,
-                bottom: 0.25
+                inner: gutter,
+                outer: KDP_LIMITS.SAFETY_MARGIN,
+                top: KDP_LIMITS.SAFETY_MARGIN,
+                bottom: KDP_LIMITS.SAFETY_MARGIN
             },
-            bleed: BLEED,
-            spineWidth: parseFloat(spine.toFixed(3)),
-            minPages: MIN_PAGES,
-            maxPages: 828 // Standard KDP max
+            bleed: KDP_LIMITS.BLEED_STANDARD,
+            spineWidth: spine,
+            minPages: KDP_LIMITS.MIN_PAGES,
+            maxPages: KDP_LIMITS.MAX_PAGES_STANDARD // Standard KDP max
         };
     }
 
