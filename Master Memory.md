@@ -1,7 +1,7 @@
 # ARTISAN AI - Master Memory
 
-> **Last Update**: 2026-02-07 12:40
-> **Current Status**: 🟢 LIVE (Public Beta - publishlab.ink)
+> **Last Update**: 2026-02-08 10:10
+> **Current Status**: 🟢 LIVE / GENRE-ENGINE VERIFIED (publishlab.ink)
 
 ## Project Overview
 **ARTISAN AI** is an advanced KDP (Kindle Direct Publishing) automation suite designed to accelerate the creation of professional-grade book content, covers, and metadata.
@@ -67,10 +67,8 @@
 | `App.tsx` | Beta gating + Password Recovery listener |
 | `AuthModal.tsx` | Login/Signup/Forgot Password UI, Added `update_password` mode (Set New Password) |
 | `downloadService.ts` | Removed placeholders, added validation gate |
-| `geminiService.ts` | Throws error instead of returning placeholder |
+| `geminiService.ts` | Throws error instead of returning placeholder; Added `resolveGenreSpec` mapping |
 | `kdpExportValidator.ts` | NEW - Export blocker with 25+ patterns |
-| `diagnostics.ts` | Fixed Gemini API endpoint |
-| `coverGenerator.ts` | Premium grain texture |
-| `marketService.ts` | NEW - Real-time market data (Firecrawl/Gemini) |
-| `TrendRadarPage.tsx` | Dynamic UI for Niche Analysis |
-| `init_cli.ps1` | CLI configuration script for isolated quota |
+| `verify_genre_matrix.ts` | NEW - Automated genre specification auditor |
+| `GENRE_VERIFICATION_REPORT.md` | NEW - Final pass/fail results for 21 genres |
+| `walkthrough.md` | Updated with full Genre Engine deployment results |

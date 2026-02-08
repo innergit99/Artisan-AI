@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ToolType, TrendingNiche, UserIntent, DashboardUIState } from '../types';
 import { TOOLS } from '../constants';
 import { gemini } from '../geminiService';
+import { PODDesignerCard } from './PODDesignerCard';
 import {
   Palette, Shirt, Box, PenTool, Scissors, Maximize, Grid2X2,
   TrendingUp, Sparkles, Zap, ArrowRight, Loader2, BarChart3, RotateCw,
@@ -238,6 +239,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, isDarkMode }) => {
                     const Icon = IconMap[tool.icon] || Sparkles;
                     const isPrimary = INTENT_PRIORITY[intent].primary.includes(tool.id);
                     const isDeemphasized = !isPrimary && !INTENT_PRIORITY[intent].secondary.includes(tool.id) && intent !== UserIntent.IDLE;
+
+                    // Use custom enhanced card for POD Designer
+                    if (tool.id === ToolType.POD_MERCH) {
+                      return (
+                        <PODDesignerCard
+                          key={tool.id}
+                          isDarkMode={isDarkMode}
+                          isPrimary={isPrimary}
+                          onNavigate={handleToolClick}
+                          getCtaLabel={getCtaLabel}
+                        />
+                      );
+                    }
 
                     return (
                       <button
