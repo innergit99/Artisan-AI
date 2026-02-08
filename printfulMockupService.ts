@@ -119,6 +119,10 @@ class PrintfulMockupService {
   async generateMockup(options: PrintfulMockupOptions): Promise<MockupResult> {
     const { designUrl, productType } = options;
     
+    // Debug: Log API key status (first 5 chars only for security)
+    const keyStatus = this.apiKey ? `Present (${this.apiKey.substring(0, 5)}...)` : 'MISSING';
+    console.log('🔍 Printful Service:', { keyStatus, productType, designUrlLength: designUrl?.length });
+    
     if (!this.apiKey) {
       console.warn('⚠️ Printful API key missing, using fallback');
       return this.generateFallbackMockup(designUrl, productType);
@@ -126,8 +130,16 @@ class PrintfulMockupService {
 
     const template = MOCKUP_TEMPLATES[productType];
     
+    if (!template) {
+      console.error('❌ No template found for product type:', productType);
+      return this.generateFallbackMockup(designUrl, productType);
+    }
+    
+    console.log('📋 Using template:', { variantId: template.variantId, placement: template.placement });
+    
     try {
       // Create mockup generation task
+      console.log('🚀 Calling Printful API...');
       const response = await fetch(`${this.baseUrl}/mockup-generator/create-task`, {
         method: 'POST',
         headers: {
@@ -142,7 +154,7 @@ class PrintfulMockupService {
           option_groups: {
             [template.placement]: {
               orientation: 'any',
-              technique: 'dtg', // Direct-to-garment for apparel
+              technique: 'dtg',
               placement: template.placement
             }
           },
@@ -162,14 +174,19 @@ class PrintfulMockupService {
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Printful API error:', response.status, errorText);
         throw new Error(`Printful API error: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log('✅ Printful task created:', data);
       const taskKey = data.result.task_key;
 
       // Poll for mockup completion
+      console.log('⏳ Polling for mockup...');
       const mockupUrl = await this.pollForMockup(taskKey);
+      console.log('🎉 Mockup ready:', mockupUrl);
       
       return {
         url: mockupUrl,
@@ -178,8 +195,8 @@ class PrintfulMockupService {
         height: 1000
       };
 
-    } catch (error) {
-      console.error('Printful mockup failed:', error);
+    } catch (error: any) {
+      console.error('❌ Printful mockup failed:', error.message);
       return this.generateFallbackMockup(designUrl, productType);
     }
   }
