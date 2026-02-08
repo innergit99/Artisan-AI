@@ -55,6 +55,8 @@ export interface ToolConfig {
 export interface PODStyle {
   id: string;
   label: string;
+  category: string;
+  gradient: string;
   promptSuffix: string;
 }
 

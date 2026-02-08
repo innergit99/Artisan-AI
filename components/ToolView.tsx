@@ -18,6 +18,7 @@ import { visualService } from '../visualService';
 import { complianceService } from '../complianceService';
 import { NicheRadarView } from './NicheRadarView';
 import { CharacterVault } from './CharacterVault';
+import { PODStyleCard } from './PODStyleCard';
 import {
   ChevronLeft, Sparkles, Download, Loader2, ImageIcon, X, Rocket, Upload,
   Search, Copy, CheckCircle, ZoomIn, ZoomOut, Move, Palette, Edit3,
@@ -345,6 +346,7 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
+  const [selectedStyleCategory, setSelectedStyleCategory] = useState<string>('All');
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [activeMockup, setActiveMockup] = useState<MockupType>('STANDARD_TEE');
   const [is4K, setIs4K] = useState(false);
@@ -3994,15 +3996,28 @@ h1, h2, h3 { page -break-after: avoid; }
 
             {toolType === ToolType.POD_MERCH && (
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Factory Design DNA (22 Styles)</label>
-                <div className="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-3 custom-scrollbar">
-                  {POD_STYLES.map(s => (
-                    <button
-                      key={s.id} onClick={() => setSelectedStyle(s.id === selectedStyle ? null : s.id)}
-                      className={`p-4 rounded-2xl border transition-all text-[11px] font-black uppercase text-center leading-tight min-h-[60px] flex items-center justify-center ${selectedStyle === s.id ? 'bg-indigo-600 border-indigo-400 text-white shadow-lg' : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200'} `}
-                    >
-                      {s.label}
-                    </button>
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Style Studio</label>
+                  <div className="flex gap-1">
+                    {["All", "Modern", "Retro", "Artistic", "Gothic"].map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => setSelectedStyleCategory(cat)}
+                        className={`px-2 py-1 rounded-lg text-[8px] font-black uppercase tracking-wider transition-all ${selectedStyleCategory === cat ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-800 text-slate-500 hover:text-slate-300 hover:bg-slate-700'}`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                  {POD_STYLES.filter(s => selectedStyleCategory === "All" || s.category === selectedStyleCategory).map(s => (
+                    <PODStyleCard
+                      key={s.id}
+                      style={s}
+                      isSelected={selectedStyle === s.id}
+                      onClick={() => setSelectedStyle(s.id === selectedStyle ? null : s.id)}
+                    />
                   ))}
                 </div>
               </div>
