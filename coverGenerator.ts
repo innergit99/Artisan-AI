@@ -584,31 +584,51 @@ export class CoverGenerator {
         this.canvas.width = width;
         this.canvas.height = height;
 
-        const palette = this.getColorPalette('FICTION', 'vibrant');
+        const palette = this.getColorPalette('ADVENTURE', 'vibrant');
         this.drawBackground(palette);
 
-        // High-End Procedural Background
-        this.drawProceduralPattern('FICTION', width, height, palette);
-
-        // Abstract Design Layers
+        // CREATE STYLIZED ILLUSTRATION
         this.ctx.save();
-        this.ctx.globalAlpha = 0.1;
-        this.ctx.strokeStyle = '#ffffff';
-        this.ctx.lineWidth = 0.5;
-        for (let i = 0; i < 100; i++) {
-            this.ctx.beginPath();
-            this.ctx.moveTo(Math.random() * width, 0);
-            this.ctx.lineTo(Math.random() * width, height);
-            this.ctx.stroke();
+        this.ctx.translate(width / 2, height / 2);
 
+        // Circular Badge
+        this.ctx.beginPath();
+        this.ctx.arc(0, 0, width * 0.35, 0, Math.PI * 2);
+        this.ctx.fillStyle = 'white';
+        this.ctx.fill();
+        this.ctx.lineWidth = 15;
+        this.ctx.strokeStyle = palette[0];
+        this.ctx.stroke();
+
+        // Stylized symbol based on prompt
+        this.ctx.fillStyle = palette[1];
+        const size = width * 0.2;
+        if (prompt.toLowerCase().includes('mountain') || prompt.toLowerCase().includes('adventure')) {
             this.ctx.beginPath();
-            this.ctx.moveTo(0, Math.random() * height);
-            this.ctx.lineTo(width, Math.random() * height);
-            this.ctx.stroke();
+            this.ctx.moveTo(-size, size); this.ctx.lineTo(0, -size); this.ctx.lineTo(size, size);
+            this.ctx.closePath(); this.ctx.fill();
+        } else if (prompt.toLowerCase().includes('space') || prompt.toLowerCase().includes('star')) {
+            this.ctx.beginPath();
+            this.ctx.arc(0, 0, size, 0, Math.PI * 2);
+            this.ctx.fill();
+            this.ctx.fillStyle = 'white';
+            this.ctx.beginPath();
+            this.ctx.arc(size / 2, -size / 2, size / 3, 0, Math.PI * 2);
+            this.ctx.fill();
+        } else {
+            // Default Abstract Emblem
+            for (let i = 0; i < 4; i++) {
+                this.ctx.rotate(Math.PI / 2);
+                this.ctx.fillRect(-size / 2, -size / 2, size, size / 2);
+            }
         }
         this.ctx.restore();
 
-        // NO OVERLAY TEXT FOR PREMIUM LOOK
+        // Industrial Frame
+        this.ctx.strokeStyle = '#000';
+        this.ctx.lineWidth = 4;
+        this.ctx.strokeRect(20, 20, width - 40, height - 40);
+
         return this.canvas.toDataURL('image/png');
     }
 }

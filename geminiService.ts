@@ -551,10 +551,10 @@ No explanations. No quotes.`;
             contents: [{
               parts: [{ text: prompt }]
             }],
-            generation_config: {
+            generationConfig: {
               temperature: 0.7,
-              max_output_tokens: 8192,
-              ...(jsonMode && { response_mime_type: "application/json" })
+              maxOutputTokens: 8192,
+              ...(jsonMode && { responseMimeType: "application/json" })
             }
           })
         }
