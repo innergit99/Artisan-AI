@@ -29,7 +29,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Create mockup task
+    // Create mockup task - Printful expects 'id' not 'variant_ids'
     const createResponse = await fetch('https://api.printful.com/mockup-generator/create-task', {
       method: 'POST',
       headers: {
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        variant_ids: [parseInt(variantId)],
+        id: parseInt(variantId),
         format: format || 'jpg',
         width: width || 1000
       })
