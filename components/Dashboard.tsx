@@ -148,7 +148,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, isDarkMode }) => {
             alt=""
             className={`w-full h-full object-cover grayscale transition-all duration-1000 ${!isDarkMode ? 'invert brightness-150 contrast-50' : ''}`}
           />
-          <div className={`absolute inset-0 bg-gradient-to-b ${isDarkMode ? 'from-slate-950 via-indigo-950/20 to-slate-950' : 'from-slate-50 via-white/80 to-slate-50'}`}></div>
+          <div className={`absolute inset-0 bg-linear-to-b ${isDarkMode ? 'from-slate-950 via-indigo-950/20 to-slate-950' : 'from-slate-50 via-white/80 to-slate-50'}`}></div>
         </div>
         <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] blur-[200px] rounded-full transition-colors duration-1000 ${isDarkMode ? 'bg-indigo-500/5' : 'bg-indigo-500/10'}`}></div>
       </div>
@@ -231,7 +231,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, isDarkMode }) => {
                       category === 'CREATIVE' ? '🔵 Content & Aesthetic DNA' :
                         '⚙️ Industrial Utilities'}
                   </h2>
-                  <div className={`h-[1px] flex-1 ${isDarkMode ? 'bg-white/5' : 'bg-slate-200'}`} />
+                  <div className={`h-px flex-1 ${isDarkMode ? 'bg-white/5' : 'bg-slate-200'}`} />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
@@ -268,7 +268,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, isDarkMode }) => {
                             ${isDarkMode ? 'opacity-[0.5] group-hover:opacity-[0.8]' : 'opacity-[0.3] group-hover:opacity-[0.7] grayscale group-hover:grayscale-0 mix-blend-multiply'}`}
                           style={{ backgroundImage: `url(${tool.image})` }}
                         />
-                        <div className={`absolute inset-0 transition-all duration-700 ${isDarkMode ? 'bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent' : 'bg-gradient-to-t from-white via-white/40 to-transparent group-hover:from-white/60'}`} />
+                        <div className={`absolute inset-0 transition-all duration-700 ${isDarkMode ? 'bg-linear-to-t from-slate-950 via-slate-950/20 to-transparent' : 'bg-linear-to-t from-white via-white/40 to-transparent group-hover:from-white/60'}`} />
 
                         {/* STATUS BADGES */}
                         <div className="absolute top-10 left-10 flex items-center gap-3">
@@ -282,9 +282,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, isDarkMode }) => {
                           </div>
                         </div>
 
-                        <div className="absolute inset-0 p-12 flex flex-col justify-end gap-6 relative z-10">
+                        <div className="absolute inset-0 p-12 flex flex-col justify-end gap-6 z-10">
                           <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-700 group-hover:scale-125 group-hover:-rotate-6 ${isDarkMode ? 'bg-slate-900 shadow-black' : 'bg-white shadow-indigo-100'}`}>
-                            <div className={`w-full h-full rounded-2xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center shadow-inner`}>
+                            <div className={`w-full h-full rounded-2xl bg-linear-to-br ${tool.gradient} flex items-center justify-center shadow-inner`}>
                               <Icon size={28} className="text-white" />
                             </div>
                           </div>
@@ -306,7 +306,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, isDarkMode }) => {
                         </div>
 
                         <div className="absolute top-10 right-10 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 duration-500">
-                          <div className="p-5 rounded-[2rem] shadow-2xl bg-indigo-600 text-white">
+                          <div className="p-5 rounded-4xl shadow-2xl bg-indigo-600 text-white">
                             <ArrowRight size={24} />
                           </div>
                         </div>

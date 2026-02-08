@@ -72,8 +72,8 @@ export const PODDesignerCard: React.FC<PODDesignerCardProps> = ({
             : 'border-slate-900/20 shadow-2xl shadow-black/5 hover:border-pink-400')
         }
         ${isDarkMode 
-          ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-pink-950/30 backdrop-blur-3xl' 
-          : 'bg-gradient-to-br from-white via-pink-50/50 to-rose-50 shadow-2xl shadow-slate-400/20'
+          ? 'bg-linear-to-br from-slate-900 via-slate-800 to-pink-950/30 backdrop-blur-3xl' 
+          : 'bg-linear-to-br from-white via-pink-50/50 to-rose-50 shadow-2xl shadow-slate-400/20'
         }`}
       style={{
         transform: `perspective(1000px) rotateX(${-mousePosition.y}deg) rotateY(${mousePosition.x}deg) scale(${isHovered ? 1.02 : 1})`,
@@ -147,7 +147,7 @@ export const PODDesignerCard: React.FC<PODDesignerCardProps> = ({
             }}
           />
           <div className={`absolute inset-0 
-            ${isDarkMode ? 'bg-gradient-to-t from-slate-900/80 to-transparent' : 'bg-gradient-to-t from-white/60 to-transparent'}`}
+            ${isDarkMode ? 'bg-linear-to-t from-slate-900/80 to-transparent' : 'bg-linear-to-t from-white/60 to-transparent'}`}
           />
         </div>
         
@@ -222,7 +222,7 @@ export const PODDesignerCard: React.FC<PODDesignerCardProps> = ({
           <div className={`relative w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3
             ${isDarkMode ? 'bg-slate-900 shadow-black' : 'bg-white shadow-pink-200'}`}
           >
-            <div className="w-full h-full rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-inner">
+            <div className="w-full h-full rounded-2xl bg-linear-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-inner">
               <Shirt size={28} className="text-white" />
             </div>
           </div>
@@ -235,7 +235,7 @@ export const PODDesignerCard: React.FC<PODDesignerCardProps> = ({
             POD Designer
           </h3>
           <div 
-            className={`absolute -bottom-1 left-0 h-1 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 transition-all duration-500
+            className={`absolute -bottom-1 left-0 h-1 rounded-full bg-linear-to-r from-pink-500 to-rose-500 transition-all duration-500
               ${isHovered ? 'w-full' : 'w-0'}`}
           />
         </div>
@@ -296,7 +296,7 @@ export const PODDesignerCard: React.FC<PODDesignerCardProps> = ({
       <div className={`absolute top-8 right-8 mt-[280px] transition-all duration-500 z-20
         ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}
       >
-        <div className={`p-4 rounded-[1.5rem] shadow-2xl transition-all duration-300
+        <div className={`p-4 rounded-3xl shadow-2xl transition-all duration-300
           ${isDarkMode 
             ? 'bg-pink-600 text-white shadow-pink-600/30' 
             : 'bg-pink-500 text-white shadow-pink-500/30'
@@ -310,8 +310,8 @@ export const PODDesignerCard: React.FC<PODDesignerCardProps> = ({
       {/* Bottom Gradient Fade */}
       <div className={`absolute bottom-0 left-0 right-0 h-48 pointer-events-none
         ${isDarkMode 
-          ? 'bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent' 
-          : 'bg-gradient-to-t from-white via-white/90 to-transparent'
+          ? 'bg-linear-to-t from-slate-950 via-slate-950/80 to-transparent' 
+          : 'bg-linear-to-t from-white via-white/90 to-transparent'
         }`}
       />
 
@@ -319,8 +319,8 @@ export const PODDesignerCard: React.FC<PODDesignerCardProps> = ({
       <div 
         className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none
           ${isDarkMode 
-            ? 'bg-gradient-to-tr from-pink-600/10 via-transparent to-purple-600/10' 
-            : 'bg-gradient-to-tr from-pink-400/20 via-transparent to-purple-400/20'
+            ? 'bg-linear-to-tr from-pink-600/10 via-transparent to-purple-600/10' 
+            : 'bg-linear-to-tr from-pink-400/20 via-transparent to-purple-400/20'
           }`}
       />
     </button>

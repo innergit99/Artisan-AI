@@ -30,7 +30,7 @@ export const PODStyleCard: React.FC<PODStyleCardProps> = ({
       `}
     >
       {/* Background Gradient */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${style.gradient} opacity-80 group-hover:opacity-100 transition-opacity`} />
+      <div className={`absolute inset-0 bg-linear-to-br ${style.gradient} opacity-80 group-hover:opacity-100 transition-opacity`} />
       
       {/* Pattern Overlay */}
       <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPjwvc3ZnPg==')]" />
@@ -59,7 +59,7 @@ export const PODStyleCard: React.FC<PODStyleCardProps> = ({
       </div>
       
       {/* Hover Glow */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
     </button>
   );
 };

@@ -317,7 +317,7 @@ const IndustrialBackground: React.FC<{ tool: any }> = ({ tool }) => {
   return (
     <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none">
       <canvas ref={canvasRef} className="absolute inset-0" />
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-transparent to-slate-950/90" />
+      <div className="absolute inset-0 bg-linear-to-b from-slate-950/60 via-transparent to-slate-950/90" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.7)_100%)]" />
       <div className="absolute w-full h-[1.5px] bg-indigo-500/30 top-0 animate-[scan_6s_linear_infinite]" />
     </div>
@@ -1178,7 +1178,7 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* LEFT: MASTER LIST */}
           <div className="lg:col-span-5 space-y-8">
-            <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group">
+            <div className="bg-linear-to-br from-slate-900 to-slate-950 border border-slate-800 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -mr-16 -mt-16 blur-3xl transition-all group-hover:bg-indigo-500/10" />
               <div className="flex items-center gap-4 mb-6">
                 <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-500">
