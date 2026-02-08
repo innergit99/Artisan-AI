@@ -19,7 +19,7 @@ import { complianceService } from '../complianceService';
 import { NicheRadarView } from './NicheRadarView';
 import { CharacterVault } from './CharacterVault';
 import { PODStyleCard } from './PODStyleCard';
-import { printfulMockupService } from '../printfulMockupService';
+import { canvasMockupService } from '../canvasMockupService';
 import {
   ChevronLeft, Sparkles, Download, Loader2, ImageIcon, X, Rocket, Upload,
   Search, Copy, CheckCircle, ZoomIn, ZoomOut, Move, Palette, Edit3,
@@ -1080,10 +1080,10 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
         tags: mockDossier.listingDossiers['Amazon/Etsy'].tags
       });
 
-      // 4. Generate Professional Printful Mockups
+      // 4. Generate Canvas Mockups (Free, no API limits)
       try {
         console.log('🎨 Final asset for mockup:', finalAsset?.substring(0, 50));
-        const mockupResult = await printfulMockupService.generateMockup({
+        const mockupResult = await canvasMockupService.generateMockup({
           designUrl: finalAsset,
           productType: activeMockup
         });
