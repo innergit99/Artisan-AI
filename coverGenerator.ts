@@ -473,23 +473,31 @@ export class CoverGenerator {
     }
 
     private drawGenreSymbol(genre: string, width: number, height: number, palette: any) {
-        // Draw subtle genre icon in background
         this.ctx.save();
-        this.ctx.globalAlpha = 0.05;
-        this.ctx.font = `${width / 2.5}px Arial`;
+        this.ctx.globalAlpha = 0.15; // Increased visibility
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
         this.ctx.fillStyle = '#FFF';
 
         let symbol = "📖";
-        if (genre.includes('MYSTERY')) symbol = "🔍";
-        if (genre.includes('THRILLER')) symbol = "⚡";
-        if (genre.includes('ROMANCE')) symbol = "♥";
-        if (genre.includes('FANTASY')) symbol = "⚔";
-        if (genre.includes('SCI-FI')) symbol = "🚀";
-        if (genre.includes('HORROR')) symbol = "👁";
+        let color = "#FFF";
 
+        if (genre.includes('MYSTERY')) { symbol = "🔍"; color = "#60a5fa"; }
+        if (genre.includes('THRILLER')) { symbol = "⚡"; color = "#fbbf24"; }
+        if (genre.includes('ROMANCE')) { symbol = "♥"; color = "#f43f5e"; }
+        if (genre.includes('FANTASY')) { symbol = "⚔"; color = "#8b5cf6"; }
+        if (genre.includes('SCI-FI')) { symbol = "🚀"; color = "#22d3ee"; }
+        if (genre.includes('HORROR')) { symbol = "👁"; color = "#ef4444"; }
+        if (genre.includes('CHILDREN')) { symbol = "🎨"; color = "#facc15"; }
+
+        this.ctx.font = `bold ${width / 2}px Arial`;
+        this.ctx.fillStyle = color;
         this.ctx.fillText(symbol, width / 2, height / 2);
+
+        // Add a secondary offset glow
+        this.ctx.globalAlpha = 0.05;
+        this.ctx.fillText(symbol, width / 2 + 10, height / 2 + 10);
+
         this.ctx.restore();
     }
 
@@ -498,32 +506,73 @@ export class CoverGenerator {
      * Used as fallback for Chapter headers
      */
     async generateInteriorImage(prompt: string, title: string, genre: string): Promise<string> {
-        // Simple procedural generation for now
-        const width = 800;
-        const height = 600;
+        const width = 1200; // High res
+        const height = 900;
         this.canvas.width = width;
         this.canvas.height = height;
 
-        // White background
-        this.ctx.fillStyle = '#FFFFFF';
+        const g = genre.toUpperCase();
+
+        // Background - Soft off-white for paper feel
+        this.ctx.fillStyle = '#fdfdfd';
         this.ctx.fillRect(0, 0, width, height);
 
-        // Abstract Design - NO TEXT Labelling
-        this.ctx.save();
-        this.ctx.globalAlpha = 0.08;
-        this.ctx.strokeStyle = '#000000';
+        // Ornate Border
+        this.ctx.strokeStyle = '#333';
+        this.ctx.lineWidth = 4;
+        this.ctx.strokeRect(40, 40, width - 80, height - 80);
         this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(50, 50, width - 100, height - 100);
 
-        for (let i = 0; i < 40; i++) {
-            this.ctx.beginPath();
-            const x = Math.random() * width;
-            const y = Math.random() * height;
-            const r = Math.random() * 150;
-            this.ctx.moveTo(x + r, y);
-            this.ctx.arc(x, y, r, 0, Math.PI * 2);
-            this.ctx.stroke();
-        }
+        // Genre Specific Centerpiece
+        this.ctx.save();
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+
+        let symbol = "📜";
+        let color = "#444";
+
+        if (g.includes('MYSTERY')) { symbol = "🕵️"; color = "#1e293b"; }
+        if (g.includes('ROMANCE')) { symbol = "🌹"; color = "#9f1239"; }
+        if (g.includes('SCI-FI')) { symbol = "🛸"; color = "#0e7490"; }
+        if (g.includes('FANTASY')) { symbol = "🐉"; color = "#4c1d95"; }
+        if (g.includes('HORROR')) { symbol = "💀"; color = "#450a0a"; }
+        if (g.includes('CHILDREN')) { symbol = "🧸"; color = "#b45309"; }
+
+        // Draw shadow/glow
+        this.ctx.font = `200px serif`;
+        this.ctx.globalAlpha = 0.1;
+        this.ctx.fillText(symbol, width / 2 + 5, height / 2 + 5);
+
+        // Draw main symbol
+        this.ctx.globalAlpha = 0.8;
+        this.ctx.fillStyle = color;
+        this.ctx.fillText(symbol, width / 2, height / 2);
+
+        // Add decorative corner elements
+        const cornerSize = 100;
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = 2;
+        this.ctx.globalAlpha = 0.4;
+
+        // Top-Left corner adornment
+        this.ctx.beginPath();
+        this.ctx.moveTo(60, 60 + cornerSize);
+        this.ctx.lineTo(60, 60);
+        this.ctx.lineTo(60 + cornerSize, 60);
+        this.ctx.stroke();
+
+        // Bottom-Right corner
+        this.ctx.beginPath();
+        this.ctx.moveTo(width - 60, height - 60 - cornerSize);
+        this.ctx.lineTo(width - 60, height - 60);
+        this.ctx.lineTo(width - 60 - cornerSize, height - 60);
+        this.ctx.stroke();
+
         this.ctx.restore();
+
+        // Subtle background texture
+        this.addGrain(0.02);
 
         return this.canvas.toDataURL('image/jpeg', 0.9);
     }
