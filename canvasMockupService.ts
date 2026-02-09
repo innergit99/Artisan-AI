@@ -340,6 +340,362 @@ const PRODUCT_SHAPES: Record<string, any> = {
       ctx.fillRect(158, 108, 484, 684); // Paper
     },
     designArea: { x: 160, y: 110, width: 480, height: 680 } // Full bleed inside frame
+  },
+
+  // --- NEW V3 SHAPES (Requested by User) ---
+
+  'FLEECE_BLANKET': {
+    width: 1000,
+    height: 1000,
+    draw: (ctx: CanvasRenderingContext2D, color: string) => {
+      addDropShadow(ctx, 10, 20);
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#ccc'; // Soft edge
+      ctx.lineWidth = 1;
+
+      // Soft/Fuzzy folded square
+      ctx.beginPath();
+      // Top with slight wave
+      ctx.moveTo(100, 100);
+      ctx.quadraticCurveTo(300, 90, 500, 100);
+      ctx.quadraticCurveTo(700, 110, 900, 100);
+      // Right side drape
+      ctx.quadraticCurveTo(910, 300, 900, 500);
+      ctx.quadraticCurveTo(890, 700, 900, 900);
+      // Bottom with wave
+      ctx.quadraticCurveTo(700, 910, 500, 900);
+      ctx.quadraticCurveTo(300, 890, 100, 900);
+      // Left side drape
+      ctx.quadraticCurveTo(90, 700, 100, 500);
+      ctx.quadraticCurveTo(110, 300, 100, 100);
+
+      ctx.fill();
+      resetShadow(ctx);
+
+      // Fuzzy Texture (Noise hint)
+      ctx.globalAlpha = 0.1;
+      for (let i = 0; i < 500; i++) {
+        ctx.fillRect(100 + Math.random() * 800, 100 + Math.random() * 800, 2, 2);
+      }
+      ctx.globalAlpha = 1.0;
+
+      // Fold line
+      drawWrinkle(ctx, 100, 800, 900, 200, 500, 500, 0.05);
+    },
+    designArea: { x: 150, y: 150, width: 700, height: 700 }
+  },
+
+  'BATH_MAT': {
+    width: 1000,
+    height: 600,
+    draw: (ctx: CanvasRenderingContext2D, color: string) => {
+      addDropShadow(ctx, 5, 10);
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#ddd';
+      ctx.lineWidth = 1;
+
+      // Plush Rectangle
+      ctx.beginPath();
+      ctx.roundRect(100, 100, 800, 400, 20);
+      ctx.fill();
+      resetShadow(ctx);
+
+      // Plush Texture strokes
+      ctx.strokeStyle = 'rgba(0,0,0,0.05)';
+      ctx.beginPath();
+      for (let i = 0; i < 100; i++) {
+        const x = 120 + Math.random() * 760;
+        const y = 120 + Math.random() * 360;
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + 5, y + 5);
+      }
+      ctx.stroke();
+    },
+    designArea: { x: 120, y: 120, width: 760, height: 360 }
+  },
+
+  'BACKPACK': {
+    width: 800,
+    height: 1000,
+    draw: (ctx: CanvasRenderingContext2D, color: string) => {
+      addDropShadow(ctx, 20, 30);
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+
+      // Main Bag Body (Dome top)
+      ctx.beginPath();
+      ctx.moveTo(200, 300);
+      ctx.quadraticCurveTo(400, 100, 600, 300); // Top Dome
+      ctx.lineTo(620, 800); // R Side
+      ctx.quadraticCurveTo(400, 850, 180, 800); // Bottom
+      ctx.lineTo(200, 300); // L Side
+      ctx.fill();
+      resetShadow(ctx);
+      ctx.stroke();
+
+      // Front Pocket
+      ctx.fillStyle = shadeColor(color, -10);
+      ctx.beginPath();
+      ctx.roundRect(250, 500, 300, 250, 30);
+      ctx.fill();
+      ctx.stroke();
+
+      // Top Handle
+      ctx.beginPath();
+      ctx.moveTo(350, 200);
+      ctx.quadraticCurveTo(400, 150, 450, 200);
+      ctx.lineWidth = 10;
+      ctx.stroke();
+
+      // Zipper Hint
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#555';
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(220, 320);
+      ctx.quadraticCurveTo(400, 150, 580, 320);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    },
+    designArea: { x: 250, y: 300, width: 300, height: 200 } // Upper pocket area
+  },
+
+  'DUFFLE_BAG': {
+    width: 1000,
+    height: 600,
+    draw: (ctx: CanvasRenderingContext2D, color: string) => {
+      addDropShadow(ctx, 15, 25);
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 2;
+
+      // Cylinder Side
+      ctx.beginPath();
+      ctx.ellipse(200, 300, 80, 150, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Main Body
+      ctx.beginPath();
+      ctx.rect(200, 150, 600, 300);
+      ctx.fill();
+      resetShadow(ctx);
+      ctx.stroke(); // Top/Bottom lines
+
+      // Straps
+      ctx.fillStyle = '#111';
+      ctx.fillRect(350, 150, 40, 300);
+      ctx.fillRect(650, 150, 40, 300);
+
+      // Handles
+      ctx.beginPath();
+      ctx.moveTo(370, 150);
+      ctx.quadraticCurveTo(520, 0, 670, 150);
+      ctx.lineWidth = 8;
+      ctx.stroke();
+      ctx.lineWidth = 2;
+    },
+    designArea: { x: 300, y: 180, width: 440, height: 240 }
+  },
+
+  'WALL_CLOCK': {
+    width: 800,
+    height: 800,
+    draw: (ctx: CanvasRenderingContext2D, color: string) => {
+      addDropShadow(ctx, 20, 40);
+
+      // Rim
+      ctx.fillStyle = '#111'; // Black Rim usually
+      ctx.beginPath();
+      ctx.arc(400, 400, 350, 0, Math.PI * 2);
+      ctx.fill();
+      resetShadow(ctx);
+
+      // Face
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(400, 400, 320, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ticks
+      ctx.fillStyle = '#000';
+      for (let i = 0; i < 12; i++) {
+        ctx.save();
+        ctx.translate(400, 400);
+        ctx.rotate(i * Math.PI / 6);
+        ctx.fillRect(-5, -300, 10, 30);
+        ctx.restore();
+      }
+
+      // Hands (10:10)
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 15;
+      ctx.lineCap = 'round';
+      // Hour Hand
+      ctx.beginPath(); ctx.moveTo(400, 400); ctx.lineTo(300, 300); ctx.stroke();
+      // Minute Hand
+      ctx.lineWidth = 10;
+      ctx.beginPath(); ctx.moveTo(400, 400); ctx.lineTo(550, 320); ctx.stroke();
+      // Second Hand (Red)
+      ctx.strokeStyle = 'red'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(400, 400); ctx.lineTo(400, 150); ctx.stroke();
+
+      // Center cap
+      ctx.fillStyle = '#000';
+      ctx.beginPath(); ctx.arc(400, 400, 15, 0, Math.PI * 2); ctx.fill();
+    },
+    designArea: { x: 200, y: 200, width: 400, height: 400 } // Center face
+  },
+
+  'SPIRAL_NOTEBOOK': {
+    width: 800,
+    height: 1000,
+    draw: (ctx: CanvasRenderingContext2D, color: string) => {
+      addDropShadow(ctx, 10, 20);
+
+      // Back Cover (slightly visible)
+      ctx.fillStyle = '#333';
+      ctx.beginPath(); ctx.roundRect(100, 100, 600, 800, 10); ctx.fill();
+
+      // Front Cover
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 1;
+      resetShadow(ctx); // Shadow already applied to back cover for depth
+
+      ctx.beginPath(); ctx.roundRect(100, 100, 600, 800, 10);
+      ctx.fill(); ctx.stroke();
+
+      // Spiral Binding
+      ctx.fillStyle = '#ddd'; // Silver coils
+      ctx.strokeStyle = '#999';
+      for (let y = 120; y < 880; y += 40) {
+        // Coil hole
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(120, y, 6, 0, Math.PI * 2); ctx.fill();
+        // Wire loop
+        ctx.strokeStyle = '#888'; ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.arc(110, y, 15, 0, Math.PI * 2); ctx.stroke();
+      }
+    },
+    designArea: { x: 150, y: 150, width: 500, height: 700 }
+  },
+
+  'HARDCOVER_JOURNAL': {
+    width: 700,
+    height: 900,
+    draw: (ctx: CanvasRenderingContext2D, color: string) => {
+      addDropShadow(ctx, 15, 30);
+
+      // Book Cover
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.roundRect(100, 100, 500, 700, 5); ctx.fill(); resetShadow(ctx); ctx.stroke();
+
+      // Spine Indentation (Left)
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillRect(115, 100, 5, 700); // Groove
+
+      // Elastic Band (optional, usually on right)
+      ctx.fillStyle = '#111';
+      ctx.fillRect(550, 100, 15, 700);
+    },
+    designArea: { x: 130, y: 150, width: 400, height: 600 }
+  },
+
+  'SHOWER_CURTAIN': {
+    width: 800,
+    height: 800,
+    draw: (ctx: CanvasRenderingContext2D, color: string) => {
+      addDropShadow(ctx, 10, 20);
+
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#ccc';
+      ctx.lineWidth = 1;
+
+      // Large rect
+      ctx.beginPath(); ctx.rect(100, 100, 600, 600); ctx.fill(); resetShadow(ctx); ctx.stroke();
+
+      // Grommets
+      ctx.fillStyle = '#fff';
+      ctx.strokeStyle = '#999';
+      ctx.lineWidth = 2;
+      for (let x = 150; x <= 650; x += 100) {
+        ctx.beginPath(); ctx.arc(x, 130, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      }
+
+      // Folds/Drape
+      drawWrinkle(ctx, 150, 700, 150, 100, 170, 400, 0.1);
+      drawWrinkle(ctx, 350, 700, 350, 100, 370, 400, 0.1);
+      drawWrinkle(ctx, 550, 700, 550, 100, 570, 400, 0.1);
+    },
+    designArea: { x: 100, y: 150, width: 600, height: 500 }
+  },
+
+  'DUVET_COVER': {
+    width: 1000,
+    height: 800,
+    draw: (ctx: CanvasRenderingContext2D, color: string) => {
+      addDropShadow(ctx, 10, 20);
+
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#ccc';
+      ctx.lineWidth = 1;
+
+      // Bedding Shape
+      ctx.beginPath();
+      ctx.moveTo(100, 200);
+      ctx.lineTo(900, 200); // Top edge
+      ctx.lineTo(920, 700); // R Side
+      ctx.quadraticCurveTo(500, 750, 80, 700); // Bottom drape
+      ctx.lineTo(100, 200);
+      ctx.fill();
+      resetShadow(ctx);
+      ctx.stroke();
+
+      // Pillow Hints
+      ctx.fillStyle = '#fff';
+      ctx.strokeStyle = '#ddd';
+      // Pillow L
+      ctx.beginPath(); ctx.roundRect(150, 100, 200, 150, 10); ctx.fill(); ctx.stroke();
+      // Pillow R
+      ctx.beginPath(); ctx.roundRect(650, 100, 200, 150, 10); ctx.fill(); ctx.stroke();
+    },
+    designArea: { x: 150, y: 250, width: 700, height: 400 }
+  },
+
+  'SILK_SCARF': {
+    width: 800,
+    height: 800,
+    draw: (ctx: CanvasRenderingContext2D, color: string) => {
+      addDropShadow(ctx, 10, 20);
+
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#ddd';
+      ctx.lineWidth = 0.5;
+
+      // Flowing Diamond shape
+      ctx.beginPath();
+      ctx.moveTo(400, 100); // Top
+      ctx.quadraticCurveTo(600, 200, 700, 400); // R
+      ctx.quadraticCurveTo(600, 600, 400, 700); // Bottom
+      ctx.quadraticCurveTo(200, 600, 100, 400); // L
+      ctx.quadraticCurveTo(200, 200, 400, 100);
+      ctx.fill();
+      resetShadow(ctx);
+      ctx.stroke();
+
+      // Silk sheen
+      const grad = ctx.createLinearGradient(200, 200, 600, 600);
+      grad.addColorStop(0, 'rgba(255,255,255,0)');
+      grad.addColorStop(0.5, 'rgba(255,255,255,0.3)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = grad;
+      ctx.fill();
+    },
+    designArea: { x: 250, y: 250, width: 300, height: 300 }
   }
 };
 
@@ -362,11 +718,28 @@ function getTemplate(type: string): any {
   const lower = type.toLowerCase();
 
   // Detailed mapping for 25+ SKUs
-  if (lower.includes('tee') || lower.includes('dress')) return PRODUCT_SHAPES['STANDARD_TEE']; // Dress reuses Tee logic for flow
+  if (lower.includes('tee') || lower.includes('dress')) return PRODUCT_SHAPES['STANDARD_TEE'];
   if (lower.includes('hat')) return PRODUCT_SHAPES['HAT'];
   if (lower.includes('mug')) return PRODUCT_SHAPES['MUG'];
-  if (lower.includes('tote') || lower.includes('bag') || lower.includes('backpack')) return PRODUCT_SHAPES['TOTE_BAG'];
-  if (lower.includes('sticker') || lower.includes('magnet') || lower.includes('button') || lower.includes('clock')) return PRODUCT_SHAPES['STICKER'];
+
+  // Specific Bags
+  if (lower.includes('backpack')) return PRODUCT_SHAPES['BACKPACK'];
+  if (lower.includes('duffle')) return PRODUCT_SHAPES['DUFFLE_BAG'];
+  if (lower.includes('tote') || lower.includes('bag')) return PRODUCT_SHAPES['TOTE_BAG'];
+
+  // Specific Stationery
+  if (lower.includes('notebook')) return PRODUCT_SHAPES['SPIRAL_NOTEBOOK'];
+  if (lower.includes('journal')) return PRODUCT_SHAPES['HARDCOVER_JOURNAL'];
+
+  // Specific Home
+  if (lower.includes('clock')) return PRODUCT_SHAPES['WALL_CLOCK'];
+  if (lower.includes('blanket')) return PRODUCT_SHAPES['FLEECE_BLANKET'];
+  if (lower.includes('bath') || lower.includes('mat')) return PRODUCT_SHAPES['BATH_MAT'];
+  if (lower.includes('shower') || lower.includes('curtain')) return PRODUCT_SHAPES['SHOWER_CURTAIN'];
+  if (lower.includes('duvet') || lower.includes('cover')) return PRODUCT_SHAPES['DUVET_COVER'];
+  if (lower.includes('scarf')) return PRODUCT_SHAPES['SILK_SCARF'];
+
+  if (lower.includes('sticker') || lower.includes('magnet') || lower.includes('button')) return PRODUCT_SHAPES['STICKER'];
   if (lower.includes('case') || lower.includes('skin')) return PRODUCT_SHAPES['PHONE_CASE'];
   if (lower.includes('pillow')) return PRODUCT_SHAPES['PILLOW'];
   if (lower.includes('poster') || lower.includes('canvas') || lower.includes('print')) return PRODUCT_SHAPES['POSTER'];

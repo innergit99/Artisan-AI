@@ -22,14 +22,25 @@ export class ImageService {
     /**
      * Generate an image with environment-aware routing
      */
+    /**
+     * Generate an image with environment-aware routing
+     */
     async generateImage(options: ImageGenerationOptions): Promise<string> {
         if (isLocalMode()) {
             console.log('🏠 LOCAL MODE: Using Canvas generation (zero API costs)');
             return this.generateWithCanvas(options);
         }
 
-        console.log('🚀 PRODUCTION MODE: Using Fal.ai Flux');
-        return this.generateWithFal(options);
+        const apiKey = import.meta.env.VITE_FAL_API_KEY || process.env.FAL_API_KEY;
+        // If we have a valid key, try Fal first
+        if (apiKey && !apiKey.includes('PLACEHOLDER')) {
+            console.log('🚀 PRODUCTION MODE: Using Fal.ai Flux');
+            return this.generateWithFal(options);
+        }
+
+        // If no key, default to Pollinations
+        console.log('🚀 PRODUCTION MODE: No Fal Key found, using Pollinations AI (Free)');
+        return this.generateWithPollinations(options);
     }
 
     /**
@@ -53,6 +64,44 @@ export class ImageService {
         }
     }
 
+
+    /**
+     * POLLINATIONS AI: Free, High-Quality Generation
+     */
+    private async generateWithPollinations(options: ImageGenerationOptions): Promise<string> {
+        const { prompt, width = 1024, height = 1024 } = options;
+
+        // 1. Construct URL
+        const encodedPrompt = encodeURIComponent(prompt);
+        // Random seed to prevent caching the same image
+        const seed = Math.floor(Math.random() * 1000000);
+        const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&nologo=true&seed=${seed}&model=flux`;
+
+        console.log(`🌸 Pollinations Request: ${url}`);
+
+        try {
+            // 2. Fetch the image blob
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Pollinations API returned ${response.status}`);
+
+            const blob = await response.blob();
+
+            // 3. Convert to Data URL
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+
+        } catch (error: any) {
+            console.error('❌ Pollinations generation failed:', error.message);
+            // Fallback to Canvas
+            console.log('🔄 Falling back to Canvas generation');
+            return this.generateWithCanvas(options);
+        }
+    }
+
     /**
      * PRODUCTION MODE: Fal.ai Flux generation
      */
@@ -67,10 +116,6 @@ export class ImageService {
         } = options;
 
         const apiKey = import.meta.env.VITE_FAL_API_KEY || process.env.FAL_API_KEY;
-        if (!apiKey || apiKey.includes('PLACEHOLDER')) {
-            console.warn('⚠️ Fal.ai API key missing, falling back to Canvas');
-            return this.generateWithCanvas(options);
-        }
 
         const modelMap = {
             'schnell': 'fal-ai/flux/schnell',
@@ -130,9 +175,9 @@ export class ImageService {
 
             console.error('❌ Fal.ai generation failed:', error.message);
 
-            // Fallback to Canvas in production if Fal.ai fails
-            console.log('🔄 Falling back to Canvas generation');
-            return this.generateWithCanvas(options);
+            // Fallback strategy
+            console.log('🔄 Attempting fallback to Pollinations...');
+            return this.generateWithPollinations(options);
         }
     }
 
@@ -159,7 +204,7 @@ export class ImageService {
     /**
      * Generate a POD design with two-tier quality system
      * - Preview mode: Canvas (free, instant)
-     * - Final mode: Fal.ai (paid, print-ready)
+     * - Final mode: Pollinations (free) or Fal.ai (paid)
      */
     async generatePODDesign(options: {
         prompt: string;
@@ -179,10 +224,10 @@ export class ImageService {
         }
 
         // FINAL MODE: Production-ready print design
-        console.log('🖨️ POD Final Mode: Using Fal.ai (print-ready)');
+        console.log('🖨️ POD Final Mode: Generating High-Res Asset...');
 
         if (isLocalMode()) {
-            console.warn('⚠️ Local mode: Using Canvas for final (production would use Fal.ai)');
+            console.warn('⚠️ Local mode: Using Canvas for final');
             return this.generateWithCanvas({
                 prompt: `${fullPrompt}, ultra high quality, 300 DPI`,
                 width: 2048,
@@ -190,10 +235,10 @@ export class ImageService {
             });
         }
 
-        // Production: Use Fal.ai Flux Dev for highest quality
+        // Production: Use Default Engine (Smart Fallback handles Pollinations vs Fal)
         try {
-            return await this.generateWithFal({
-                prompt: `${fullPrompt}, ultra high quality, 300 DPI, print-ready, professional`,
+            return await this.generateImage({
+                prompt: `${fullPrompt}, ultra high quality, 300 DPI, print-ready, professional, isolated on white background`,
                 width: 2048,
                 height: 2048,
                 model: 'dev', // Higher quality for print
@@ -201,8 +246,7 @@ export class ImageService {
                 guidanceScale: 7.5 // Higher guidance for better prompt adherence
             });
         } catch (error: any) {
-            console.error('❌ Fal.ai failed for POD final, falling back to Canvas:', error.message);
-            // Fallback to high-res Canvas if Fal.ai fails
+            console.error('❌ Production generation failed:', error.message);
             return this.generateWithCanvas({
                 prompt: `${fullPrompt}, ultra high quality`,
                 width: 2048,

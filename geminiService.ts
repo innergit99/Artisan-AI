@@ -2483,24 +2483,14 @@ AVOID: Any imagery that could interfere with barcode scanning`;
   }
 
   private async generateWithPollinations(prompt: string, width: number, height: number, negativePrompt: string, returnBase64: boolean = false): Promise<string> {
-    // ENVIRONMENT-AWARE IMAGE GENERATION
-    // Local mode: Canvas (zero cost)
-    // Production mode: Fal.ai Flux (industrial quality)
+    // Redirect to the robust ImageService implementation
     const { imageService } = await import('./imageService');
-
-    try {
-      return await imageService.generateImage({
-        prompt,
-        width,
-        height,
-        model: 'schnell',
-        numInferenceSteps: 4,
-        guidanceScale: 3.5
-      });
-    } catch (error: any) {
-      console.error('❌ Image generation failed:', error.message);
-      throw error;
-    }
+    return imageService.generateImage({
+      prompt,
+      width,
+      height,
+      model: 'schnell' // Maps to Pollinations in fallback mode
+    });
   }
 
   private async generateWithHuggingFaceZeroGPU(prompt: string, size: number): Promise<string> {

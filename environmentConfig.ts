@@ -47,7 +47,8 @@ export const RESOURCE_CONFIG = {
     },
     images: {
         local: 'canvas',       // Client-side Canvas API
-        production: 'fal'      // Fal.ai Flux Schnell/Dev
+        production: 'fal',     // Fal.ai Flux Schnell/Dev
+        fallback: 'pollinations' // Pollinations.ai (Free)
     },
     marketData: {
         local: 'simulated',    // Static cached data
@@ -64,6 +65,13 @@ export const RESOURCE_CONFIG = {
  */
 export function getResourceProvider(service: keyof typeof RESOURCE_CONFIG): string {
     const mode = isLocalMode() ? 'local' : 'production';
+
+    // Special Logic for Images: Check for Fal Key
+    if (service === 'images' && mode === 'production') {
+        const hasFalKey = (import.meta.env.VITE_FAL_API_KEY || process.env.FAL_API_KEY)?.length > 10;
+        if (!hasFalKey) return 'pollinations'; // Auto-fallback if no key
+    }
+
     return RESOURCE_CONFIG[service][mode];
 }
 
