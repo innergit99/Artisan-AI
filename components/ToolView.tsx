@@ -20,6 +20,7 @@ import { NicheRadarView } from './NicheRadarView';
 import { CharacterVault } from './CharacterVault';
 import { PODStyleCard } from './PODStyleCard';
 import { holographicMockupService } from '../holographicMockupService';
+import { canvasMockupService } from '../canvasMockupService';
 import {
   ChevronLeft, Sparkles, Download, Loader2, ImageIcon, X, Rocket, Upload,
   Search, Copy, CheckCircle, ZoomIn, ZoomOut, Move, Palette, Edit3,
@@ -1066,30 +1067,54 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
         tags: mockDossier.listingDossiers['Amazon/Etsy'].tags
       });
 
-      // 4. Generate Professional Canvas Mockups for ALL products
+      // 4. Generate Professional Canvas Mockups (LAZY LOAD: Only T-Shirt First)
       try {
-        const { canvasMockupService } = await import('../canvasMockupService');
-        console.log('🎨 Finalizing ALL mockups for gallery...');
+        console.log('🎨 Finalizing Primary Mockup (T-Shirt)...');
 
-        const mockupPromises = (Object.keys(MOCKUP_LABELS) as MockupType[]).map(async (type) => {
-          const result = await canvasMockupService.generateMockup({
-            designUrl: finalAsset,
-            productType: type
-          });
-          return { type, url: result.url };
+        // Generate ONLY Standard Tee immediately
+        const teeResult = await canvasMockupService.generateMockup({
+          designUrl: finalAsset,
+          productType: 'STANDARD_TEE'
         });
 
-        const results = await Promise.all(mockupPromises);
-        const newMockups: Record<string, string> = {};
-        results.forEach(res => { newMockups[res.type] = res.url; });
+        setPrintfulMockups(prev => ({
+          ...prev,
+          'STANDARD_TEE': teeResult.url
+        }));
 
-        setPrintfulMockups(prev => ({ ...prev, ...newMockups }));
+        setActiveMockup('STANDARD_TEE');
+
       } catch (mockupError) {
-        console.warn('Batch mockup generation failed:', mockupError);
+        console.warn('Primary mockup generation failed:', mockupError);
       }
 
       setIsGeneratingMockups(false);
     }, 1500);
+  };
+
+  const handleSwitchMockup = async (type: MockupType) => {
+    // 1. Optimistic Switch (Show base immediately)
+    setActiveMockup(type);
+
+    // 2. If we have a design (result) and haven't generated this mockup yet
+    const isGenerated = printfulMockups[type] && printfulMockups[type] !== printfulMockups[`base_${type}`];
+
+    if (result && !isGenerated) {
+      console.log(`🎨 Lazy Generating Mockup: ${type}...`);
+      try {
+        const newMockup = await canvasMockupService.generateMockup({
+          designUrl: result,
+          productType: type
+        });
+
+        setPrintfulMockups(prev => ({
+          ...prev,
+          [type]: newMockup.url
+        }));
+      } catch (e) {
+        console.error("Lazy generation failed:", e);
+      }
+    }
   };
   // Old logic removed to prevent infinite loop
   /*
@@ -4179,7 +4204,7 @@ drop-shadow-2xl pointer-events-none
                       {(Object.keys(MOCKUP_LABELS) as MockupType[]).map(mockupType => (
                         <button
                           key={mockupType}
-                          onClick={() => setActiveMockup(mockupType)}
+                          onClick={() => handleSwitchMockup(mockupType)}
                           className={`group relative aspect-square rounded-2xl overflow-hidden border-4 transition-all ${activeMockup === mockupType
                             ? 'border-indigo-500 scale-105 shadow-2xl shadow-indigo-500/20'
                             : 'border-slate-800 hover:border-slate-600 opacity-60 hover:opacity-100'
