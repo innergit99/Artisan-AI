@@ -26,10 +26,9 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
         name: 'Novice',
         price: 0,
         features: [
-            '1 Manuscript Projection / Mo',
-            'Low-res Cover Previews',
-            'Basic Niche Discovery',
-            'Standard AI Model',
+            '1 Manuscript / Mo',
+            'Full Canvas Mockup Suite',
+            'Standard AI Model (Pollinations)',
             'Community Support',
         ],
         limits: {
@@ -44,12 +43,12 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
         id: 'solo',
         name: 'Solo Builder',
         price: 12.99,
-        yearlyPrice: 124.99, // ~20% discount
-        paddleProductId: 'pri_01kgrqwj3x68wckxbyya8bqa78',
-        paddleYearlyProductId: 'pri_01kgrr2bfas8jwm082vqfzeybg',
+        yearlyPrice: 124.99,
+        paddleProductId: 'pri_01kh3z7fx618mjrjagj2b9cxqa',
+        paddleYearlyProductId: 'pri_01kh3z49dtwybn7e3mf5rp609j',
         features: [
             '5 Manuscripts / Mo',
-            '300 DPI Print-Ready Covers',
+            '300 DPI High-Res Assets',
             'Standard Character Bibles',
             'Priority Support',
             'No Watermarks',
@@ -66,12 +65,12 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
         id: 'artisan',
         name: 'Artisan',
         price: 14.99,
-        yearlyPrice: 143.99, // ~20% discount ($11.99/mo)
-        paddleProductId: 'pri_01kgrr7qv64p4c514xd76gp8aw',
-        paddleYearlyProductId: 'pri_01kgrrbchq7v2hsbxjajb5v75j',
+        yearlyPrice: 143.99,
+        paddleProductId: 'pri_01kh3yyxwayxxqa46hdmyy451v',
+        paddleYearlyProductId: 'pri_01kh3yvkeq3e58mqapxwxmy2sv',
         features: [
             'Unlimited Manuscripts',
-            '300 DPI Print-Ready Covers',
+            '300 DPI High-Res Assets',
             'Trend Radar API Access',
             'Gemini 1.5 Pro Engine',
             'Advanced Character Bibles',
@@ -87,15 +86,15 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
 
     MASTER: {
         id: 'master',
-        name: 'PublishLab Master',
+        name: 'Artisan Master',
         price: 49.00,
-        yearlyPrice: 470.00, // ~20% discount
-        paddleProductId: 'pri_01kgrreb2y6aer1qg8x41z7r6k',
-        paddleYearlyProductId: 'pri_01kgrrkrgfc795b67vst0dbcya',
+        yearlyPrice: 470.00,
+        paddleProductId: 'pri_01kh3yrj9trbxwnaqmgbf3hrvp',
+        paddleYearlyProductId: 'pri_01kh3yn5e6tg9xwfyx3m2svrwf',
         features: [
             'Everything in Artisan',
             'Multi-Agent Collaboration',
-            '1-Click KDP Deployment',
+            '1-Click Export Validation',
             'Whitelabel Export',
             'Dedicated Account Manager',
             'Custom AI Fine-tuning',
@@ -123,14 +122,15 @@ export interface UserSubscription {
 
 // Initialize Paddle
 export async function initializePaddle(): Promise<void> {
-    const paddleToken = import.meta.env.VITE_PADDLE_CLIENT_TOKEN || import.meta.env.VITE_PADDLE_VENDOR_ID;
+    const paddleToken = import.meta.env.VITE_PADDLE_CLIENT_TOKEN;
+    const sellerId = import.meta.env.VITE_PADDLE_VENDOR_ID || '281327'; // User's ID from screenshot
 
     if (!paddleToken) {
-        console.warn('Paddle initialization token not configured (VITE_PADDLE_CLIENT_TOKEN)');
+        console.warn('⚠️ Paddle initialization token missing (VITE_PADDLE_CLIENT_TOKEN)');
         return;
     }
 
-    // Load Paddle.js
+    // Load Paddle.js (v2)
     const script = document.createElement('script');
     script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
     script.async = true;
@@ -138,16 +138,16 @@ export async function initializePaddle(): Promise<void> {
     script.onload = () => {
         // @ts-ignore
         if (window.Paddle) {
-            // @ts-ignore
             const paddleEnv = import.meta.env.VITE_PADDLE_ENVIRONMENT || 'sandbox';
             // @ts-ignore
             window.Paddle.Environment.set(paddleEnv);
             // @ts-ignore
             window.Paddle.Initialize({
                 token: paddleToken,
+                seller: parseInt(sellerId),
                 eventCallback: handlePaddleEvent,
             });
-            console.log(`✅ Paddle initialized in ${paddleEnv} mode`);
+            console.log(`✅ Paddle v2 initialized in ${paddleEnv} mode (Seller: ${sellerId})`);
         }
     };
 
