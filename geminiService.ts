@@ -537,46 +537,66 @@ No explanations. No quotes.`;
     const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("Gemini API Key missing (VITE_GEMINI_API_KEY)");
 
-    // Use v1beta for latest features including JSON mode
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent?key=${apiKey}`;
+    // List of models to try in order of preference (Cost/Speed -> Quality -> Legacy)
+    const models = [
+      'gemini-1.5-flash',
+      'gemini-1.5-flash-001',
+      'gemini-1.5-flash-002',
+      'gemini-1.5-pro',
+      'gemini-1.0-pro'
+    ];
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    let lastError: any;
 
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 8192,
-            ...(jsonMode && { responseMimeType: "application/json" })
-          }
-        })
-      });
+    for (const model of models) {
+      try {
+        // console.log(`💎 Trying Gemini Model: ${model}...`);
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-      clearTimeout(timeoutId);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s per model attempt
 
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(`Gemini Error (${response.status}): ${err.error?.message || response.statusText}`);
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            contents: [{
+              parts: [{ text: prompt }]
+            }],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 8192,
+              ...(jsonMode && { responseMimeType: "application/json" })
+            }
+          })
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const err = await response.json();
+          // If 404 (Model not found) or 400 (Bad Request), try next model. 
+          // If 429 (Quota), maybe wait? But for now, we treat as fail and move to next or fallback.
+          throw new Error(`(${response.status}) ${err.error?.message || response.statusText}`);
+        }
+
+        const data = await response.json();
+        const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!content) throw new Error("Empty Gemini response");
+
+        console.log(`✅ Gemini Success (${model})`);
+        return content;
+
+      } catch (e: any) {
+        // console.warn(`⚠️ Gemini ${model} failed:`, e.message);
+        lastError = e;
+        // Continue to next model loop
       }
-
-      const data = await response.json();
-      const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!content) throw new Error("Empty Gemini response");
-
-      console.log('✅ Gemini 1.5 Flash generation successful');
-      return content;
-    } catch (e: any) {
-      clearTimeout(timeoutId);
-      throw new Error(`Gemini Failed: ${e.message}`);
     }
+
+    throw new Error(`All Gemini models failed. Last error: ${lastError?.message}`);
   }
 
   private async queryGroqDirectly(prompt: string, jsonMode: boolean = false): Promise<string> {
