@@ -144,7 +144,6 @@ export async function initializePaddle(): Promise<void> {
             // @ts-ignore
             window.Paddle.Initialize({
                 token: paddleToken,
-                seller: parseInt(sellerId),
                 eventCallback: handlePaddleEvent,
             });
             console.log(`✅ Paddle v2 initialized in ${paddleEnv} mode (Seller: ${sellerId})`);
