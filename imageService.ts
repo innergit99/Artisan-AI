@@ -71,38 +71,39 @@ export class ImageService {
     private async generateWithPollinations(options: ImageGenerationOptions): Promise<string> {
         const { prompt, width = 1024, height = 1024 } = options;
 
-        // 1. Construct URL with FLUX model for industrial quality
         const encodedPrompt = encodeURIComponent(prompt);
-        // Random seed to prevent caching the same image
         const seed = Math.floor(Math.random() * 1000000);
-        const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&nologo=true&seed=${seed}&model=flux`;
 
-        console.log(`🌸 Pollinations Request: ${url}`);
+        // Try multiple models on Pollinations
+        const pollinationModels = ['flux', 'vibe', 'default'];
+        let lastImgUrl = '';
 
-        try {
-            // 2. Try to fetch as blob (for data consistency) but return URL if fetch fails
-            const response = await fetch(url, { mode: 'no-cors' }).catch(() => null);
+        for (const pModel of pollinationModels) {
+            const modelParam = pModel === 'default' ? '' : `&model=${pModel}`;
+            const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&nologo=true&seed=${seed}${modelParam}`;
+            lastImgUrl = url;
 
-            if (!response) {
-                console.warn('⚠️ Pollinations fetch failed, returning direct URL.');
-                return url;
+            try {
+                // Try to fetch as blob (for data consistency) but return URL if fetch fails
+                const response = await fetch(url, { mode: 'no-cors' }).catch(() => null);
+                if (!response) continue;
+
+                const blob = await response.blob().catch(() => null);
+                if (!blob) return url;
+
+                return await new Promise<string>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result as string || url);
+                    reader.onerror = () => resolve(url);
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e) {
+                console.warn(`⚠️ Pollinations ${pModel} failed, trying next...`);
+                continue;
             }
-
-            const blob = await response.blob().catch(() => null);
-            if (!blob) return url;
-
-            // 3. Convert to Data URL
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result as string || url);
-                reader.onerror = () => resolve(url);
-                reader.readAsDataURL(blob);
-            });
-
-        } catch (error: any) {
-            console.warn('🔄 Pollinations conversion error, using direct URL:', error.message);
-            return url;
         }
+
+        return lastImgUrl || `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true`;
     }
 
     /**

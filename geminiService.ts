@@ -537,61 +537,64 @@ No explanations. No quotes.`;
     const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("Gemini API Key missing (VITE_GEMINI_API_KEY)");
 
-    // List of models to try in order of preference (Cost/Speed -> Quality -> Legacy)
+    // List of models to try (Latest aliases -> Specific versions -> Legacy)
     const models = [
+      'gemini-1.5-flash-latest',
       'gemini-1.5-flash',
       'gemini-1.5-flash-001',
       'gemini-1.5-flash-002',
+      'gemini-1.5-pro-latest',
       'gemini-1.5-pro',
+      'gemini-pro',
       'gemini-1.0-pro'
     ];
 
     let lastError: any;
 
     for (const model of models) {
-      try {
-        // console.log(`💎 Trying Gemini Model: ${model}...`);
-        const version = model.includes('1.5') ? 'v1beta' : 'v1';
-        const url = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${apiKey}`;
+      // Try both v1beta and v1 for each model
+      for (const version of ['v1beta', 'v1']) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${apiKey}`;
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 12000); // Faster per-model timeout
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s per attempt
 
-        const response = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          signal: controller.signal,
-          body: JSON.stringify({
-            contents: [{
-              parts: [{ text: prompt }]
-            }],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 8192,
-              ...(jsonMode && version === 'v1beta' && { responseMimeType: "application/json" })
-            }
-          })
-        });
+          const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            signal: controller.signal,
+            body: JSON.stringify({
+              contents: [{
+                parts: [{ text: prompt }]
+              }],
+              generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 8192,
+                ...(jsonMode && version === 'v1beta' && { responseMimeType: "application/json" })
+              }
+            })
+          });
 
-        clearTimeout(timeoutId);
+          clearTimeout(timeoutId);
 
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
-          throw new Error(`(${response.status}) ${err.error?.message || response.statusText}`);
+          if (!response.ok) {
+            const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
+            throw new Error(`(${response.status}) ${err.error?.message || response.statusText}`);
+          }
+
+          const data = await response.json();
+          const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+          if (!content) throw new Error("Empty Gemini response");
+
+          console.log(`✅ Gemini Success (${model} via ${version})`);
+          return content;
+
+        } catch (e: any) {
+          lastError = e;
+          // Continue to next version/model
         }
-
-        const data = await response.json();
-        const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-        if (!content) throw new Error("Empty Gemini response");
-
-        console.log(`✅ Gemini Success (${model})`);
-        return content;
-
-      } catch (e: any) {
-        // console.warn(`⚠️ Gemini ${model} failed:`, e.message);
-        lastError = e;
-        // Continue to next model loop
       }
     }
 

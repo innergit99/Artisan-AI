@@ -159,44 +159,47 @@ export class MarketService {
 
         // List of models to try in order of preference
         const models = [
+            'gemini-1.5-flash-latest',
             'gemini-1.5-flash',
             'gemini-1.5-flash-001',
-            'gemini-1.5-flash-002',
-            'gemini-1.5-pro',
+            'gemini-1.5-pro-latest',
+            'gemini-pro',
             'gemini-1.0-pro'
         ];
 
         let lastError: any;
+        const jsonMode = true; // Assuming we always want JSON mode if available
 
         for (const model of models) {
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        generationConfig: {
-                            temperature: 0.7,
-                            responseMimeType: "application/json"
-                        }
-                    })
-                });
+            for (const version of ['v1beta', 'v1']) {
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${geminiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            generationConfig: {
+                                temperature: 0.7,
+                                responseMimeType: (jsonMode && version === 'v1beta') ? "application/json" : undefined
+                            }
+                        })
+                    });
 
-                if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(`(${response.status}) ${err.error?.message || response.statusText}`);
+                    if (!response.ok) {
+                        const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
+                        throw new Error(`(${response.status}) ${err.error?.message || response.statusText}`);
+                    }
+
+                    const json = await response.json();
+                    const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (!rawText) throw new Error("Gemini returned empty analysis");
+
+                    return JSON.parse(rawText) as NicheAnalysis;
+
+                } catch (e: any) {
+                    lastError = e;
                 }
-
-                const json = await response.json();
-                const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                if (!rawText) throw new Error("Gemini returned empty analysis");
-
-                return JSON.parse(rawText) as NicheAnalysis;
-
-            } catch (e: any) {
-                // console.warn(`⚠️ MarketService Gemini ${model} failed:`, e.message);
-                lastError = e;
             }
         }
 
