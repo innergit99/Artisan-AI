@@ -537,66 +537,61 @@ No explanations. No quotes.`;
     const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("Gemini API Key missing (VITE_GEMINI_API_KEY)");
 
-    // List of models to try (Latest aliases -> Experimental -> Specific versions -> Legacy)
+    // UPDATED FEB 2026: Gemini 1.0 and 1.5 models are RETIRED (return 404)
+    // Current working models: gemini-3-*, gemini-2.5-*, gemini-2.0-*
     const models = [
-      'gemini-2.0-flash-exp',
-      'gemini-1.5-flash-latest',
-      'gemini-1.5-flash',
-      'gemini-1.5-flash-001',
-      'gemini-1.5-flash-002',
-      'gemini-1.5-flash-8b',
-      'gemini-1.5-pro-latest',
-      'gemini-1.5-pro',
-      'gemini-pro',
-      'gemini-1.0-pro'
+      'gemini-3-flash-preview',      // Newest, fastest
+      'gemini-3-pro-preview',        // Newest, most capable
+      'gemini-2.5-flash-lite',       // Recommended replacement for 2.0
+      'gemini-2.0-flash',            // Stable (retiring March 2026)
+      'gemini-2.0-flash-lite',       // Stable lite version
     ];
 
     let lastError: any;
 
     for (const model of models) {
-      // Try both v1beta and v1 for each model
-      for (const version of ['v1beta', 'v1']) {
-        try {
-          const url = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${apiKey}`;
+      // Only use v1beta for newest models (v1 often lags behind)
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s per attempt
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
-          const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            signal: controller.signal,
-            body: JSON.stringify({
-              contents: [{
-                parts: [{ text: prompt }]
-              }],
-              generationConfig: {
-                temperature: 0.7,
-                maxOutputTokens: 8192,
-                ...(jsonMode && version === 'v1beta' && { responseMimeType: "application/json" })
-              }
-            })
-          });
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            contents: [{
+              parts: [{ text: prompt }]
+            }],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 8192,
+              ...(jsonMode && { responseMimeType: "application/json" })
+            }
+          })
+        });
 
-          clearTimeout(timeoutId);
+        clearTimeout(timeoutId);
 
-          if (!response.ok) {
-            const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
-            throw new Error(`(${response.status}) ${err.error?.message || response.statusText}`);
-          }
-
-          const data = await response.json();
-          const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-          if (!content) throw new Error("Empty Gemini response");
-
-          console.log(`✅ Gemini Success (${model} via ${version})`);
-          return content;
-
-        } catch (e: any) {
-          lastError = e;
-          // Continue to next version/model
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
+          throw new Error(`(${response.status}) ${err.error?.message || response.statusText}`);
         }
+
+        const data = await response.json();
+        const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!content) throw new Error("Empty Gemini response");
+
+        console.log(`✅ Gemini Success (${model})`);
+        return content;
+
+      } catch (e: any) {
+        lastError = e;
+        console.warn(`⚠️ Gemini model ${model} failed:`, e.message);
+        // Continue to next model
       }
     }
 
@@ -736,13 +731,28 @@ No explanations. No quotes.`;
         throw new Error(`HTTP ${response.status} - ${err.error?.message || response.statusText}`);
       }
       const data = await response.json();
-      const models = data.models?.map((m: any) => m.name.replace('models/', '')) || [];
-      console.log("💎 Gemini Diagnostics: Available Models for your key:", models);
+      const allModels = data.models?.map((m: any) => m.name.replace('models/', '')) || [];
+      
+      // Filter for generateContent-compatible models (Gemini 2.0+, 2.5+, 3.x)
+      const workingModels = allModels.filter((m: string) => 
+        m.includes('gemini-3') || 
+        m.includes('gemini-2.5') || 
+        m.includes('gemini-2.0')
+      );
+      
+      // Note: Gemini 1.x models are RETIRED and will return 404
+      const retiredModels = allModels.filter((m: string) => 
+        m.includes('gemini-1.') || m === 'gemini-pro'
+      );
 
-      if (models.length > 0) {
-        console.log("💎 Gemini Diagnostics: Key is VALID and ACTIVE.");
-      } else {
-        console.warn("💎 Gemini Diagnostics: Key is valid but returns ZERO models. Check billing or project restriction.");
+      console.log("💎 Gemini Diagnostics: Key is VALID. Working models:", workingModels.slice(0, 10));
+      
+      if (retiredModels.length > 0) {
+        console.warn("💎 Gemini Diagnostics: RETIRED models in list (will 404):", retiredModels.length, "models");
+      }
+      
+      if (workingModels.length === 0) {
+        console.warn("💎 Gemini Diagnostics: No working Gemini 2.0+ models found. Will fallback to Groq.");
       }
     } catch (e: any) {
       console.error("💎 Gemini Diagnostics: Scan Failed -", e.message);

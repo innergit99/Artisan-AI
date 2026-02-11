@@ -81,38 +81,50 @@ export class ImageService {
 
     /**
      * POLLINATIONS AI: Free, High-Quality Generation
+     * Note: Rate limits apply - will fallback to Canvas if rate limited
      */
     private async generateWithPollinations(options: ImageGenerationOptions): Promise<string> {
         const { prompt, width = 1024, height = 1024 } = options;
 
         const encodedPrompt = encodeURIComponent(prompt);
-        const seed = Math.floor(Math.random() * 1000000);
 
-        // Try multiple models on Pollinations
-        const pollinationModels = ['flux', 'vibe', 'default'];
-        let lastImgUrl = '';
-        let lastError: any = null; // Declared before the loop
+        // Try multiple models on Pollinations (reduced list for faster fallback)
+        const pollinationModels = ['flux', 'turbo'];
+        let lastError: any = null;
+        let isRateLimited = false;
 
         for (const pModel of pollinationModels) {
-            const modelParam = pModel === 'default' ? '' : `&model=${pModel}`;
-            const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&nologo=true&seed=${seed}${modelParam}`;
-            lastImgUrl = url;
-
             try {
                 console.log(`📡 Pollinations attempt: model=${pModel}...`);
                 const seed = Math.floor(Math.random() * 1000000);
-                const modelParam = pModel === 'default' ? '' : `&model=${pModel}`;
+                const modelParam = `&model=${pModel}`;
                 const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&nologo=true&seed=${seed}${modelParam}`;
-                lastImgUrl = url; // Keep track of the last URL tried
 
-                const response = await fetch(url, { mode: 'cors' }); // Changed to 'cors' for better error handling
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
+                const response = await fetch(url, { 
+                    mode: 'cors',
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                // Check for rate limiting
+                if (response.status === 429 || response.status === 503) {
+                    isRateLimited = true;
+                    throw new Error(`Rate limited (${response.status})`);
+                }
+
                 if (!response.ok) {
                     throw new Error(`Model ${pModel} failed with status: ${response.status}`);
                 }
 
                 const blob = await response.blob();
-                if (blob.size < 1000) { // Basic check for valid image data
-                    throw new Error("Image too small or invalid from Pollinations");
+                
+                // Check for rate limit image (usually small placeholder)
+                if (blob.size < 5000) {
+                    isRateLimited = true;
+                    throw new Error("Rate limit placeholder detected (small image)");
                 }
 
                 // Convert blob to data URL for consistency with other generators
@@ -125,18 +137,27 @@ export class ImageService {
             } catch (e: any) {
                 console.warn(`⚠️ Pollinations Model ${pModel} failed:`, e.message);
                 lastError = e;
-                continue; // Try the next model
+                
+                // If rate limited, don't try other models - go straight to fallback
+                if (isRateLimited || e.message?.includes('Rate limit')) {
+                    break;
+                }
+                continue;
             }
         }
 
-        // If all models fail, throw the last error or return the last tried URL
-        if (lastError) {
-            console.error('❌ All Pollinations models failed. Last error:', lastError.message);
-            throw new Error(`Pollinations generation failed after multiple attempts: ${lastError.message}`);
+        // FALLBACK: Use Canvas generation when Pollinations fails
+        console.warn('🔄 Pollinations failed, falling back to Canvas generation...');
+        try {
+            return await this.generateWithCanvas({
+                prompt,
+                width,
+                height
+            });
+        } catch (canvasError: any) {
+            console.error('❌ Canvas fallback also failed:', canvasError.message);
+            throw new Error(`Image generation failed: Pollinations (${lastError?.message}), Canvas (${canvasError.message})`);
         }
-
-        // Fallback to returning the last constructed URL if no blob could be successfully converted
-        return lastImgUrl || `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true`;
     }
 
     /**
