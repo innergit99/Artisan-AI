@@ -1044,19 +1044,38 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
     // 1. Capture the selected asset
     const selectedAsset = variants[selectedIndex];
 
-    // 2. Process Transparency (Remove White Background)
-    // We confirm the standard "isolated on white" prompt was used, so we run the internal removal tool.
+    // 2. High-Res FINAL Generation (Replace preview with pro-tier AI)
     let finalAsset = selectedAsset;
     try {
-      // Simple heuristic: If it's a URL (not base64), it needs processing
-      if (selectedAsset.startsWith('http')) {
-        finalAsset = await gemini.processTransparency(selectedAsset);
+      console.log('🖨️ POD Final Mode: Generating High-Res Asset...');
+      const { imageService } = await import('../imageService');
+      const styleDef = POD_STYLES.find(s => s.id === selectedStyle);
+      const stylePrompt = styleDef ? styleDef.promptSuffix : 'professional commercial design';
+
+      const highResUrl = await imageService.generatePODDesign({
+        prompt: prompt,
+        style: stylePrompt,
+        mode: 'final' // Triggers High-Res (FLUX/VIBE)
+      });
+
+      if (highResUrl) {
+        finalAsset = highResUrl;
+        console.log('✅ High-Res Generation Successful');
+      }
+    } catch (hrError) {
+      console.warn("High-Res generation failed, using preview asset:", hrError);
+    }
+
+    // 3. Process Transparency (Remove White Background)
+    try {
+      if (finalAsset.startsWith('http')) {
+        finalAsset = await gemini.processTransparency(finalAsset);
       }
     } catch (e) {
       console.warn("Transparency processing skipped:", e);
     }
 
-    setResult(finalAsset); // Set the TRANSPARENT PNG as the result
+    setResult(finalAsset); // Set the HIGH-RES TRANSPARENT PNG as the result
 
     // 3. Generate Rich SEO Data (Mocking the AI return for speed/reliability)
     // CRITICAL: Use Smart Fallback if AI is offline to avoid "Same Text" issue

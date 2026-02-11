@@ -485,7 +485,7 @@ export class ManuscriptDoctorService {
     private async callGemini(prompt: string, jsonMode: boolean = false): Promise<string> {
         if (!this.geminiKey) throw new Error("Gemini API Key missing");
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${this.geminiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.geminiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

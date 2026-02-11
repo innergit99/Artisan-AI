@@ -537,12 +537,14 @@ No explanations. No quotes.`;
     const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("Gemini API Key missing (VITE_GEMINI_API_KEY)");
 
-    // List of models to try (Latest aliases -> Specific versions -> Legacy)
+    // List of models to try (Latest aliases -> Experimental -> Specific versions -> Legacy)
     const models = [
+      'gemini-2.0-flash-exp',
       'gemini-1.5-flash-latest',
       'gemini-1.5-flash',
       'gemini-1.5-flash-001',
       'gemini-1.5-flash-002',
+      'gemini-1.5-flash-8b',
       'gemini-1.5-pro-latest',
       'gemini-1.5-pro',
       'gemini-pro',
@@ -705,28 +707,45 @@ No explanations. No quotes.`;
 
   async testConnection(): Promise<{ success: boolean; message: string; tier: 'Free' | 'Paid' | 'Unknown' }> {
     try {
-      // 1. Test Gemini Cloud
-      if (process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('PLACEHOLDER')) {
-        return { success: true, message: "Gemini Cloud 2.5 Active", tier: 'Free' };
+      const res = await this.queryGeminiFlash("Ping", false);
+      this.success = !!res;
+      this.message = "Engine Connection: ACTIVE";
+      this.tier = 'Paid';
+      return { success: true, message: this.message, tier: this.tier };
+    } catch (e: any) {
+      this.success = false;
+      this.message = `Engine Error: ${e.message}`;
+      this.tier = 'Unknown';
+      return { success: false, message: this.message, tier: this.tier };
+    }
+  }
+
+  async runDiagnostics(): Promise<void> {
+    const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.warn("💎 Gemini Diagnostics: Missing API Key");
+      return;
+    }
+
+    try {
+      // Use v1beta for model listing as it's the most feature-rich
+      const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(`HTTP ${response.status} - ${err.error?.message || response.statusText}`);
       }
+      const data = await response.json();
+      const models = data.models?.map((m: any) => m.name.replace('models/', '')) || [];
+      console.log("💎 Gemini Diagnostics: Available Models for your key:", models);
 
-      // 2. Test Artisan AI Backend (Port 7860)
-      try {
-        const backendRes = await fetch("http://localhost:7860/health");
-        if (backendRes.ok) return { success: true, message: "Industrial Backend (Port 7860) Active", tier: 'Paid' };
-      } catch (e) { }
-
-      // 3. Test Local Ollama (Port 11434) - DEV ONLY
-      if (import.meta.env.DEV) {
-        try {
-          const ollamaRes = await fetch("/api/ollama/api/tags");
-          if (ollamaRes.ok) return { success: true, message: "Local Engine (Ollama) Online.", tier: 'Free' };
-        } catch (e) { }
+      if (models.length > 0) {
+        console.log("💎 Gemini Diagnostics: Key is VALID and ACTIVE.");
+      } else {
+        console.warn("💎 Gemini Diagnostics: Key is valid but returns ZERO models. Check billing or project restriction.");
       }
-
-      throw new Error("No engine found");
-    } catch (error: any) {
-      return { success: true, message: "Engine Offline (Visuals Only)", tier: 'Unknown' };
+    } catch (e: any) {
+      console.error("💎 Gemini Diagnostics: Scan Failed -", e.message);
     }
   }
 
@@ -2356,11 +2375,29 @@ AVOID: Any imagery that could interfere with barcode scanning`;
         height,
         model: module === 'KDP' || module === 'KDP_INTERIOR' ? 'dev' : 'schnell', // Higher quality for book content
         numInferenceSteps: module === 'KDP' ? 28 : 4, // More steps for covers
-        guidanceScale: 7.5
+        guidanceScale: 7.5,
+        module,
+        author: options.author,
+        genre: options.genre
       });
     } catch (error: any) {
       console.error(`❌ Image generation failed for ${module}:`, error.message);
-      throw error;
+
+      // ROBUST FALLBACK - NEVER FAIL THE UI
+      console.log(`🔄 [KDP Book Lab] Falling back to industrial Canvas placeholder for ${module}...`);
+      try {
+        return await imageService.generateImage({
+          prompt: finalPrompt,
+          width,
+          height,
+          module,
+          author: options.author,
+          genre: options.genre
+        });
+      } catch (fallbackError: any) {
+        console.error('❌ Serious Error: Even Canvas fallback failed.', fallbackError.message);
+        throw fallbackError;
+      }
     }
   }
 

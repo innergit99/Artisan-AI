@@ -53,10 +53,8 @@ const App: React.FC = () => {
 
   // Log environment configuration on mount
   useEffect(() => {
-    console.log("🚀 PUBLISHLAB DEPLOYMENT: v2.1.5-stable (Ultimate AI Fallbacks)");
-    import('./environmentConfig').then(({ logEnvironmentInfo }) => {
-      logEnvironmentInfo();
-    });
+    console.log("🚀 ARTISAN AI | Core Version: v2.1.6-stable");
+    gemini.runDiagnostics();
   }, []);
 
   useEffect(() => {

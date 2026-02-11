@@ -16,6 +16,10 @@ export interface ImageGenerationOptions {
     model?: 'schnell' | 'dev' | 'pro'; // Fal.ai Flux variants
     numInferenceSteps?: number;
     guidanceScale?: number;
+    module?: 'POD' | 'KDP' | 'MOCKUP' | 'KDP_INTERIOR';
+    title?: string;
+    author?: string;
+    genre?: string;
 }
 
 export class ImageService {
@@ -47,9 +51,19 @@ export class ImageService {
      * LOCAL MODE: Canvas-based generation
      */
     private async generateWithCanvas(options: ImageGenerationOptions): Promise<string> {
-        const { prompt, width = 1024, height = 1024 } = options;
+        const { prompt, width = 1024, height = 1024, module, title, genre } = options;
 
         try {
+            // Specialized Canvas generation for book interiors
+            if (module === 'KDP_INTERIOR') {
+                console.log('📖 Generating industrial interior placeholder...');
+                return await coverGenerator.generateInteriorImage(
+                    prompt,
+                    title || 'Untitled',
+                    genre || 'Fiction'
+                );
+            }
+
             // Use the existing Canvas generator for generic placeholders
             const dataUrl = await coverGenerator.generateGenericPlaceholder(
                 prompt,
@@ -77,6 +91,7 @@ export class ImageService {
         // Try multiple models on Pollinations
         const pollinationModels = ['flux', 'vibe', 'default'];
         let lastImgUrl = '';
+        let lastError: any = null; // Declared before the loop
 
         for (const pModel of pollinationModels) {
             const modelParam = pModel === 'default' ? '' : `&model=${pModel}`;
@@ -84,25 +99,43 @@ export class ImageService {
             lastImgUrl = url;
 
             try {
-                // Try to fetch as blob (for data consistency) but return URL if fetch fails
-                const response = await fetch(url, { mode: 'no-cors' }).catch(() => null);
-                if (!response) continue;
+                console.log(`📡 Pollinations attempt: model=${pModel}...`);
+                const seed = Math.floor(Math.random() * 1000000);
+                const modelParam = pModel === 'default' ? '' : `&model=${pModel}`;
+                const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&nologo=true&seed=${seed}${modelParam}`;
+                lastImgUrl = url; // Keep track of the last URL tried
 
-                const blob = await response.blob().catch(() => null);
-                if (!blob) return url;
+                const response = await fetch(url, { mode: 'cors' }); // Changed to 'cors' for better error handling
+                if (!response.ok) {
+                    throw new Error(`Model ${pModel} failed with status: ${response.status}`);
+                }
 
-                return await new Promise<string>((resolve) => {
+                const blob = await response.blob();
+                if (blob.size < 1000) { // Basic check for valid image data
+                    throw new Error("Image too small or invalid from Pollinations");
+                }
+
+                // Convert blob to data URL for consistency with other generators
+                return await new Promise<string>((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result as string || url);
-                    reader.onerror = () => resolve(url);
+                    reader.onloadend = () => resolve(reader.result as string);
+                    reader.onerror = reject;
                     reader.readAsDataURL(blob);
                 });
-            } catch (e) {
-                console.warn(`⚠️ Pollinations ${pModel} failed, trying next...`);
-                continue;
+            } catch (e: any) {
+                console.warn(`⚠️ Pollinations Model ${pModel} failed:`, e.message);
+                lastError = e;
+                continue; // Try the next model
             }
         }
 
+        // If all models fail, throw the last error or return the last tried URL
+        if (lastError) {
+            console.error('❌ All Pollinations models failed. Last error:', lastError.message);
+            throw new Error(`Pollinations generation failed after multiple attempts: ${lastError.message}`);
+        }
+
+        // Fallback to returning the last constructed URL if no blob could be successfully converted
         return lastImgUrl || `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true`;
     }
 
