@@ -551,10 +551,11 @@ No explanations. No quotes.`;
     for (const model of models) {
       try {
         // console.log(`💎 Trying Gemini Model: ${model}...`);
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const version = model.includes('1.5') ? 'v1beta' : 'v1';
+        const url = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${apiKey}`;
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s per model attempt
+        const timeoutId = setTimeout(() => controller.abort(), 12000); // Faster per-model timeout
 
         const response = await fetch(url, {
           method: "POST",
@@ -567,7 +568,7 @@ No explanations. No quotes.`;
             generationConfig: {
               temperature: 0.7,
               maxOutputTokens: 8192,
-              ...(jsonMode && { responseMimeType: "application/json" })
+              ...(jsonMode && version === 'v1beta' && { responseMimeType: "application/json" })
             }
           })
         });
@@ -575,9 +576,7 @@ No explanations. No quotes.`;
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-          const err = await response.json();
-          // If 404 (Model not found) or 400 (Bad Request), try next model. 
-          // If 429 (Quota), maybe wait? But for now, we treat as fail and move to next or fallback.
+          const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
           throw new Error(`(${response.status}) ${err.error?.message || response.statusText}`);
         }
 

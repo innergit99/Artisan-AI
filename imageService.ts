@@ -80,25 +80,28 @@ export class ImageService {
         console.log(`🌸 Pollinations Request: ${url}`);
 
         try {
-            // 2. Fetch the image blob
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`Pollinations API returned ${response.status}`);
+            // 2. Try to fetch as blob (for data consistency) but return URL if fetch fails
+            const response = await fetch(url, { mode: 'no-cors' }).catch(() => null);
 
-            const blob = await response.blob();
+            if (!response) {
+                console.warn('⚠️ Pollinations fetch failed, returning direct URL.');
+                return url;
+            }
+
+            const blob = await response.blob().catch(() => null);
+            if (!blob) return url;
 
             // 3. Convert to Data URL
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result as string);
-                reader.onerror = reject;
+                reader.onloadend = () => resolve(reader.result as string || url);
+                reader.onerror = () => resolve(url);
                 reader.readAsDataURL(blob);
             });
 
         } catch (error: any) {
-            console.error('❌ Pollinations generation failed:', error.message);
-            // Fallback to Canvas
-            console.log('🔄 Falling back to Canvas generation');
-            return this.generateWithCanvas(options);
+            console.warn('🔄 Pollinations conversion error, using direct URL:', error.message);
+            return url;
         }
     }
 

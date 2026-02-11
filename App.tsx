@@ -53,7 +53,7 @@ const App: React.FC = () => {
 
   // Log environment configuration on mount
   useEffect(() => {
-    console.log("🚀 PUBLISHLAB DEPLOYMENT: v2.1.0-hotfix (Firecrawl Fix + Navigation Patch)");
+    console.log("🚀 PUBLISHLAB DEPLOYMENT: v2.1.4-stable (Robust AI Fallbacks + Pollinations Calibration)");
     import('./environmentConfig').then(({ logEnvironmentInfo }) => {
       logEnvironmentInfo();
     });
