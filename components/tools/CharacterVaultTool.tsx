@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { ToolComponentProps } from './types';
-import CharacterVault from '../CharacterVault';
+import { CharacterVault } from '../CharacterVault';
 
 export const CharacterVaultTool: React.FC<ToolComponentProps> = ({ 
   toolType, 
