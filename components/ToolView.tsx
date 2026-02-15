@@ -1378,7 +1378,7 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
                 <div className="mt-12 flex gap-6">
                   <button
                     onClick={() => setShowTrendBrief(true)}
-                    className="flex-1 bg-white text-black py-8 rounded-[2.5rem] font-black uppercase tracking-[0.4em] text-sm shadow-2xl transition-all active:scale-[0.98] border-b-[10px] border-slate-300"
+                    className="flex-1 bg-white text-black py-8 rounded-[2.5rem] font-black uppercase tracking-[0.4em] text-sm shadow-2xl transition-all active:scale-[0.98] border-b-10 border-slate-300"
                   >
                     Confirm Implementation
                   </button>
@@ -1404,7 +1404,7 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
 
         {/* TREND BRIEF MODAL / DECISION BRIDGE */}
         {showTrendBrief && selectedTrend && (
-          <div className="fixed inset-0 bg-black/95 backdrop-blur-3xl z-[100] flex items-center justify-center p-8 animate-in fade-in">
+          <div className="fixed inset-0 bg-black/95 backdrop-blur-3xl z-100 flex items-center justify-center p-8 animate-in fade-in">
             <div className="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-[4rem] overflow-hidden shadow-[0_0_100px_rgba(99,102,241,0.2)]">
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <div className="p-16 space-y-10 border-r border-slate-800">
@@ -3054,7 +3054,7 @@ h1, h2, h3 { page -break-after: avoid; }
             <div className="grid grid-cols-12 gap-12 animate-in fade-in">
               {/* READER PREVIEW (PRINT & DIGITAL) */}
               {isPreviewMode && (
-                <div className="fixed inset-0 z-[100] bg-slate-950 flex flex-col p-8 overflow-hidden no-print">
+                <div className="fixed inset-0 z-100 bg-slate-950 flex flex-col p-8 overflow-hidden no-print">
                   <div className="max-w-4xl mx-auto w-full h-full flex flex-col">
                     <div className="flex items-center justify-between mb-8">
                       <div className="flex bg-slate-900 p-1.5 rounded-full border border-slate-800">
@@ -4151,7 +4151,7 @@ h1, h2, h3 { page -break-after: avoid; }
                 ))}
               </div>
               {selectedIndex !== null && (
-                <button onClick={handleFinalizeSelection} disabled={isFinalizing} className="w-full mt-12 bg-white text-black py-8 rounded-[3rem] font-black uppercase tracking-[0.6em] flex items-center justify-center gap-4 shadow-2xl border-b-[10px] border-slate-300 active:translate-y-1">
+                <button onClick={handleFinalizeSelection} disabled={isFinalizing} className="w-full mt-12 bg-white text-black py-8 rounded-[3rem] font-black uppercase tracking-[0.6em] flex items-center justify-center gap-4 shadow-2xl border-b-10 border-slate-300 active:translate-y-1">
                   {isFinalizing ? <Loader2 className="animate-spin" size={24} /> : <Rocket size={24} />} Commit Design
                 </button>
               )}
@@ -4172,7 +4172,7 @@ h1, h2, h3 { page -break-after: avoid; }
 
                   <div className="relative group rounded-[4rem] overflow-hidden">
                     <div
-                      className="aspect-[4/3] relative flex items-center justify-center cursor-move border-[15px] border-slate-900 rounded-[4rem] overflow-hidden shadow-2xl transition-all duration-500"
+                      className="aspect-4/3 relative flex items-center justify-center cursor-move border-15 border-slate-900 rounded-[4rem] overflow-hidden shadow-2xl transition-all duration-500"
                       onMouseDown={handleDragStart}
                       onMouseMove={handleDragMove}
                       onMouseUp={handleDragEnd}
@@ -4255,7 +4255,7 @@ drop-shadow-2xl pointer-events-none
                             className="w-full h-full object-contain p-2 transition-transform group-hover:scale-110"
                             alt={MOCKUP_LABELS[mockupType]}
                           />
-                          <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center p-2 ${activeMockup === mockupType ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
+                          <div className={`absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent flex items-end justify-center p-2 ${activeMockup === mockupType ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
                             <span className="text-[8px] font-black uppercase text-white text-center leading-tight tracking-wider">
                               {MOCKUP_LABELS[mockupType]}
                             </span>
