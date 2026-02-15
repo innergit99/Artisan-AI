@@ -30,6 +30,18 @@ export class ImageService {
      * Generate an image with environment-aware routing
      */
     async generateImage(options: ImageGenerationOptions): Promise<string> {
+        // FORCE CANVAS FOR KDP_INTERIOR TO TEST ENHANCED DESIGNS
+        if (options.module === 'KDP_INTERIOR') {
+            console.log('🎨 [FORCE] Using Canvas for KDP_INTERIOR to test enhanced designs');
+            return this.generateWithCanvas(options);
+        }
+
+        // FORCE CANVAS FOR KDP_COVER TO TEST ENHANCED DESIGNS
+        if (options.module === 'KDP_COVER') {
+            console.log('📚 [FORCE] Using Canvas for KDP_COVER to test enhanced designs');
+            return this.generateWithCanvas(options);
+        }
+
         if (isLocalMode()) {
             console.log('🏠 LOCAL MODE: Using Canvas generation (zero API costs)');
             return this.generateWithCanvas(options);
