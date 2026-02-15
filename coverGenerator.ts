@@ -502,402 +502,10 @@ export class CoverGenerator {
     }
 
     /**
-     * Generate amazing, matching chapter illustrations
-     * Creates thematic illustrations based on chapter content and genre
-     */
-    async generateChapterIllustration(chapterTitle: string, chapterContent: string, genre: string, chapterIndex: number, totalChapters: number): Promise<string> {
-        const width = 1200;
-        const height = 900;
-        this.canvas.width = width;
-        this.canvas.height = height;
-        
-        const palette = this.getColorPalette(genre, 'vibrant');
-        
-        // Analyze chapter content for themes
-        const themes = this.extractChapterThemes(chapterContent);
-        const primaryTheme = themes[0] || 'adventure';
-        
-        // Background
-        this.drawBackground(palette);
-        
-        // Create thematic illustration based on content
-        this.drawThematicIllustration(primaryTheme, chapterIndex, totalChapters, width, height, palette);
-        
-        // Add chapter number
-        this.ctx.save();
-        this.ctx.fillStyle = 'rgba(0,0,0,0.8)';
-        this.ctx.fillRect(width - 80, height - 80, 60, 60);
-        this.ctx.fillStyle = '#ffffff';
-        this.ctx.font = 'bold 24px Arial';
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(`Chapter ${chapterIndex + 1}`, width - 50, height - 40);
-        this.ctx.restore();
-        
-        return this.canvas.toDataURL('image/png', 0.95);
-    }
-
-    /**
-     * Extract visual themes from chapter content
-     */
-    private extractChapterThemes(content: string): string[] {
-        const themes = ['adventure', 'mystery', 'romance', 'action', 'magic', 'nature', 'urban', 'fantasy'];
-        const foundThemes: string[] = [];
-        
-        themes.forEach(theme => {
-            if (content.toLowerCase().includes(theme)) {
-                foundThemes.push(theme);
-            }
-        });
-        
-        return foundThemes.length > 0 ? foundThemes : ['adventure']; // Default to adventure
-    }
-
-    /**
-     * Draw thematic illustrations based on chapter theme
-     */
-    private drawThematicIllustration(theme: string, chapterIndex: number, totalChapters: number, width: number, height: number, palette: any) {
-        const centerX = width / 2;
-        const centerY = height / 2;
-        
-        this.ctx.save();
-        
-        switch (theme) {
-            case 'adventure':
-                this.drawAdventureScene(centerX, centerY, width, height, palette);
-                break;
-            case 'mystery':
-                this.drawMysteryScene(centerX, centerY, width, height, palette);
-                break;
-            case 'romance':
-                this.drawRomanceScene(centerX, centerY, width, height, palette);
-                break;
-            case 'action':
-                this.drawActionScene(centerX, centerY, width, height, palette);
-                break;
-            case 'magic':
-                this.drawMagicScene(centerX, centerY, width, height, palette);
-                break;
-            case 'nature':
-                this.drawNatureScene(centerX, centerY, width, height, palette);
-                break;
-            case 'urban':
-                this.drawUrbanScene(centerX, centerY, width, height, palette);
-                break;
-            case 'fantasy':
-                this.drawFantasyScene(centerX, centerY, width, height, palette);
-                break;
-            default:
-                this.drawAdventureScene(centerX, centerY, width, height, palette);
-                break;
-        }
-        
-        this.ctx.restore();
-    }
-
-    /**
-     * Draw mystery-themed scene
-     */
-    private drawMysteryScene(centerX: number, centerY: number, width: number, height: number, palette: any) {
-        // Foggy atmosphere with shadowy figures
-        this.drawBackground(palette);
-        
-        // Misty overlay
-        this.ctx.fillStyle = 'rgba(100, 100, 120, 0.1)';
-        this.ctx.fillRect(0, 0, width, height);
-        
-        // Shadowy figures
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-        for (let i = 0; i < 3; i++) {
-            const x = Math.random() * width;
-            const y = Math.random() * height;
-            this.ctx.beginPath();
-            this.ctx.arc(x, y, 20 + Math.random() * 30, 0, Math.PI * 2);
-            this.ctx.fill();
-        }
-        
-        // Crescent moon
-        this.ctx.fillStyle = palette.secondary;
-        this.ctx.beginPath();
-        this.ctx.arc(width * 0.8, height * 0.2, 40, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-        this.ctx.beginPath();
-        this.ctx.arc(width * 0.8, height * 0.2, 35, 0, Math.PI * 2);
-        this.ctx.fill();
-    }
-
-    /**
-     * Draw romance-themed scene
-     */
-    private drawRomanceScene(centerX: number, centerY: number, width: number, height: number, palette: any) {
-        this.drawBackground(palette);
-        
-        // Soft gradient overlay
-        const gradient = this.ctx.createLinearGradient(0, 0, width, height);
-        gradient.addColorStop(0, 'rgba(255, 182, 193, 0.1)');
-        gradient.addColorStop(0.5, 'rgba(255, 182, 193, 0.05)');
-        gradient.addColorStop(1, 'rgba(255, 182, 193, 0)');
-        this.ctx.fillStyle = gradient;
-        this.ctx.fillRect(0, 0, width, height);
-        
-        // Hearts
-        this.ctx.fillStyle = palette.primary;
-        for (let i = 0; i < 5; i++) {
-            const x = centerX + (Math.random() - 0.5) * width;
-            const y = centerY + (Math.random() - 0.5) * height;
-            this.ctx.save();
-            this.ctx.translate(x, y);
-            this.ctx.rotate(Math.random() * Math.PI);
-            this.drawHeart(0, 0, 15);
-            this.ctx.restore();
-        }
-    }
-
-    /**
-     * Draw action-themed scene
-     */
-    private drawActionScene(centerX: number, centerY: number, width: number, height: number, palette: any) {
-        this.drawBackground(palette);
-        
-        // Explosions
-        for (let i = 0; i < 4; i++) {
-            const x = centerX + (Math.random() - 0.5) * width;
-            const y = centerY + (Math.random() - 0.5) * height;
-            this.drawExplosion(x, y, 25, palette);
-        }
-        
-        // Motion lines
-        this.ctx.strokeStyle = palette.accent;
-        this.ctx.lineWidth = 2;
-        for (let i = 0; i < 6; i++) {
-            this.ctx.beginPath();
-            this.ctx.moveTo(Math.random() * width, Math.random() * height);
-            this.ctx.lineTo(Math.random() * width, Math.random() * height);
-            this.ctx.stroke();
-        }
-    }
-
-    /**
-     * Draw magic-themed scene
-     */
-    private drawMagicScene(centerX: number, centerY: number, width: number, height: number, palette: any) {
-        this.drawBackground(palette);
-        
-        // Magical sparkles
-        for (let i = 0; i < 20; i++) {
-            const x = Math.random() * width;
-            const y = Math.random() * height;
-            const size = Math.random() * 3 + 1;
-            this.ctx.save();
-            this.ctx.translate(x, y);
-            this.ctx.rotate(Math.random() * Math.PI * 2);
-            
-            // Sparkle effect
-            this.ctx.fillStyle = `hsla(${Math.random() * 60 + 200}, 100%, 70%, 0.8)`;
-            this.ctx.beginPath();
-            this.ctx.arc(0, 0, size, 0, Math.PI * 2);
-            this.ctx.fill();
-            
-            // Star rays
-            this.ctx.strokeStyle = `hsla(${Math.random() * 60 + 200}, 100%, 50%, 0.6)`;
-            this.ctx.lineWidth = 1;
-            for (let j = 0; j < 8; j++) {
-                this.ctx.beginPath();
-                this.ctx.moveTo(0, 0);
-                this.ctx.lineTo(Math.cos(j * Math.PI / 4) * size * 2, Math.sin(j * Math.PI / 4) * size * 2);
-                this.ctx.stroke();
-            }
-            
-            this.ctx.restore();
-        }
-    }
-
-    /**
-     * Draw nature-themed scene
-     */
-    private drawNatureScene(centerX: number, centerY: number, width: number, height: number, palette: any) {
-        this.drawBackground(palette);
-        
-        // Tree
-        this.ctx.fillStyle = palette.primary;
-        this.ctx.fillRect(centerX - 50, centerY + 100, 100, height * 0.6);
-        this.ctx.fillStyle = palette.secondary;
-        this.ctx.fillRect(centerX - 30, centerY + 50, 60, height * 0.4);
-        
-        // Leaves
-        this.ctx.fillStyle = palette.accent;
-        for (let i = 0; i < 8; i++) {
-            const x = centerX + (Math.random() - 0.3) * width;
-            const y = centerY - 50 + Math.random() * height * 0.3;
-            this.ctx.save();
-            this.ctx.translate(x, y);
-            this.ctx.rotate(Math.random() * Math.PI / 6);
-            this.drawLeaf(0, 0, 15);
-            this.ctx.restore();
-        }
-    }
-
-    /**
-     * Draw urban-themed scene
-     */
-    private drawUrbanScene(centerX: number, centerY: number, width: number, height: number, palette: any) {
-        this.drawBackground(palette);
-        
-        // City skyline
-        this.ctx.fillStyle = palette.primary;
-        for (let i = 0; i < 5; i++) {
-            const x = (width / 5) * i;
-            const h = height * 0.3 + Math.random() * height * 0.3;
-            this.ctx.fillRect(x, height - h, width / 6, h);
-        }
-        
-        // Grid pattern
-        this.ctx.strokeStyle = palette.accent;
-        this.ctx.lineWidth = 1;
-        this.ctx.globalAlpha = 0.3;
-        for (let i = 0; i < width; i += 20) {
-            this.ctx.beginPath();
-            this.ctx.moveTo(i, height * 0.7);
-            this.ctx.lineTo(i, height);
-            this.ctx.stroke();
-        }
-        this.ctx.globalAlpha = 1;
-    }
-
-    /**
-     * Draw fantasy-themed scene
-     */
-    private drawFantasyScene(centerX: number, centerY: number, width: number, height: number, palette: any) {
-        this.drawBackground(palette);
-        
-        // Castle silhouette
-        this.ctx.fillStyle = palette.primary;
-        this.ctx.fillRect(centerX - 100, centerY - 50, 200, height * 0.8);
-        
-        // Tower
-        this.ctx.fillRect(centerX - 50, centerY - 100, 60, height * 0.6);
-        
-        // Stars
-        this.ctx.fillStyle = '#ffffff';
-        for (let i = 0; i < 15; i++) {
-            const x = Math.random() * width;
-            const y = Math.random() * height * 0.5;
-            this.ctx.beginPath();
-            this.ctx.arc(x, y, Math.random() * 2 + 0.5, 0, Math.PI * 2);
-            this.ctx.fill();
-        }
-        
-        // Magical aura
-        const gradient = this.ctx.createRadialGradient(centerX, centerY, 0, width * 0.8);
-        gradient.addColorStop(0, 'rgba(147, 51, 234, 0)');
-        gradient.addColorStop(0.5, 'rgba(147, 51, 234, 0.2)');
-        gradient.addColorStop(1, 'rgba(147, 51, 234, 0)');
-        this.ctx.fillStyle = gradient;
-        this.ctx.fillRect(0, 0, width, height);
-    }
-
-    /**
-     * Draw mountain range
-     */
-    private drawMountainRange(startX: number, baseY: number, width: number, height: number, palette: any) {
-        const mountains = 5;
-        for (let i = 0; i < mountains; i++) {
-            const x = startX + (width / mountains) * i;
-            const peakHeight = height * (0.3 + Math.random() * 0.4);
-            const baseWidth = width / mountains / 2;
-            
-            // Mountain shape
-            this.ctx.fillStyle = palette.primary;
-            this.ctx.beginPath();
-            this.ctx.moveTo(x - baseWidth / 2, baseY);
-            this.ctx.lineTo(x, baseY - peakHeight);
-            this.ctx.lineTo(x + baseWidth / 2, baseY - peakHeight);
-            this.ctx.closePath();
-            this.ctx.fill();
-            
-            // Snow cap
-            if (Math.random() > 0.7) {
-                this.ctx.fillStyle = '#ffffff';
-                this.ctx.beginPath();
-                this.ctx.arc(x, baseY - peakHeight, 15, 0, Math.PI * 2);
-                this.ctx.fill();
-            }
-        }
-    }
-
-    /**
-     * Draw heart shape
-     */
-    private drawHeart(x: number, y: number, size: number) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(x, y + size / 4);
-        this.ctx.bezierCurveTo(x - size / 2, y, x - size / 2, y - size / 4);
-        this.ctx.bezierCurveTo(x - size / 2, y - size / 2, x + size / 2, y - size / 4);
-        this.ctx.bezierCurveTo(x, y - size / 4, x + size / 2, y - size / 4);
-        this.ctx.bezierCurveTo(x, y, x + size / 2, y - size / 4);
-        this.ctx.bezierCurveTo(x, y + size / 4, x + size / 2, y - size / 4);
-        this.ctx.closePath();
-        this.ctx.fill();
-    }
-
-    /**
-     * Draw explosion effect
-     */
-    private drawExplosion(x: number, y: number, size: number, palette: any) {
-        const particles = 12;
-        for (let i = 0; i < particles; i++) {
-            const angle = (Math.PI * 2 / particles) * i;
-            const velocity = size * (0.5 + Math.random() * 0.5);
-            const px = x + Math.cos(angle) * velocity;
-            const py = y + Math.sin(angle) * velocity;
-            
-            this.ctx.fillStyle = `hsla(${Math.random() * 60}, 100%, 70%, ${0.8 - i * 0.05})`;
-            this.ctx.beginPath();
-            this.ctx.arc(px, py, 2 + Math.random() * 2, 0, Math.PI * 2);
-            this.ctx.fill();
-        }
-    }
-
-    /**
-     * Draw leaf shape
-     */
-    private drawLeaf(x: number, y: number, size: number) {
-        this.ctx.save();
-        this.ctx.translate(x, y);
-        this.ctx.rotate(Math.random() * Math.PI / 4);
-        
-        this.ctx.fillStyle = palette.accent;
-        this.ctx.beginPath();
-        this.ctx.ellipse(0, 0, size, size * 0.6, 0, Math.PI * 2);
-        this.ctx.fill();
-        
-        this.ctx.restore();
-    }
-        // Mountain landscape
-        this.drawMountainRange(0, height * 0.6, width, height * 0.4, palette);
-        
-        // Path/Trail
-        this.ctx.strokeStyle = palette.accent;
-        this.ctx.lineWidth = 3;
-        this.ctx.beginPath();
-        this.ctx.moveTo(width * 0.1, height * 0.8);
-        this.ctx.quadraticCurveTo(width * 0.3, height * 0.7, width * 0.5, height * 0.6);
-        this.ctx.quadraticCurveTo(width * 0.7, height * 0.5, width * 0.8, height * 0.3);
-        this.ctx.stroke();
-        
-        // Sun
-        this.ctx.fillStyle = palette.primary;
-        this.ctx.beginPath();
-        this.ctx.arc(width * 0.8, height * 0.2, 30, 0, Math.PI * 2);
-        this.ctx.fill();
-    }
-
-    /**
      * Generate a simple interior illustration (Grayscale/Line art style)
      * Used as fallback for Chapter headers
      */
-    async generateInteriorImage(prompt: string, title: string, genre: string, chapterIndex?: number, totalChapters?: number): Promise<string> {
+    async generateInteriorImage(prompt: string, title: string, genre: string): Promise<string> {
         const width = 1200; // High res
         const height = 900;
         this.canvas.width = width;
@@ -1022,6 +630,439 @@ export class CoverGenerator {
         this.ctx.strokeRect(20, 20, width - 40, height - 40);
 
         return this.canvas.toDataURL('image/png');
+    }
+
+    /**
+     * Generate amazing, matching chapter illustrations
+     * Creates thematic illustrations based on chapter content and genre
+     */
+    async generateChapterIllustration(chapterTitle: string, chapterContent: string, genre: string, chapterIndex: number, totalChapters: number): Promise<string> {
+        const width = 1200;
+        const height = 900;
+        this.canvas.width = width;
+        this.canvas.height = height;
+        
+        const palette = this.getColorPalette(genre, 'vibrant');
+        
+        // Analyze chapter content for themes
+        const themes = this.extractChapterThemes(chapterContent);
+        const primaryTheme = themes[0] || 'adventure';
+        
+        // Background
+        this.drawBackground(palette);
+        
+        // Create thematic illustration based on content
+        this.drawThematicIllustration(primaryTheme, chapterIndex, totalChapters, width, height, palette);
+        
+        // Add chapter number
+        this.ctx.save();
+        this.ctx.fillStyle = 'rgba(0,0,0,0.8)';
+        this.ctx.fillRect(width - 80, height - 80, 60, 60);
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.font = 'bold 24px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(`Chapter ${chapterIndex + 1}`, width - 50, height - 40);
+        this.ctx.restore();
+        
+        return this.canvas.toDataURL('image/png', 0.95);
+    }
+
+    /**
+     * Extract visual themes from chapter content
+     */
+    private extractChapterThemes(content: string): string[] {
+        const themes = ['adventure', 'mystery', 'romance', 'action', 'magic', 'nature', 'urban', 'fantasy'];
+        const foundThemes: string[] = [];
+        
+        themes.forEach(theme => {
+            if (content.toLowerCase().includes(theme)) {
+                foundThemes.push(theme);
+            }
+        });
+        
+        return foundThemes.length > 0 ? foundThemes : ['adventure']; // Default to adventure
+    }
+
+    /**
+     * Draw thematic illustrations based on chapter theme
+     */
+    private drawThematicIllustration(theme: string, chapterIndex: number, totalChapters: number, width: number, height: number, palette: any): void {
+        const centerX = width / 2;
+        const centerY = height / 2;
+        
+        this.ctx.save();
+        
+        switch (theme) {
+            case 'adventure':
+                this.drawAdventureScene(centerX, centerY, width, height, palette);
+                break;
+            case 'mystery':
+                this.drawMysteryScene(centerX, centerY, width, height, palette);
+                break;
+            case 'romance':
+                this.drawRomanceScene(centerX, centerY, width, height, palette);
+                break;
+            case 'action':
+                this.drawActionScene(centerX, centerY, width, height, palette);
+                break;
+            case 'magic':
+                this.drawMagicScene(centerX, centerY, width, height, palette);
+                break;
+            case 'nature':
+                this.drawNatureScene(centerX, centerY, width, height, palette);
+                break;
+            case 'urban':
+                this.drawUrbanScene(centerX, centerY, width, height, palette);
+                break;
+            case 'fantasy':
+                this.drawFantasyScene(centerX, centerY, width, height, palette);
+                break;
+            default:
+                this.drawAdventureScene(centerX, centerY, width, height, palette);
+                break;
+        }
+        
+        this.ctx.restore();
+    }
+
+    /**
+     * Draw adventure-themed scene
+     */
+    private drawAdventureScene(centerX: number, centerY: number, width: number, height: number, palette: any): void {
+        // Create background gradient
+        const gradient = this.ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, palette.primary || '#4a90e2');
+        gradient.addColorStop(1, palette.secondary || '#357abd');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // Path/Trail
+        this.ctx.strokeStyle = palette.accent || '#fbbf24';
+        this.ctx.lineWidth = 3;
+        this.ctx.beginPath();
+        this.ctx.moveTo(width * 0.1, height * 0.8);
+        this.ctx.quadraticCurveTo(width * 0.3, height * 0.7, width * 0.5, height * 0.6);
+        this.ctx.quadraticCurveTo(width * 0.7, height * 0.5, width * 0.8, height * 0.3);
+        this.ctx.stroke();
+        
+        // Sun
+        this.ctx.fillStyle = palette.accent || '#fbbf24';
+        this.ctx.beginPath();
+        this.ctx.arc(width * 0.8, height * 0.2, 30, 0, Math.PI * 2);
+        this.ctx.fill();
+    }
+
+    /**
+     * Draw mystery-themed scene
+     */
+    private drawMysteryScene(centerX: number, centerY: number, width: number, height: number, palette: any): void {
+        // Create dark background
+        const gradient = this.ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, palette.primary || '#1a1a2e');
+        gradient.addColorStop(1, palette.secondary || '#16213e');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // Misty overlay
+        this.ctx.fillStyle = 'rgba(100, 100, 120, 0.1)';
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // Shadowy figures
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        for (let i = 0; i < 3; i++) {
+            const x = Math.random() * width;
+            const y = Math.random() * height;
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, 20 + Math.random() * 30, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+        
+        // Crescent moon
+        this.ctx.fillStyle = palette.accent || '#e5e7eb';
+        this.ctx.beginPath();
+        this.ctx.arc(width * 0.8, height * 0.2, 40, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        this.ctx.beginPath();
+        this.ctx.arc(width * 0.8, height * 0.2, 35, 0, Math.PI * 2);
+        this.ctx.fill();
+    }
+
+    /**
+     * Draw romance-themed scene
+     */
+    private drawRomanceScene(centerX: number, centerY: number, width: number, height: number, palette: any): void {
+        // Create soft background
+        const gradient = this.ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, palette.primary || '#ffe0e6');
+        gradient.addColorStop(1, palette.secondary || '#ffb6c1');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // Soft gradient overlay
+        const softGradient = this.ctx.createLinearGradient(0, 0, width, height);
+        softGradient.addColorStop(0, 'rgba(255, 182, 193, 0.1)');
+        softGradient.addColorStop(0.5, 'rgba(255, 182, 193, 0.05)');
+        softGradient.addColorStop(1, 'rgba(255, 182, 193, 0)');
+        this.ctx.fillStyle = softGradient;
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // Hearts
+        this.ctx.fillStyle = palette.accent || '#ec4899';
+        for (let i = 0; i < 5; i++) {
+            const x = centerX + (Math.random() - 0.5) * width;
+            const y = centerY + (Math.random() - 0.5) * height;
+            this.ctx.save();
+            this.ctx.translate(x, y);
+            this.ctx.rotate(Math.random() * Math.PI);
+            this.drawHeart(0, 0, 15);
+            this.ctx.restore();
+        }
+    }
+
+    /**
+     * Draw action-themed scene
+     */
+    private drawActionScene(centerX: number, centerY: number, width: number, height: number, palette: any): void {
+        // Create dynamic background
+        const gradient = this.ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, palette.primary || '#ff6b6b');
+        gradient.addColorStop(1, palette.secondary || '#c92a2a');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // Explosions
+        for (let i = 0; i < 4; i++) {
+            const x = centerX + (Math.random() - 0.5) * width;
+            const y = centerY + (Math.random() - 0.5) * height;
+            this.drawExplosion(x, y, 25, palette);
+        }
+        
+        // Motion lines
+        this.ctx.strokeStyle = palette.accent || '#fbbf24';
+        this.ctx.lineWidth = 2;
+        for (let i = 0; i < 6; i++) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(Math.random() * width, Math.random() * height);
+            this.ctx.lineTo(Math.random() * width, Math.random() * height);
+            this.ctx.stroke();
+        }
+    }
+
+    /**
+     * Draw magic-themed scene
+     */
+    private drawMagicScene(centerX: number, centerY: number, width: number, height: number, palette: any): void {
+        // Create mystical background
+        const gradient = this.ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, palette.primary || '#9333ea');
+        gradient.addColorStop(1, palette.secondary || '#6b21a8');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // Magical sparkles
+        for (let i = 0; i < 20; i++) {
+            const x = Math.random() * width;
+            const y = Math.random() * height;
+            const size = Math.random() * 3 + 1;
+            this.ctx.save();
+            this.ctx.translate(x, y);
+            this.ctx.rotate(Math.random() * Math.PI * 2);
+            
+            // Sparkle effect
+            this.ctx.fillStyle = `hsla(${Math.random() * 60 + 200}, 100%, 70%, 0.8)`;
+            this.ctx.beginPath();
+            this.ctx.arc(0, 0, size, 0, Math.PI * 2);
+            this.ctx.fill();
+            
+            // Star rays
+            this.ctx.strokeStyle = `hsla(${Math.random() * 60 + 200}, 100%, 50%, 0.6)`;
+            this.ctx.lineWidth = 1;
+            for (let j = 0; j < 8; j++) {
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, 0);
+                this.ctx.lineTo(Math.cos(j * Math.PI / 4) * size * 2, Math.sin(j * Math.PI / 4) * size * 2);
+                this.ctx.stroke();
+            }
+            
+            this.ctx.restore();
+        }
+    }
+
+    /**
+     * Draw nature-themed scene
+     */
+    private drawNatureScene(centerX: number, centerY: number, width: number, height: number, palette: any): void {
+        // Create natural background
+        const gradient = this.ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, palette.primary || '#22c55e');
+        gradient.addColorStop(1, palette.secondary || '#16a34a');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // Tree
+        this.ctx.fillStyle = palette.accent || '#16a34a';
+        this.ctx.fillRect(centerX - 50, centerY + 100, 100, height * 0.6);
+        this.ctx.fillStyle = palette.secondary || '#22c55e';
+        this.ctx.fillRect(centerX - 30, centerY + 50, 60, height * 0.4);
+        
+        // Leaves
+        this.ctx.fillStyle = palette.accent || '#84cc16';
+        for (let i = 0; i < 8; i++) {
+            const x = centerX + (Math.random() - 0.3) * width;
+            const y = centerY - 50 + Math.random() * height * 0.3;
+            this.ctx.save();
+            this.ctx.translate(x, y);
+            this.ctx.rotate(Math.random() * Math.PI / 6);
+            this.drawLeaf(0, 0, 15, palette);
+            this.ctx.restore();
+        }
+    }
+
+    /**
+     * Draw urban-themed scene
+     */
+    private drawUrbanScene(centerX: number, centerY: number, width: number, height: number, palette: any): void {
+        // Create urban background
+        const gradient = this.ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, palette.primary || '#6b7280');
+        gradient.addColorStop(1, palette.secondary || '#374151');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // City skyline
+        this.ctx.fillStyle = palette.accent || '#374151';
+        for (let i = 0; i < 5; i++) {
+            const x = (width / 5) * i;
+            const h = height * 0.3 + Math.random() * height * 0.3;
+            this.ctx.fillRect(x, height - h, width / 6, h);
+        }
+        
+        // Grid pattern
+        this.ctx.strokeStyle = palette.accent || '#6b7280';
+        this.ctx.lineWidth = 1;
+        this.ctx.globalAlpha = 0.3;
+        for (let i = 0; i < width; i += 20) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(i, height * 0.7);
+            this.ctx.lineTo(i, height);
+            this.ctx.stroke();
+        }
+        this.ctx.globalAlpha = 1;
+    }
+
+    /**
+     * Draw fantasy-themed scene
+     */
+    private drawFantasyScene(centerX: number, centerY: number, width: number, height: number, palette: any): void {
+        // Create fantasy background
+        const gradient = this.ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, palette.primary || '#8b5cf6');
+        gradient.addColorStop(1, palette.secondary || '#7c3aed');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, width, height);
+        
+        // Castle silhouette
+        this.ctx.fillStyle = palette.accent || '#7c3aed';
+        this.ctx.fillRect(centerX - 100, centerY - 50, 200, height * 0.8);
+        
+        // Tower
+        this.ctx.fillRect(centerX - 50, centerY - 100, 60, height * 0.6);
+        
+        // Stars
+        this.ctx.fillStyle = '#ffffff';
+        for (let i = 0; i < 15; i++) {
+            const x = Math.random() * width;
+            const y = Math.random() * height * 0.5;
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, Math.random() * 2 + 0.5, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+        
+        // Magical aura
+        const auraGradient = this.ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, width * 0.8);
+        auraGradient.addColorStop(0, 'rgba(147, 51, 234, 0)');
+        auraGradient.addColorStop(0.5, 'rgba(147, 51, 234, 0.2)');
+        auraGradient.addColorStop(1, 'rgba(147, 51, 234, 0)');
+        this.ctx.fillStyle = auraGradient;
+        this.ctx.fillRect(0, 0, width, height);
+    }
+
+    /**
+     * Draw mountain range
+     */
+    private drawMountainRange(startX: number, baseY: number, width: number, height: number, palette: any): void {
+        const mountains = 5;
+        for (let i = 0; i < mountains; i++) {
+            const x = startX + (width / mountains) * i;
+            const peakHeight = height * (0.3 + Math.random() * 0.4);
+            const baseWidth = width / mountains / 2;
+            
+            // Mountain shape
+            this.ctx.fillStyle = palette.accent || '#22c55e';
+            this.ctx.beginPath();
+            this.ctx.moveTo(x - baseWidth / 2, baseY);
+            this.ctx.lineTo(x, baseY - peakHeight);
+            this.ctx.lineTo(x + baseWidth / 2, baseY - peakHeight);
+            this.ctx.closePath();
+            this.ctx.fill();
+            
+            // Snow cap
+            if (Math.random() > 0.7) {
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.beginPath();
+                this.ctx.arc(x, baseY - peakHeight, 15, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+        }
+    }
+
+    /**
+     * Draw heart shape
+     */
+    private drawHeart(x: number, y: number, size: number): void {
+        this.ctx.beginPath();
+        this.ctx.moveTo(x, y + size / 4);
+        this.ctx.bezierCurveTo(x - size / 2, y, x - size / 2, y - size / 4, x - size / 2, y);
+        this.ctx.bezierCurveTo(x, y, x + size / 2, y - size / 4, x + size / 2, y);
+        this.ctx.bezierCurveTo(x, y, x + size / 2, y - size / 4, x, y - size / 4);
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
+
+    /**
+     * Draw explosion effect
+     */
+    private drawExplosion(x: number, y: number, size: number, palette: any): void {
+        const particles = 12;
+        for (let i = 0; i < particles; i++) {
+            const angle = (Math.PI * 2 / particles) * i;
+            const velocity = size * (0.5 + Math.random() * 0.5);
+            const px = x + Math.cos(angle) * velocity;
+            const py = y + Math.sin(angle) * velocity;
+            
+            this.ctx.fillStyle = `hsla(${Math.random() * 60}, 100%, 70%, ${0.8 - i * 0.05})`;
+            this.ctx.beginPath();
+            this.ctx.arc(px, py, 2 + Math.random() * 2, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+    }
+
+    /**
+     * Draw leaf shape
+     */
+    private drawLeaf(x: number, y: number, size: number, palette?: any): void {
+        this.ctx.save();
+        this.ctx.translate(x, y);
+        this.ctx.rotate(Math.random() * Math.PI / 4);
+        
+        this.ctx.fillStyle = palette?.accent || '#84cc16';
+        this.ctx.beginPath();
+        this.ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        this.ctx.restore();
     }
 }
 
