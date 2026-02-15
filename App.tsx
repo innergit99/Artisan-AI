@@ -10,6 +10,7 @@ import CoverFoundryPage from './components/CoverFoundryPage';
 import TrendRadarPage from './components/TrendRadarPage';
 import PricingPage from './components/PricingPage';
 import TermsPage from './components/TermsPage';
+import { ToolRouter } from './components/tools/ToolRouter';
 
 import { AuthModal } from './components/AuthModal';
 import { ToolType, GeneratedImage } from './types';
