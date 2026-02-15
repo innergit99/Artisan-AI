@@ -494,6 +494,7 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
   const [isPromptBettering, setIsPromptBettering] = useState(false);
   const [isGeneratingMockups, setIsGeneratingMockups] = useState(false);
   const [printfulMockups, setPrintfulMockups] = useState<Record<string, string>>({});
+  const [canvasMockupService, setCanvasMockupService] = useState<any>(null);
   const [showUploadCopilot, setShowUploadCopilot] = useState(false);
   const [isConfirmingReset, setIsConfirmingReset] = useState(false);
 
@@ -564,13 +565,14 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
         try {
           console.log('Loading canvas mockup service...');
           const canvasMockupModule = await import('../canvasMockupService');
-          const canvasMockupService = canvasMockupModule.canvasMockupService;
+          const service = canvasMockupModule.canvasMockupService;
+          setCanvasMockupService(service);
           console.log('Canvas mockup service loaded successfully');
           
           const drawings: Record<string, string> = {};
           for (const type of Object.keys(MOCKUP_LABELS)) {
             try {
-              const baseURL = await canvasMockupService.generateBaseProduct(type, '#ffffff');
+              const baseURL = await service.generateBaseProduct(type, '#ffffff');
               drawings[type] = baseURL;
               drawings[`base_${type}`] = baseURL;
             } catch (e) { 
@@ -654,7 +656,7 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
   useEffect(() => {
     const updateProductBase = async () => {
       try {
-        const result = await canvasMockupService.generateMockup({
+        const result = await canvasMockupService?.generateMockup({
           designUrl: '', // Plain base
           productType: activeMockup,
           color: baseColor
@@ -1120,7 +1122,7 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
         console.log('🎨 Finalizing Primary Mockup (T-Shirt)...');
 
         // Generate ONLY Standard Tee immediately
-        const teeResult = await canvasMockupService.generateMockup({
+        const teeResult = await canvasMockupService?.generateMockup({
           designUrl: finalAsset,
           productType: 'STANDARD_TEE'
         });
@@ -1150,7 +1152,7 @@ const ToolViewInner: React.FC<ToolViewProps> = ({ toolType, initialPrompt, onBac
     if (result && !isGenerated) {
       console.log(`🎨 Lazy Generating Mockup: ${type}...`);
       try {
-        const newMockup = await canvasMockupService.generateMockup({
+        const newMockup = await canvasMockupService?.generateMockup({
           designUrl: result,
           productType: type
         });
