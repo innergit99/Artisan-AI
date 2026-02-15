@@ -138,9 +138,13 @@ export class ImageService {
                 console.warn(`⚠️ Pollinations Model ${pModel} failed:`, e.message);
                 lastError = e;
                 
-                // If rate limited, don't try other models - go straight to fallback
-                if (isRateLimited || e.message?.includes('Rate limit')) {
-                    break;
+                // Check for specific error types
+                if (e.message.includes('530') || e.message.includes('origin')) {
+                    console.warn('🌐 Pollinations.ai appears to be down (HTTP 530)');
+                    isRateLimited = false; // Don't treat as rate limiting
+                } else if (e.message.includes('429') || e.message.includes('rate')) {
+                    console.warn('⏱️ Pollinations rate limit reached');
+                    isRateLimited = true;
                 }
                 continue;
             }
